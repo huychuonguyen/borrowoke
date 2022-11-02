@@ -8,7 +8,6 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MAX
 import com.chuthi.borrowok.R
@@ -51,7 +50,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun sendRegistrationToServer(token: String?) {
         val fcmToken = token
-       // token?.let { fcmToken = token }
+        // token?.let { fcmToken = token }
     }
 
     private fun sendNotification(messageBody: Map<String, String>) {
@@ -114,6 +113,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setPriority(PRIORITY_MAX)
                 .setGroup(NOTIFICATION_GROUP_KEY)
+                .setSound(null)
                 .setGroupSummary(true)
 
             val channel = NotificationChannel(
