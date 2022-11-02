@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "133339570291",
+    "firebase_url": "https://borrowoke-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "borrowoke",
+    "storage_bucket": "borrowoke.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133339570291:android:8a79ea0c5270bd6b248a06",
+        "android_client_info": {
+          "package_name": "com.chuthi.borrowok"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133339570291-pm72n1735gp2v7tbhdlgpr8hidmmhdeu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chuthi.borrowok",
+            "certificate_hash": "cc46f2c272af0ccca3c6a3dbf1d748205a313960"
+          }
+        },
+        {
+          "client_id": "133339570291-1hcfv5qi6ndurqio953npfvu5b4b5osl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4cEGisw-ANyowLJEPc5JHahWpuLEiEY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133339570291-1hcfv5qi6ndurqio953npfvu5b4b5osl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

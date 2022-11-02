@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Borrowoke</string>
+    <string name="supprise_old_woman">Bất ngờ chưa bà dà… !!!</string>
+    <string name="default_notification_channel_id">1234566789</string>
+</resources>
