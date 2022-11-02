@@ -1,4 +1,4 @@
-package com.chuthi.borrowok
+package com.chuthi.borrowoke
 
 import org.junit.Test
 

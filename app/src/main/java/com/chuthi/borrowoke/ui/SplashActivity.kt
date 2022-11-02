@@ -1,12 +1,12 @@
-package com.chuthi.borrowok.ui
+package com.chuthi.borrowoke.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import com.chuthi.borrowok.R
-import com.chuthi.borrowok.base.BaseActivity
+import com.chuthi.borrowoke.R
+import com.chuthi.borrowoke.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_splash.*
 
 @SuppressLint("CustomSplashScreen")

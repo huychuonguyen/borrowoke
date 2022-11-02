@@ -1,4 +1,4 @@
-package com.chuthi.borrowok.service.firebase
+package com.chuthi.borrowoke.service.firebase
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,10 +10,10 @@ import android.content.Intent
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MAX
-import com.chuthi.borrowok.R
-import com.chuthi.borrowok.other.NOTIFICATION_GROUP_ID
-import com.chuthi.borrowok.other.NOTIFICATION_GROUP_KEY
-import com.chuthi.borrowok.ui.MainActivity
+import com.chuthi.borrowoke.R
+import com.chuthi.borrowoke.other.NOTIFICATION_GROUP_ID
+import com.chuthi.borrowoke.other.NOTIFICATION_GROUP_KEY
+import com.chuthi.borrowoke.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.util.*

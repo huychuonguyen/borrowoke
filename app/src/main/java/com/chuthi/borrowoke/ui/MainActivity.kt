@@ -1,8 +1,8 @@
-package com.chuthi.borrowok.ui
+package com.chuthi.borrowoke.ui
 
 import android.util.Log
-import com.chuthi.borrowok.R
-import com.chuthi.borrowok.base.BaseActivity
+import com.chuthi.borrowoke.R
+import com.chuthi.borrowoke.base.BaseActivity
 import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : BaseActivity() {

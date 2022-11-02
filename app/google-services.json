@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:133339570291:android:8a79ea0c5270bd6b248a06",
+        "mobilesdk_app_id": "1:133339570291:android:0ae1c53c2fd2b371248a06",
         "android_client_info": {
-          "package_name": "com.chuthi.borrowok"
+          "package_name": "com.chuthi.borrowoke"
         }
       },
       "oauth_client": [
         {
-          "client_id": "133339570291-pm72n1735gp2v7tbhdlgpr8hidmmhdeu.apps.googleusercontent.com",
+          "client_id": "133339570291-mmop5ueu6176ekqc6a7d0s7knavdevlv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.chuthi.borrowok",
+            "package_name": "com.chuthi.borrowoke",
             "certificate_hash": "cc46f2c272af0ccca3c6a3dbf1d748205a313960"
           }
         },

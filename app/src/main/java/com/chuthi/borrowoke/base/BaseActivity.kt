@@ -1,4 +1,4 @@
-package com.chuthi.borrowok.base
+package com.chuthi.borrowoke.base
 
 import android.os.Bundle
 import androidx.annotation.LayoutRes

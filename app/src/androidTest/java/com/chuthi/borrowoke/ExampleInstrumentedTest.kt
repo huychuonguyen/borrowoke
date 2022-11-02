@@ -1,4 +1,4 @@
-package com.chuthi.borrowok
+package com.chuthi.borrowoke
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
