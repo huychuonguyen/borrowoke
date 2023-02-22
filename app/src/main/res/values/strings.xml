@@ -1,5 +1,10 @@
 <resources>
-    <string name="app_name">Borrowoke</string>
+    <string name="app_name">Sam Coffee</string>
     <string name="supprise_old_woman">Bất ngờ chưa bà dà… !!!</string>
     <string name="default_notification_channel_id">1234566789</string>
+    <string name="sam_coffee_uncle">Sam Coffee uncle</string>
+    <string name="created_by_medal">owner: Samchigo\ncreated by: Medal</string>
+    <string name="u_r_my_caffeine">U\'r my caffeine</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

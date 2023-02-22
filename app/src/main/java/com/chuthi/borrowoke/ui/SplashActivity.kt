@@ -5,16 +5,22 @@ import android.content.Intent
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import com.chuthi.borrowoke.R
+import android.view.LayoutInflater
 import com.chuthi.borrowoke.base.BaseActivity
+import com.chuthi.borrowoke.base.BaseViewModel
+import com.chuthi.borrowoke.databinding.ActivitySplashBinding
+import com.chuthi.borrowoke.ui.main.MainActivity
 import kotlinx.android.synthetic.main.activity_splash.*
 
 @SuppressLint("CustomSplashScreen")
-class SplashActivity : BaseActivity() {
+class SplashActivity(override val viewModel: BaseViewModel? = null) :
+    BaseActivity<ActivitySplashBinding, BaseViewModel>() {
 
     private var countDown: CountDownTimer? = null
 
-    override fun layoutId() = R.layout.activity_splash
+    override fun setViewBinding(inflater: LayoutInflater) = ActivitySplashBinding.inflate(inflater)
+
+    override fun onObserveData(): Nothing? = null
 
     override fun setupUI() {
         // delay splash screen
@@ -56,6 +62,6 @@ class SplashActivity : BaseActivity() {
 
     companion object {
         private const val DELAY_SPLASH = 1000L
-        private const val COUNTDOWN_DURATION = 3000L
+        private const val COUNTDOWN_DURATION = 0L
     }
 }

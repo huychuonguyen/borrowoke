@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.chuthi.borrowoke">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".BaseApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Borrowoke"
         tools:targetApi="31">
@@ -24,7 +24,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.chuthi.borrowoke.ui.MainActivity"
+            android:name="com.chuthi.borrowoke.ui.main.MainActivity"
+            android:launchMode="singleTask"
             android:exported="true" />
 
         <service
