@@ -22,7 +22,7 @@ class MainViewModel : BaseViewModel() {
     fun fetchData() {
         launchViewModelScope {
             showLoading()
-            delay(1000)
+            delay(500)
             hideLoading()
             _dummyData2.emit("Á đù")
         }

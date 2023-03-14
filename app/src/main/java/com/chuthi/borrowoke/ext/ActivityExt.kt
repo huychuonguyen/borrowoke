@@ -37,3 +37,6 @@ fun AppCompatActivity.repeatOnLifecycle(
         }
     }
 }
+
+fun AppCompatActivity.popBackStack() = supportFragmentManager
+    .popBackStack()

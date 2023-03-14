@@ -5,6 +5,9 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.chuthi.borrowoke.data.model.UserModel
+import com.chuthi.borrowoke.data.model.toUserEntity
+import com.chuthi.borrowoke.data.repo.UserRepo
 import com.chuthi.borrowoke.other.INPUT_BLUR_WORKER
 import com.chuthi.borrowoke.other.OUTPUT_BLUR_WORKER
 import com.chuthi.borrowoke.util.notifyImageBlurred
@@ -14,8 +17,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class BlurWorker(
-    context: Context,
-    params: WorkerParameters
+    private val userRepo: UserRepo,
+    val context: Context,
+    val params: WorkerParameters
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -45,7 +49,7 @@ class BlurWorker(
 
                     if (progress >= 100) {
                         delay(1000)
-                        // notify image blurred
+                        // notify image blurre
                         notifyImageBlurred(
                             context = appContext,
                             title = "Image blurred",
@@ -58,6 +62,8 @@ class BlurWorker(
                 }
 
                 setProgress(workDataOf(PROGRESS to 100))
+
+                userRepo.deleteUser(userId = 15)
 
                 val outputData = workDataOf(OUTPUT_BLUR_WORKER to "Blur xong gòi")
                 return@withContext Result.success(outputData)

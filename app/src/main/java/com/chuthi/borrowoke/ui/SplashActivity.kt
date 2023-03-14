@@ -5,20 +5,16 @@ import android.content.Intent
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.databinding.ActivitySplashBinding
 import com.chuthi.borrowoke.ui.main.MainActivity
-import kotlinx.android.synthetic.main.activity_splash.*
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity(override val viewModel: BaseViewModel? = null) :
-    BaseActivity<ActivitySplashBinding, BaseViewModel>() {
+    BaseActivity<ActivitySplashBinding, BaseViewModel>(ActivitySplashBinding::inflate) {
 
     private var countDown: CountDownTimer? = null
-
-    override fun setViewBinding(inflater: LayoutInflater) = ActivitySplashBinding.inflate(inflater)
 
     override fun onObserveData(): Nothing? = null
 
@@ -45,19 +41,21 @@ class SplashActivity(override val viewModel: BaseViewModel? = null) :
     }
 
     private fun startCountDown() {
-        val tvCountDown = tvCountDown
-        var countdownValue = COUNTDOWN_DURATION / 1000L
-        countDown = object : CountDownTimer(COUNTDOWN_DURATION, 1000L) {
-            override fun onTick(millisUntilFinished: Long) {
-                tvCountDown.text = (countdownValue--).toString()
-            }
+        binding.run {
+            val tvCountDown = tvCountDown
+            var countdownValue = COUNTDOWN_DURATION / 1000L
+            countDown = object : CountDownTimer(COUNTDOWN_DURATION, 1000L) {
+                override fun onTick(millisUntilFinished: Long) {
+                    tvCountDown.text = (countdownValue--).toString()
+                }
 
-            override fun onFinish() {
-                moveToMain()
-            }
+                override fun onFinish() {
+                    moveToMain()
+                }
 
+            }
+            countDown?.start()
         }
-        countDown?.start()
     }
 
     companion object {

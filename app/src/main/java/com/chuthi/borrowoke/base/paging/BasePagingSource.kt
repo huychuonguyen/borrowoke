@@ -36,7 +36,7 @@ abstract class BasePagingSource<T : BaseModel> : PagingSource<Int, T>() {
      * callback to raise api calling with BaseResponseModel<List<T>> response,
      * @return BaseResponseModel<List<T>>?
      * */
-    abstract fun query(): suspend (Int, Int, T?) -> List<T>?
+    abstract fun submitAction(): suspend (Int, Int, T?) -> List<T>?
 
     /**
      * On error
@@ -78,7 +78,7 @@ abstract class BasePagingSource<T : BaseModel> : PagingSource<Int, T>() {
             // if page start at 0, set to 1
             if (page == 0) page++
             // response data of query action
-            val data = query().invoke(page, PAGING_DEFAULT_SIZE, _lastedItem)
+            val data = submitAction().invoke(page, PAGING_DEFAULT_SIZE, _lastedItem)
             // update lasted item
             _lastedItem = data?.lastOrNull()
             // set next key to next paging,

@@ -1,3 +1,8 @@
 package com.chuthi.borrowoke.base
 
-open class BaseModel : java.io.Serializable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+
+@Parcelize
+open class BaseModel : Parcelable

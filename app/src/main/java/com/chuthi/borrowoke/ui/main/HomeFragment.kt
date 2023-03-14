@@ -6,14 +6,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentHomeBinding
+import com.chuthi.borrowoke.ext.popBackStack
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.OUTPUT_BLUR_WORKER
 import com.chuthi.borrowoke.other.adapters.normal.UserAdapter
 import com.chuthi.borrowoke.other.adapters.paging.UserPagingAdapter
 import com.chuthi.borrowoke.woker.BlurWorker.Companion.PROGRESS
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -62,39 +63,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun onObserveData(): (suspend CoroutineScope.() -> Unit) = {
         viewModel.run {
-            launch {
-                counter.collectLatest {
-                    tvCounter.text = it.toString()
+            binding.run {
+                launch {
+                    counter.collectLatest {
+                        tvCounter.text = it.toString()
+                    }
                 }
-            }
-            launch {
-                countState.collectLatest {
-                    tvHomeTitle.text = it
+                launch {
+                    countState.collectLatest {
+                        tvHomeTitle.text = it
+                    }
                 }
-            }
-            launch {
-                userState.collectLatest {
-                    userAdapter.submitList(it)
+                launch {
+                    userState.collectLatest {
+                        userAdapter.submitList(it)
+                    }
                 }
-            }
-            launch {
-                userPaging.collectLatest {
-                    userPagingAdapter.submitData(it)
+                launch {
+                    /* userPaging.collectLatest {
+                         userPagingAdapter.submitData(it)
+                     }*/
                 }
-            }
-            // worker
-            launch {
-                blurImageWorkInfo.collectLatest { workInfo ->
-                    workInfo ?: return@collectLatest
+                // worker
+                launch {
+                    blurImageWorkInfo.collectLatest { workInfo ->
+                        workInfo ?: return@collectLatest
 
-                    val progressValue = workInfo.progress.getInt(PROGRESS, -1)
-                    if (progressValue != -1) showToast("progress: $progressValue")
+                        val progressValue = workInfo.progress.getInt(PROGRESS, -1)
+                        if (progressValue != -1) showToast("progress: $progressValue")
 
-                    val outputData = workInfo.outputData
-                    val blurOutput =
-                        outputData.getString(OUTPUT_BLUR_WORKER) ?: return@collectLatest
-                    Log.i("blur_worker_output", blurOutput)
-                    showToast(blurOutput)
+                        val outputData = workInfo.outputData
+                        val blurOutput =
+                            outputData.getString(OUTPUT_BLUR_WORKER) ?: return@collectLatest
+                        Log.i("blur_worker_output", blurOutput)
+                        showToast(blurOutput)
+                    }
                 }
             }
         }
@@ -102,7 +105,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun onDestroyView() {
         viewModel.saveStateTitle("Medal không có chơi đồ")
+        viewModel.clearUsers()
         super.onDestroyView()
+    }
+
+    override fun handleFragmentBackPressed() {
+        (context as? BaseActivity<*, *>)?.popBackStack()
     }
 
     private fun setupRecyclerView() {
@@ -120,19 +128,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 })
 
             userPagingAdapter = UserPagingAdapter(
-                onItemLongClick = { user, position ->
+                onItemLongClick = { user, _ ->
                     val newUser = user.copy(
                         name = "Medal nè"
                     )
                     viewModel.updateUserPaging(newUser)
                 },
-                onItemClick = { user, position ->
+                onItemClick = { user, _ ->
                     viewModel.removeUserPaging(user)
                 })
 
             rcvUser.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = userPagingAdapter
+                adapter = userAdapter
             }
         }
     }

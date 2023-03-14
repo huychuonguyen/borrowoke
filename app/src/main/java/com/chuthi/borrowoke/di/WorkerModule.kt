@@ -1,6 +1,7 @@
 package com.chuthi.borrowoke.di
 
 import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.chuthi.borrowoke.BaseApp
 import com.chuthi.borrowoke.woker.BlurWorker
 import com.chuthi.borrowoke.woker.MyWorker
@@ -9,7 +10,13 @@ import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 
 val workerModule = module {
-    worker { BlurWorker(get(), get()) }
+    worker { (workerParams: WorkerParameters) ->
+        BlurWorker(
+            context = get(),
+            params = workerParams,
+            userRepo = get(),
+        )
+    }
     single { provideWorkManager(androidApplication() as BaseApp) }
     single { provideMyWorker(get()) }
 }

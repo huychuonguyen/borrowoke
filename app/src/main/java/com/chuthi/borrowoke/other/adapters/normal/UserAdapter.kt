@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.chibijob.ui.base.BaseAdapter
 import com.chuthi.borrowoke.data.model.UserModel
 import com.chuthi.borrowoke.databinding.UserItemBinding
+import com.chuthi.borrowoke.other.enums.asString
 
 class UserAdapter(
     private val onItemClick: (item: UserModel, position: Int) -> Unit,
@@ -26,7 +27,7 @@ class UserAdapter(
             }
 
             tvUserId.text = item.userId.toString()
-            tvUsername.text = item.name
+            tvUsername.text = item.value.asString(root.context)
         }
     }
 }

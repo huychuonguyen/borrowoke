@@ -1,17 +1,22 @@
 package com.chuthi.borrowoke.data.paging
 
 import com.chuthi.borrowoke.base.paging.BasePagingSource
-import com.chuthi.borrowoke.data.model.UserModel
+import com.chuthi.borrowoke.data.database.dao.UserDao
+import com.chuthi.borrowoke.data.database.entity.UserEntity
 
 class UserPagingSource(
-    private val queryAction: suspend (page: Int, size: Int, UserModel?)
-    -> List<UserModel>?
-) : BasePagingSource<UserModel>() {
+    private val userDao: UserDao,
+    private val queryAction: suspend (page: Int, size: Int, UserEntity?)
+    -> List<UserEntity>?
+) : BasePagingSource<UserEntity>() {
 
+    override fun onError(): (String) -> Unit = {}
 
-    override fun onError(): (String) -> Unit = {
-
-    }
-
-    override fun query() = queryAction
+    override fun submitAction(): suspend (Int, Int, UserEntity?) -> List<UserEntity>? =
+        { page, size, entity ->
+            val userEntities = queryAction.invoke(page, size, entity)?.also {
+                userDao.insertAll(it)
+            }
+            userEntities
+        }
 }

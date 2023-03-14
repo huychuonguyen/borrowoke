@@ -4,30 +4,31 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.filter
 import androidx.paging.map
 import androidx.work.workDataOf
+import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseViewModel
+import com.chuthi.borrowoke.data.database.entity.toUserModel
 import com.chuthi.borrowoke.data.model.UserModel
-import com.chuthi.borrowoke.data.paging.UserPagingSource
+import com.chuthi.borrowoke.data.model.toUserEntity
+import com.chuthi.borrowoke.data.repo.UserRepo
 import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.INPUT_BLUR_WORKER
-import com.chuthi.borrowoke.util.pagerConfig
+import com.chuthi.borrowoke.other.enums.UiText
 import com.chuthi.borrowoke.woker.MyWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class HomeViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val myWorker: MyWorker
+    private val myWorker: MyWorker,
+    private val userRepo: UserRepo
 ) : BaseViewModel() {
 
     val countState = savedStateHandle.getStateFlow(COUNT_STATE_ARG, "nothing")
@@ -41,30 +42,27 @@ class HomeViewModel(
     private val _userState = MutableStateFlow<List<UserModel>>(mutableListOf())
     val userState = _userState.asStateFlow()
 
-    private val _userPaging = MutableStateFlow<PagingData<UserModel>>(PagingData.empty())
-    val userPaging: StateFlow<PagingData<UserModel>>
-        get() = _userPaging.asStateFlow()
+    private val allUserEntity = userRepo.getUsersOrderByName()
+
+    /**
+     * Observe user paging as Flow
+     */
+    val userPaging = userRepo.getUsersPaging().map {
+        it.map { entity ->
+            entity.toUserModel()
+        }
+    }
+    /*allUserEntity.map { userEntities ->
+        PagingData.from(userEntities.map { userEntity ->
+            userEntity.toUserModel()
+        })
+    }*/
 
     val blurImageWorkInfo =
         myWorker.workManager
             .getWorkInfoByIdLiveData(MyWorker.blurWorkRequestId)
             .asFlow()
 
-
-    fun blurImage(uri: Uri) {
-        val inputData = workDataOf(INPUT_BLUR_WORKER to "Blur input nè")
-        myWorker.applyBlurWork(inputData)
-    }
-
-    fun fetchUsersPaging() = launchViewModelScope {
-        _userPaging.emit(
-            pagerConfig(pagingSource = {
-                UserPagingSource { page, size, user ->
-                    getDummyUsers2()
-                }
-            }).cachedIn(viewModelScope).stateIn(viewModelScope).value
-        )
-    }
 
     val counter = combine(
         firstCounter,
@@ -78,16 +76,38 @@ class HomeViewModel(
     init {
         // apply blur worker
         blurImage(Uri.EMPTY)
-        //
-        updateUsers(users = getDummyUsers())
-        // fetch paging users
-        fetchUsersPaging()
+        // insert users
+        insertUsers(getDummyUsers())
+        // update users
+        updateUsers(getDummyUsers())
+
+
         /*launchViewModelScope {
             val data2 = fetchData2()
             val data1 = fetchData1()
             Log.i("home_result", "result2: $data2")
             Log.i("home_result", "result1: $data1")
         }*/
+    }
+
+    fun insertUser(user: UserModel) = launchViewModelScope {
+        userRepo.insertUser(user.toUserEntity())
+    }
+
+    private fun insertUsers(users: List<UserModel>) = launchViewModelScope {
+        userRepo.insertUsers(users.map {
+            it.toUserEntity()
+        })
+    }
+
+    fun clearUsers() = launchViewModelScope {
+        userRepo.deleteAll()
+    }
+
+
+    fun blurImage(uri: Uri) {
+        val inputData = workDataOf(INPUT_BLUR_WORKER to "Blur input nè")
+        myWorker.applyBlurWork(inputData)
     }
 
     fun increaseFirstCounter() = launchViewModelScope {
@@ -128,19 +148,11 @@ class HomeViewModel(
     }
 
     fun removeUserPaging(user: UserModel) = launchViewModelScope {
-        val removePaging = userPaging.value.filter { curUser ->
-            curUser.userId != user.userId
-        }
-        _userPaging.emit(removePaging)
+        userRepo.deleteUser(user.userId)
     }
 
     fun updateUserPaging(userUpdate: UserModel) = launchViewModelScope {
-        val updatePaging = userPaging.value.map { curUser ->
-            if (curUser.userId == userUpdate.userId)
-                userUpdate
-            else curUser
-        }
-        _userPaging.emit(updatePaging)
+        userRepo.updateUser(userUpdate.toUserEntity())
     }
 
     fun updateUser(userUpdate: UserModel) = launchViewModelScope {
@@ -156,82 +168,56 @@ class HomeViewModel(
     fun getDummyUsers() = listOf(
         UserModel(
             userId = 0,
-            name = "huychuong"
+            name = "huychuong",
+            value = UiText.DynamicString("huychuonguyen 1")
         ),
         UserModel(
             userId = 1,
-            name = "huychuong1"
+            name = "huychuong1",
+            value = UiText.DynamicString("huychuonguyen 2")
         ),
         UserModel(
             userId = 2,
-            name = "huychuong2"
+            name = "huychuong2",
+            value = UiText.DynamicString("huychuonguyen 3")
         ),
         UserModel(
             userId = 3,
-            name = "huychuong3"
+            name = "huychuong3",
+            value = UiText.DynamicString("huychuonguyen 4")
         ),
         UserModel(
             userId = 4,
-            name = "huychuong4"
+            name = "huychuong4",
+            value = UiText.DynamicString("huychuonguyen 5")
         ),
         UserModel(
             userId = 5,
-            name = "huychuong5"
+            name = "huychuong5",
+            value = UiText.DynamicString("huychuonguyen 6")
         ),
         UserModel(
             userId = 6,
-            name = "huychuong6"
+            name = "huychuong6",
+            value = UiText.DynamicString("huychuonguyen 7")
         ),
         UserModel(
             userId = 7,
-            name = "huychuong7"
+            name = "huychuong7",
+            value = UiText.DynamicString("huychuonguyen 8")
         ),
         UserModel(
             userId = 8,
-            name = "huychuong8"
+            name = "huychuong8",
+            value = UiText.DynamicString("huychuonguyen 9")
         ),
         UserModel(
             userId = 9,
-            name = "huychuong9"
-        ),
-        UserModel(
-            userId = 10,
-            name = "huychuong10"
-        ),
-        UserModel(
-            userId = 11,
-            name = "huychuong11"
-        ),
-        UserModel(
-            userId = 12,
-            name = "huychuong12"
-        ),
-        UserModel(
-            userId = 13,
-            name = "huychuong13"
-        ),
-        UserModel(
-            userId = 14,
-            name = "huychuong14"
-        ),
-    )
-
-    fun getDummyUsers2() = listOf(
-        UserModel(
-            userId = 50,
-            name = "Gumi in my heart 50"
-        ),
-        UserModel(
-            userId = 51,
-            name = "Gumi in my heart 51"
-        ),
-        UserModel(
-            userId = 52,
-            name = "Gumi in my heart 52"
-        ),
-        UserModel(
-            userId = 53,
-            name = "Gumi in my heart 53"
+            name = "huychuong9",
+            value = UiText.StringResource(
+                resId = R.string.sample_string,
+                "Huy Chương"
+            )
         ),
     )
 
