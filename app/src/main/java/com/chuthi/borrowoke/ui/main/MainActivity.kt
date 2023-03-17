@@ -7,10 +7,11 @@ import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.data.model.AuthModel
 import com.chuthi.borrowoke.databinding.ActivityMainBinding
+import com.chuthi.borrowoke.ext.putData
+import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ui.home.AuthenticationActivity
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity :
@@ -23,17 +24,35 @@ class MainActivity :
         getFcmToken()
         // register callback
         registerCallback()
+
+        openAuthentication()
+    }
+
+    private fun openAuthentication() {
         // delay 2s to open AuthenticationActivity
         android.os.Handler(Looper.getMainLooper()).postDelayed({
-            openActivity<AuthenticationActivity>(
-                data = Bundle().apply {
+            openActivity(
+                targetActivity = AuthenticationActivity::class.java,
+                data = Bundle().putData(
+                    key = "AUTH_DATA",
+                    value =  AuthModel(
+                        name = "Medal Auth"
+                    )
+                )
+
+               /* Bundle().apply {
                     putParcelable(
                         "AUTH_DATA", AuthModel(
                             name = "Medal Auth"
                         )
                     )
+                }*/
+            ) {
+                it?.let { result ->
+                    val resultInt = result.data?.extras?.getInt("AUTH_RESULT") ?: 0
+                    showToast(resultInt.toString())
                 }
-            )
+            }
         }, 2000)
     }
 
@@ -55,17 +74,30 @@ class MainActivity :
     }
 
     override fun onObserveData(): suspend CoroutineScope.() -> Unit = {
-        launch {
-            viewModel.dummyData.collect { data ->
-                Log.i("dummyData", data.toString())
+        /*  launch {
+              viewModel.dummyData.collect { data ->
+                  Log.i("dummyData", data.toString())
+              }
+          }*/
+
+        /*launch {
+            viewModel.dummyData2.collect {
+                Log.i("dummyData2", it)
+                showToast(it)
             }
         }
 
         launch {
-            viewModel.dummyData2.collect {
-                Log.i("dummyData2", it)
+            viewModel.errorChannel.collectLatest { error ->
+                showToast(error)
             }
-        }
+        }*/
+
+        /* launch {
+             viewModel.errorSharedFlow.collectLatest { errorShared ->
+                 showToast(errorShared)
+             }
+         }*/
     }
 
     private fun getFcmToken() {

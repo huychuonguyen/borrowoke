@@ -3,7 +3,10 @@ package com.chuthi.borrowoke.base
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import com.chuthi.borrowoke.ext.launchViewModelScope
+import com.chuthi.borrowoke.other.enums.CommonError
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 open class BaseViewModel : ViewModel() {
@@ -12,8 +15,12 @@ open class BaseViewModel : ViewModel() {
     val argumentData: Bundle?
         get() = _argumentData
 
-    private var _isLoading = MutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+
+    protected val commonError = MutableSharedFlow<CommonError>()
+    val error = commonError.asSharedFlow()
+
 
     protected fun showLoading() = launchViewModelScope {
         _isLoading.emit(true)

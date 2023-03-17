@@ -142,7 +142,7 @@ fun notifyImageBlurred(context: Context?, title: String?, message: String?) {
             val notificationBuilder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentTitle(title ?: "")
-                .setContentText(message ?: "")
+                .setContentText(message)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setGroup(NOTIFICATION_GROUP_KEY)

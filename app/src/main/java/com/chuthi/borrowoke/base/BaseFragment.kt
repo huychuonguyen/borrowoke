@@ -86,6 +86,12 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
         observeData()
     }
 
+    override fun onDestroyView() {
+        // hide loading on view destroyed
+        hideLoading()
+        super.onDestroyView()
+    }
+
     /**
      * Observe flow data from lifeCycle's [CoroutineScope] of viewLifecycleOwner
      */

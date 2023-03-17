@@ -39,8 +39,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String?) {
-        val fcmToken = token
-        // token?.let { fcmToken = token }
     }
 
 }

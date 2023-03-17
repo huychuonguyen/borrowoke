@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import com.chuthi.borrowoke.ext.repeatOnLifecycle
+import com.chuthi.borrowoke.ext.showToast
+import com.chuthi.borrowoke.other.enums.HttpError
+import com.chuthi.borrowoke.other.enums.asString
 import com.chuthi.borrowoke.ui.dialog.LoadingDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -25,6 +28,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
     protected val binding: VB
         get() = _binding
 
+
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             this@BaseActivity.handleOnBackPressed()
@@ -32,14 +36,14 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
     }
 
     /**
-     * callback result after call startActivityResult
+     * callback result after launch [registerForActivityResult]
      */
     private var onActivityResult: ((ActivityResult?) -> Unit)? = null
 
     /**
      * launcher to start activity and get callback result
      */
-    val resultLauncher =
+    private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             onActivityResult?.invoke(it)
         }
@@ -56,6 +60,8 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
 
     protected abstract val viewModel: VM?
 
+    open fun onArgumentsSaved(arguments: Bundle?) {}
+
     abstract fun setupUI()
 
     abstract fun onObserveData(): (suspend CoroutineScope.() -> Unit)?
@@ -71,16 +77,18 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
         super.onCreate(savedInstanceState)
         registerLifecycleOwner(this)
         _binding = viewBindingInflater(layoutInflater)
+        // raise arguments saved callback
+        onArgumentsSaved(intent?.extras)
         // set layout id
         setContentView(binding.root)
+        // observe data
+        observeData()
         // register back pressed
         registerBackPressed(backPressedCallback)
         // init dialogs
         initDialogs()
         // setup ui
         setupUI()
-        // observe data
-        observeData()
     }
 
     fun addFragmentBackPressed(lifecycleOwner: LifecycleOwner, callback: OnBackPressedCallback) {
@@ -138,11 +146,25 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
      */
     private fun observeData() {
         repeatOnLifecycle {
-            // observer loading
+            // observe loading
             launch {
                 viewModel?.isLoading?.collectLatest { isLoading ->
                     if (isLoading) showLoading()
                     else hideLoading()
+                }
+            }
+            // observe error
+            launch {
+                viewModel?.error?.collect { commonError ->
+                    val errorMess = commonError.message.asString(this@BaseActivity)
+
+                    when (commonError) {
+                        is HttpError.Unauthorized401 -> {
+                            // open authentication activity
+                            //openActivity(targetActivity = AuthenticationActivity::class.java)
+                        }
+                        else -> showToast(errorMess)
+                    }
                 }
             }
             // raise observe data on coroutine
@@ -150,13 +172,19 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
         }
     }
 
-    inline fun <reified T : AppCompatActivity> openActivity(
-        data: Bundle? = null
+    /**
+     * open an activity with result
+     */
+    fun <T : AppCompatActivity> openActivity(
+        targetActivity: Class<T>,
+        data: Bundle? = null,
+        result: ((ActivityResult?) -> Unit)? = null
     ) {
-        val targetIntent = Intent(this, T::class.java).apply {
+        onActivityResult = result
+        val targetIntent = Intent(this, targetActivity).apply {
             data?.let { putExtras(it) }
         }
-        startActivity(targetIntent)
+        resultLauncher.launch(targetIntent)
     }
 
 }
