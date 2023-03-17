@@ -8,22 +8,29 @@ import android.os.Parcelable
 /**
  * put parcelize data
  */
-fun <T : Parcelable> Bundle.putData(
-    key: String,
-    value: T
-): Bundle = apply {
-    putParcelable(
-        key, value
-    )
+fun <T : Any> Bundle.putData(
+    vararg pairs: Pair<String, T?>
+) = apply {
+    for ((key, value) in pairs) {
+        putParcelable(
+            key,
+            value?.toParcelable()
+        )
+    }
 }
 
 /**
  * get Parcelize data
  */
-private inline fun <reified T : Parcelable> Bundle.getData(
+inline fun <reified T : Parcelable> Bundle.getData(
     key: String
-) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-    getParcelable(key, T::class.java)
-else
-    getParcelable(key) as? T
+): T? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        getParcelable(key, T::class.java)
+    else
+        getParcelable(key) as? T
+}
+
+
+
 

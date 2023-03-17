@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.data.model.AuthModel
+import com.chuthi.borrowoke.data.model.ParcelizeData
 import com.chuthi.borrowoke.databinding.ActivityAuthenticationBinding
 import com.chuthi.borrowoke.ext.getData
 import kotlinx.coroutines.CoroutineScope
@@ -13,14 +14,21 @@ class AuthenticationActivity(override val viewModel: BaseViewModel? = null) :
     BaseActivity<ActivityAuthenticationBinding, BaseViewModel>(ActivityAuthenticationBinding::inflate) {
 
     private var authModel: AuthModel? = null
+    private var intData: Int? = null
+    private var floatData: Float? = null
 
     override fun onArgumentsSaved(arguments: Bundle?) {
-        authModel = arguments?.getData("AUTH_DATA")
+        arguments?.run {
+            authModel = getData("AUTH_DATA")
+            intData = getData<ParcelizeData>("INT_DATA")?.getRawValue() ?: 0
+            floatData = getData<ParcelizeData>("FLOAT_DATA")?.getRawValue() ?: 0f
+        }
     }
 
     override fun setupUI() {
         with(binding) {
-            tvAuthTitle.text = authModel?.name ?: "nothing"
+            tvAuthTitle.text =
+                (authModel?.name ?: "nothing").plus(" | Int: $intData | Float: $floatData")
         }
     }
 

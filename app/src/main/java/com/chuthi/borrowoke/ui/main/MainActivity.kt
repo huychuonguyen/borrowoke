@@ -33,20 +33,15 @@ class MainActivity :
         android.os.Handler(Looper.getMainLooper()).postDelayed({
             openActivity(
                 targetActivity = AuthenticationActivity::class.java,
-                data = Bundle().putData(
-                    key = "AUTH_DATA",
-                    value =  AuthModel(
-                        name = "Medal Auth"
-                    )
-                )
-
-               /* Bundle().apply {
-                    putParcelable(
-                        "AUTH_DATA", AuthModel(
+                data = Bundle().apply {
+                    putData(
+                        "AUTH_DATA" to AuthModel(
                             name = "Medal Auth"
-                        )
+                        ),
+                        "INT_DATA" to 500,
+                        "FLOAT_DATA" to 5f
                     )
-                }*/
+                }
             ) {
                 it?.let { result ->
                     val resultInt = result.data?.extras?.getInt("AUTH_RESULT") ?: 0
