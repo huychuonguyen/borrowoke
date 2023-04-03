@@ -24,12 +24,6 @@ suspend fun <T> Response<T>.apiCall(
             return
         }
         onSuccess.invoke(ApiResponse.Success(data = data))
-        onException.invoke(
-            ApiResponse.Error(
-                message = "Response exception",
-                errorCode = 1995
-            )
-        )
     }
     // error
     else -> {

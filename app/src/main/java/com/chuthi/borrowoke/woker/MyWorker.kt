@@ -20,7 +20,22 @@ class MyWorker(val workManager: WorkManager) {
         )
     }
 
+    /**
+     * Run [NewsWorker]
+     */
+    fun runNewsWork() {
+        val newsWorkerRequest = OneTimeWorkRequestBuilder<NewsWorker>()
+            .setId(newsWorkRequestId)
+            .build()
+        workManager.enqueueUniqueWork(
+            NewsWorker.TAG,
+            ExistingWorkPolicy.REPLACE,
+            newsWorkerRequest
+        )
+    }
+
     companion object {
         val blurWorkRequestId: UUID = UUID.randomUUID()
+        val newsWorkRequestId: UUID = UUID.randomUUID()
     }
 }

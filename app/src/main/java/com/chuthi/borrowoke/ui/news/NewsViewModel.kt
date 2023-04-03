@@ -7,16 +7,23 @@ import com.chuthi.borrowoke.ext.apiCall
 import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.UiText
+import com.chuthi.borrowoke.woker.MyWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class NewsViewModel(private val newsRepo: NewsRepo) : BaseViewModel() {
+class NewsViewModel(
+    private val myWorker: MyWorker,
+    private val newsRepo: NewsRepo
+) : BaseViewModel() {
 
     private val _breakingNews = MutableStateFlow<List<Article>>(emptyList())
     val breakingNews = _breakingNews.asStateFlow()
 
     init {
+        // fetch breaking news
         getBreakingNews()
+        // run news worker
+        myWorker.runNewsWork()
     }
 
     /**
