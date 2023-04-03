@@ -12,6 +12,9 @@ import com.chuthi.borrowoke.ext.hideLoading
 import com.chuthi.borrowoke.ext.popBackStack
 import com.chuthi.borrowoke.ext.repeatOnLifecycle
 import com.chuthi.borrowoke.ext.showLoading
+import com.chuthi.borrowoke.ext.showToast
+import com.chuthi.borrowoke.other.enums.HttpError
+import com.chuthi.borrowoke.other.enums.asString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -102,6 +105,23 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
                 viewModel?.isLoading?.collectLatest { isLoading ->
                     if (isLoading) showLoading()
                     else hideLoading()
+                }
+            }
+
+            // observe error
+            launch {
+                viewModel?.error?.collect { commonError ->
+                    context?.run {
+                        val errorMess = commonError.message.asString(this)
+
+                        when (commonError) {
+                            is HttpError.Unauthorized401 -> {
+                                // open authentication activity
+                                //openActivity(targetActivity = AuthenticationActivity::class.java)
+                            }
+                            else -> showToast(errorMess)
+                        }
+                    }
                 }
             }
             // raise observe data on coroutine

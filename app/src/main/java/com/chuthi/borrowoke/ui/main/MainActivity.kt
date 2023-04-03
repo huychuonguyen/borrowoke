@@ -6,10 +6,14 @@ import android.util.Log
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.data.model.AuthModel
+import com.chuthi.borrowoke.data.model.ParcelizeData
 import com.chuthi.borrowoke.databinding.ActivityMainBinding
+import com.chuthi.borrowoke.ext.getData
 import com.chuthi.borrowoke.ext.putData
 import com.chuthi.borrowoke.ext.showToast
-import com.chuthi.borrowoke.ui.home.AuthenticationActivity
+import com.chuthi.borrowoke.ui.auth.AuthenticationActivity
+import com.chuthi.borrowoke.ui.home.HomeFragment
+import com.chuthi.borrowoke.ui.news.NewsFragment
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -25,7 +29,10 @@ class MainActivity :
         // register callback
         registerCallback()
 
-        openAuthentication()
+        // open news
+        addNewsFragment()
+
+        //openAuthentication()
     }
 
     private fun openAuthentication() {
@@ -44,8 +51,10 @@ class MainActivity :
                 }
             ) {
                 it?.let { result ->
-                    val resultInt = result.data?.extras?.getInt("AUTH_RESULT") ?: 0
-                    showToast(resultInt.toString())
+                    val resultInt =
+                        result.data?.extras?.getData<ParcelizeData>("AUTH_RESULT")?.getRawValue()
+                            ?: ""
+                    showToast(resultInt)
                 }
             }
         }, 2000)
@@ -59,6 +68,17 @@ class MainActivity :
                 HomeFragment.TAG
             )
             .addToBackStack(HomeFragment.TAG)
+            .commit()
+    }
+
+    private fun addNewsFragment() {
+        supportFragmentManager.beginTransaction()
+            .add(
+                R.id.frameMain,
+                NewsFragment.newInstance(),
+                NewsFragment.TAG
+            )
+            .addToBackStack(NewsFragment.TAG)
             .commit()
     }
 

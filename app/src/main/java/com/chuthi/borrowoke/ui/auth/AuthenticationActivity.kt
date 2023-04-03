@@ -1,4 +1,4 @@
-package com.chuthi.borrowoke.ui.home
+package com.chuthi.borrowoke.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,7 @@ import com.chuthi.borrowoke.data.model.AuthModel
 import com.chuthi.borrowoke.data.model.ParcelizeData
 import com.chuthi.borrowoke.databinding.ActivityAuthenticationBinding
 import com.chuthi.borrowoke.ext.getData
+import com.chuthi.borrowoke.ext.putData
 import kotlinx.coroutines.CoroutineScope
 
 class AuthenticationActivity(override val viewModel: BaseViewModel? = null) :
@@ -37,7 +38,9 @@ class AuthenticationActivity(override val viewModel: BaseViewModel? = null) :
 
     override fun handleOnBackPressed() {
         setResult(1995, Intent().apply {
-            putExtra("AUTH_RESULT", 1995)
+            putExtras(Bundle().apply {
+                putData("AUTH_RESULT" to "Back nè")
+            })
         })
         finish()
     }

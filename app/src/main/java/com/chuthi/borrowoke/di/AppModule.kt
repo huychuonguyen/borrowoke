@@ -2,22 +2,64 @@ package com.chuthi.borrowoke.di
 
 import androidx.room.Room
 import com.chuthi.borrowoke.BaseApp
+import com.chuthi.borrowoke.BuildConfig
+import com.chuthi.borrowoke.data.api.ApiService
+import com.chuthi.borrowoke.data.api.HeaderInterceptor
 import com.chuthi.borrowoke.data.database.AppDatabase
 import com.chuthi.borrowoke.other.APP_DATABASE_NAME
+import com.chuthi.borrowoke.other.BASE_URL
+import com.chuthi.borrowoke.util.provideService
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 val appModule = module {
     // database
     single { provideAppDatabase(androidApplication() as BaseApp) }
+    // okhttp
+    single { provideOkHttpClient() }
+    // retrofit
+    single { provideRetrofit(get()) }
+    // api service
+    single { provideApiService(get()) }
     // dao
     single { provideUserDao(get()) }
+}
+
+fun provideOkHttpClient(): OkHttpClient {
+    val logging = HttpLoggingInterceptor()
+    logging.level = if (BuildConfig.DEBUG)
+        HttpLoggingInterceptor.Level.BODY
+    else
+        HttpLoggingInterceptor.Level.NONE
+    return OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .addInterceptor(HeaderInterceptor())
+        .build()
+}
+
+fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    return Retrofit.Builder()
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .addConverterFactory(MoshiConverterFactory.create().asLenient())
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .build()
 }
 
 
 //
 // Provider Methods
 //
+
+// region Service methods
+fun provideApiService(retrofit: Retrofit) = provideService<ApiService>(retrofit)
+
+// endregion
 fun provideAppDatabase(app: BaseApp): AppDatabase = Room.databaseBuilder(
     app,
     AppDatabase::class.java,

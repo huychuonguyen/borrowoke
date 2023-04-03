@@ -1,4 +1,4 @@
-package com.chuthi.borrowoke.ui.main
+package com.chuthi.borrowoke.ui.home
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle

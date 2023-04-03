@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Borrowoke"
         tools:targetApi="tiramisu">
         <activity
-            android:name=".ui.home.AuthenticationActivity"
+            android:name=".ui.auth.AuthenticationActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

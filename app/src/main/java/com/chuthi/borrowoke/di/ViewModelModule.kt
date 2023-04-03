@@ -1,7 +1,8 @@
 package com.chuthi.borrowoke.di
 
-import com.chuthi.borrowoke.ui.main.HomeViewModel
+import com.chuthi.borrowoke.ui.home.HomeViewModel
 import com.chuthi.borrowoke.ui.main.MainViewModel
+import com.chuthi.borrowoke.ui.news.NewsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -12,4 +13,5 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel { MainViewModel() }
     viewModel { HomeViewModel(get(), get(), get()) }
+    viewModel { NewsViewModel(get()) }
 }

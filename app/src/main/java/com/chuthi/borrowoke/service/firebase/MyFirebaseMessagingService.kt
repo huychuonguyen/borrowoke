@@ -18,7 +18,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        sendRegistrationToServer(token)
+        sendRegistrationToServer()
     }
 
     override fun handleIntent(intent: Intent) {
@@ -38,7 +38,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendRegistrationToServer(token: String?) {
+    private fun sendRegistrationToServer() {
     }
 
 }
