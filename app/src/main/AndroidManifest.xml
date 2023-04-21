@@ -67,6 +67,14 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
+
+        <receiver
+            android:name=".service.broadcast.NotificationBroadcast"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="NotificationContentClick" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

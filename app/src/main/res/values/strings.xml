@@ -1,13 +1,21 @@
 <resources>
     <string name="app_name">Sam Coffee</string>
-    <string name="supprise_old_woman">Bất ngờ chưa bà dà… !!!</string>
+    <string name="surprise_old_woman">Bất ngờ chưa bà dà… !!!</string>
     <string name="default_notification_channel_id">1234566789</string>
     <string name="sam_coffee_uncle">Sam Coffee uncle</string>
     <string name="created_by_medal">owner: Samchigo\ncreated by: Medal</string>
     <string name="u_r_my_caffeine">U\'r my caffeine</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sample_string">Hello %1s</string>
     <string name="sample_error">Error: %1s &amp; %2s</string>
     <string name="news">News</string>
+    <string name="profile">Profile</string>
+    <string name="borrowoke">Borrowoke</string>
+    <string name="counter">counter</string>
+    <string name="home_to_profile">From Home To Profile</string>
+    <string name="input_bro">nhập đi mày</string>
+    <string name="wow">Wow</string>
+    <string name="todo">TODO</string>
+    <string name="channel_human_readable_title">Channel human readable title</string>
+    <string name="authentication">Authentication</string>
+    <string name="open">Open</string>
 </resources>

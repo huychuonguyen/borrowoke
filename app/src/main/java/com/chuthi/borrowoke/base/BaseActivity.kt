@@ -2,7 +2,6 @@ package com.chuthi.borrowoke.base
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,11 +17,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
-    private val viewBindingInflater: (
-        inflater: LayoutInflater
-    ) -> VB
-) : LifecycleObserverActivity() {
+abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
+    LifecycleObserverActivity() {
 
     private lateinit var _binding: VB
     protected val binding: VB
@@ -62,6 +58,15 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
 
     open fun onArgumentsSaved(arguments: Bundle?) {}
 
+    protected abstract fun getViewBinding(): VB
+
+    /**
+     * - Attach other viewModels if activity have more one viewModel
+     * besides the main [viewModel] variable.
+     * - Notice: Do not add the [viewModel] variable into this list.
+     */
+    open fun setMoreViewModels(): List<BaseViewModel> = emptyList()
+
     abstract fun setupUI()
 
     abstract fun onObserveData(): (suspend CoroutineScope.() -> Unit)?
@@ -76,19 +81,19 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerLifecycleOwner(this)
-        _binding = viewBindingInflater(layoutInflater)
+        _binding = getViewBinding()
         // raise arguments saved callback
         onArgumentsSaved(intent?.extras)
         // set layout id
         setContentView(binding.root)
-        // observe data
-        observeData()
-        // register back pressed
-        registerBackPressed(backPressedCallback)
-        // init dialogs
-        initDialogs()
         // setup ui
         setupUI()
+        // init dialogs
+        initDialogs()
+        // register back pressed
+        registerBackPressed(backPressedCallback)
+        // observe data
+        observeData()
     }
 
     fun addFragmentBackPressed(lifecycleOwner: LifecycleOwner, callback: OnBackPressedCallback) {
@@ -97,7 +102,6 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
             callback
         )
     }
-
 
     private fun registerBackPressed(callback: OnBackPressedCallback) {
         onBackPressedDispatcher.addCallback(
@@ -125,7 +129,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
                             // reset loading flag
                             _isShowLoading = false
                         }
-                        .commitAllowingStateLoss()
+                        .commit()
                         .also {
                             // update loading flag
                             _isShowLoading = true
@@ -137,7 +141,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
     fun hideLoading() {
         _loadingDialog?.let { dialog ->
             if (dialog.isAdded)
-                dialog.dismissAllowingStateLoss()
+                dialog.dismiss()
         }
     }
 
@@ -145,25 +149,52 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
      * Observe flow data from lifeCycle's [CoroutineScope] of activity
      */
     private fun observeData() {
+        val viewModels = setMoreViewModels().plus(viewModel)
         repeatOnLifecycle {
-            // observe loading
-            launch {
-                viewModel?.isLoading?.collectLatest { isLoading ->
-                    if (isLoading) showLoading()
-                    else hideLoading()
-                }
-            }
-            // observe error
-            launch {
-                viewModel?.error?.collect { commonError ->
-                    val errorMess = commonError.message.asString(this@BaseActivity)
+            /* // observe loading
+             launch {
+                 viewModel?.isLoading?.collectLatest { isLoading ->
+                     if (isLoading) showLoading()
+                     else hideLoading()
+                 }
+             }
+             // observe error
+             launch {
+                 viewModel?.error?.collect { commonError ->
+                     val errorMess = commonError.message.asString(this@BaseActivity)
 
-                    when (commonError) {
-                        is HttpError.Unauthorized401 -> {
-                            // open authentication activity
-                            //openActivity(targetActivity = AuthenticationActivity::class.java)
+                     when (commonError) {
+                         is HttpError.Unauthorized401 -> {
+                             // open authentication activity
+                             //openActivity(targetActivity = AuthenticationActivity::class.java)
+                         }
+
+                         else -> showToast(errorMess)
+                     }
+                 }
+             }*/
+            // also observe other viewModels besides the main viewModel
+            viewModels.forEach { viewModel ->
+                // observe loading
+                launch {
+                    viewModel?.isLoading?.collectLatest { isLoading ->
+                        if (isLoading) showLoading()
+                        else hideLoading()
+                    }
+                }
+                // observe error
+                launch {
+                    viewModel?.error?.collect { commonError ->
+                        val errorMess = commonError.message.asString(this@BaseActivity)
+
+                        when (commonError) {
+                            is HttpError.Unauthorized401 -> {
+                                // open authentication activity
+                                //openActivity(targetActivity = AuthenticationActivity::class.java)
+                            }
+
+                            else -> showToast(errorMess)
                         }
-                        else -> showToast(errorMess)
                     }
                 }
             }
@@ -186,5 +217,4 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel>(
         }
         resultLauncher.launch(targetIntent)
     }
-
 }

@@ -12,11 +12,13 @@ import com.chuthi.borrowoke.ext.putData
 import kotlinx.coroutines.CoroutineScope
 
 class AuthenticationActivity(override val viewModel: BaseViewModel? = null) :
-    BaseActivity<ActivityAuthenticationBinding, BaseViewModel>(ActivityAuthenticationBinding::inflate) {
+    BaseActivity<ActivityAuthenticationBinding, BaseViewModel>() {
 
     private var authModel: AuthModel? = null
     private var intData: Int? = null
     private var floatData: Float? = null
+
+    override fun getViewBinding() = ActivityAuthenticationBinding.inflate(layoutInflater)
 
     override fun onArgumentsSaved(arguments: Bundle?) {
         arguments?.run {

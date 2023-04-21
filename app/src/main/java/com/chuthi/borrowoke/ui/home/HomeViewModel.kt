@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
@@ -32,6 +33,8 @@ class HomeViewModel(
 ) : BaseViewModel() {
 
     val countState = savedStateHandle.getStateFlow(COUNT_STATE_ARG, "nothing")
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), 0)
+
 
     private var _firstCounter = MutableStateFlow(1)
     private val firstCounter = _firstCounter.asStateFlow()
@@ -42,7 +45,14 @@ class HomeViewModel(
     private val _userState = MutableStateFlow<List<UserModel>>(mutableListOf())
     val userState = _userState.asStateFlow()
 
-    private val allUserEntity = userRepo.getUsersOrderByName()
+    private val _allUserEntity = userRepo.getUsersOrderByName()
+
+    val allUserModel = _allUserEntity.map {
+        it.map { userEntity ->
+            userEntity.toUserModel()
+        }
+    }
+
 
     /**
      * Observe user paging as Flow
@@ -76,12 +86,10 @@ class HomeViewModel(
     init {
         // apply blur worker
         blurImage(Uri.EMPTY)
+        // delete all users
+        deleteAllUsers()
         // insert users
         insertUsers(getDummyUsers())
-        // update users
-        updateUsers(getDummyUsers())
-
-
         /*launchViewModelScope {
             val data2 = fetchData2()
             val data1 = fetchData1()
@@ -140,11 +148,7 @@ class HomeViewModel(
         }
 
     fun removeUser(user: UserModel) = launchViewModelScope {
-        _userState.update {
-            it.filter { curUser ->
-                curUser.userId != user.userId
-            }
-        }
+        userRepo.deleteUser(user.userId)
     }
 
     fun removeUserPaging(user: UserModel) = launchViewModelScope {
@@ -163,6 +167,10 @@ class HomeViewModel(
                 else curUser
             }
         }
+    }
+
+    private fun deleteAllUsers() = launchViewModelScope {
+        userRepo.deleteAll()
     }
 
     fun getDummyUsers() = listOf(

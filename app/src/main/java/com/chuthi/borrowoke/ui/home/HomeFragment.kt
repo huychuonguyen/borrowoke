@@ -1,20 +1,22 @@
 package com.chuthi.borrowoke.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentHomeBinding
+import com.chuthi.borrowoke.ext.navigateTo
+import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.popBackStack
 import com.chuthi.borrowoke.ext.showToast
-import com.chuthi.borrowoke.other.OUTPUT_BLUR_WORKER
+import com.chuthi.borrowoke.other.NO_DELAY_CLICK_INTERVAL
 import com.chuthi.borrowoke.other.adapters.normal.UserAdapter
 import com.chuthi.borrowoke.other.adapters.paging.UserPagingAdapter
-import com.chuthi.borrowoke.woker.BlurWorker.Companion.PROGRESS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -34,7 +36,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override val viewModel: HomeViewModel by viewModel()
 
-    override fun setViewBinding(
+    override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ) = FragmentHomeBinding.inflate(inflater, container, false)
@@ -46,16 +48,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun setupUI() {
         binding.run {
-            btnIncreaseFirst.setOnClickListener {
+            btnIncreaseFirst.onSafeClick(NO_DELAY_CLICK_INTERVAL) {
                 viewModel.increaseFirstCounter()
             }
 
-            btnIncreaseSecond.setOnClickListener {
+            btnIncreaseSecond.onSafeClick(NO_DELAY_CLICK_INTERVAL) {
                 viewModel.increaseSecondCounter()
             }
 
-            tvHomeTitle.setOnClickListener {
-                showToast("count: ${viewModel.counter.value}")
+            tvHomeTitle.onSafeClick { v ->
+                val action =
+                    HomeFragmentDirections.actionHomeFragmentToNewsFragment()
+                v.navigateTo(action)
+            }
+
+            tvCounter.onSafeClick { v ->
+                val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(
+                    profileTitle = R.string.home_to_profile
+                )
+                v.navigateTo(action)
             }
         }
         setupRecyclerView()
@@ -75,7 +86,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
-                    userState.collectLatest {
+                    /* userState.collectLatest {
+                         userAdapter.submitList(it)
+                     }*/
+                }
+                launch {
+                    allUserModel.collectLatest {
                         userAdapter.submitList(it)
                     }
                 }
@@ -86,7 +102,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 // worker
                 launch {
-                    blurImageWorkInfo.collectLatest { workInfo ->
+                    /*blurImageWorkInfo.collectLatest { workInfo ->
                         workInfo ?: return@collectLatest
 
                         val progressValue = workInfo.progress.getInt(PROGRESS, -1)
@@ -97,16 +113,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             outputData.getString(OUTPUT_BLUR_WORKER) ?: return@collectLatest
                         Log.i("blur_worker_output", blurOutput)
                         showToast(blurOutput)
-                    }
+                    }*/
                 }
             }
         }
-    }
 
-    override fun onDestroyView() {
-        viewModel.saveStateTitle("Medal không có chơi đồ")
-        viewModel.clearUsers()
-        super.onDestroyView()
+        // observe back stack
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("key")
+            ?.observe(
+                viewLifecycleOwner
+            ) {
+                // show result from back stack
+                // (it means from press system Back button)
+                showToast("backStack: ${it ?: ""}")
+            }
     }
 
     override fun handleFragmentBackPressed() {
@@ -124,7 +144,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     val newUser = user.copy(
                         name = "Medal Gumi"
                     )
-                    viewModel.updateUser(newUser)
+                    viewModel.updateUserPaging(newUser)
                 })
 
             userPagingAdapter = UserPagingAdapter(

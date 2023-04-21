@@ -1,9 +1,10 @@
 package com.chuthi.borrowoke.ui.main
 
+import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.enums.CommonError
-import com.chuthi.borrowoke.other.enums.HttpError
+import com.chuthi.borrowoke.other.enums.UiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -51,16 +52,23 @@ class MainViewModel : BaseViewModel() {
                   )
               )*/
 
-            commonError.emit(
-                HttpError.Unauthorized403
-            )
+            /* commonError.emit(
+                 HttpError.Unauthorized403
+             )*/
+
+
 
             delay(2000)
-
+            // test error with dynamic string
             commonError.emit(
-                HttpError.Unauthorized401
+                CommonError.NormalError(
+                    message = UiText.DynamicString("Medal không có chơi đồ"),
+                    code = 1995
+                )
             )
-
+            /*showLoading()
+            delay(2000)
+            hideLoading()*/
         }
     }
 

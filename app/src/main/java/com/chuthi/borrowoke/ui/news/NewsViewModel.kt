@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class NewsViewModel(
-    private val myWorker: MyWorker,
+    myWorker: MyWorker,
     private val newsRepo: NewsRepo
 ) : BaseViewModel() {
 
@@ -23,32 +23,20 @@ class NewsViewModel(
         // fetch breaking news
         getBreakingNews()
         // run news worker
-        myWorker.runNewsWork()
-    }
-
-    /**
-     * Get articles of breaking news
-     */
-    private fun getBreakingNews2() = launchViewModelScope {
-        val newsResponse = newsRepo.getBreakingNews()
-        if (newsResponse.isSuccessful) {
-            newsResponse.body().let { news ->
-                val articles = news?.articles ?: emptyList()
-                _breakingNews.emit(articles)
-            }
-        }
+       // myWorker.runNewsWork()
     }
 
     /**
      * Get articles of breaking news
      */
     private fun getBreakingNews() = launchViewModelScope {
+        showLoading()
         newsRepo.getBreakingNews().apiCall(
             onSuccess = { news ->
                 val articles = news.data?.articles ?: emptyList()
                 _breakingNews.emit(articles)
             },
-            onException = {
+            onError = {
                 val code = it.errorCode
                 val message = it.message ?: ""
                 commonError.emit(
@@ -57,6 +45,9 @@ class NewsViewModel(
                         code = code
                     )
                 )
+            },
+            onFinished = {
+                hideLoading()
             }
         )
     }

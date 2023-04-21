@@ -1,13 +1,12 @@
-package com.chibijob.ui.base
+package com.chuthi.borrowoke.base
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.chuthi.borrowoke.base.BaseDiffAdapter
-import com.chuthi.borrowoke.base.BaseModel
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.other.DEFAULT_CLICK_INTERVAL
 import java.util.concurrent.Executors
@@ -24,6 +23,11 @@ import java.util.concurrent.Executors
  * @param clickDelay Delay time between each click action
  */
 abstract class BaseAdapter<T : BaseModel, VB : ViewBinding>(
+    private val viewBindingInflater: (
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        attachToParent: Boolean
+    ) -> VB,
     private val clickDelay: Long = DEFAULT_CLICK_INTERVAL
 ) : ListAdapter<T, BaseAdapter<T, VB>.BaseHolder>(
     AsyncDifferConfig
@@ -31,12 +35,6 @@ abstract class BaseAdapter<T : BaseModel, VB : ViewBinding>(
         .setBackgroundThreadExecutor(Executors.newSingleThreadExecutor())
         .build()
 ) {
-
-
-    /**
-     * Override to set binding of layout item
-     */
-    protected abstract fun setViewBinding(parent: ViewGroup): VB
 
     /**
      * Override to raise on item clicked.
@@ -57,7 +55,14 @@ abstract class BaseAdapter<T : BaseModel, VB : ViewBinding>(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ) = BaseHolder(setViewBinding(parent))
+    ) = BaseHolder(
+        viewBindingInflater.invoke(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+    )
+
 
     @CallSuper
     override fun onBindViewHolder(

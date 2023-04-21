@@ -38,7 +38,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
 
     abstract val viewModel: VM?
 
-    protected abstract fun setViewBinding(
+    protected abstract fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): VB
@@ -66,10 +66,11 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         // register fragment back pressed
-        (context as? BaseActivity<*, *>)?.addFragmentBackPressed(
-            this,
-            fragmentBackPressedCallback
-        )
+        /* (context as? BaseActivity<*, *>)?.addFragmentBackPressed(
+             this,
+             fragmentBackPressedCallback
+         )*/
+
     }
 
     override fun onCreateView(
@@ -77,7 +78,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = setViewBinding(inflater, container)
+        _binding = getViewBinding(inflater, container)
         return binding.root
     }
 
@@ -107,7 +108,6 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
                     else hideLoading()
                 }
             }
-
             // observe error
             launch {
                 viewModel?.error?.collect { commonError ->

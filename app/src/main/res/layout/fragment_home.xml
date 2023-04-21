@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:clickable="false"
+    android:focusable="false"
     tools:context=".ui.home.HomeFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -14,14 +16,17 @@
         android:padding="@dimen/_5dp"
         app:layout_constraintBottom_toTopOf="@+id/tvHomeTitle"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp"
         tools:listitem="@layout/user_item" />
 
     <TextView
         android:id="@+id/tvHomeTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
-        android:text="@string/hello_blank_fragment"
         android:textSize="@dimen/_20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,8 +36,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_20dp"
+        android:background="@drawable/bg_click"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
-        android:text="counter"
+        android:text="@string/counter"
         android:textSize="@dimen/_20sp"
         app:layout_constraintTop_toBottomOf="@+id/tvHomeTitle" />
 

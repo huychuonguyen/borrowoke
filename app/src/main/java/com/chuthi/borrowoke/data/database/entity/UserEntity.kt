@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.chuthi.borrowoke.base.BaseModel
 import com.chuthi.borrowoke.data.model.UserModel
+import com.chuthi.borrowoke.other.enums.UiText
 
 @Entity(tableName = "user_table")
 data class UserEntity(
@@ -16,5 +17,6 @@ data class UserEntity(
 fun UserEntity.toUserModel() = UserModel(
     id = id,
     userId = userId,
-    name = name
+    name = name,
+    value = UiText.DynamicString(name)
 )

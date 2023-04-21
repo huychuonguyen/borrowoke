@@ -4,9 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentNewsBinding
+import com.chuthi.borrowoke.ext.navigateTo
+import com.chuthi.borrowoke.ext.onSafeClick
+import com.chuthi.borrowoke.ext.showSnackBar
+import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.adapters.normal.BreakingNewsAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -22,16 +28,25 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
 
     private lateinit var breakingNewsAdapter: BreakingNewsAdapter
 
+    private val newsArgs: NewsFragmentArgs by navArgs()
+
     override val viewModel by viewModel<NewsViewModel>()
 
-    override fun setViewBinding(
+    override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ) = FragmentNewsBinding.inflate(inflater, container, false)
 
     override fun setupUI() {
         binding.run {
+            tvNewsTitle.text = newsArgs.title
 
+            tvNewsTitle.onSafeClick {
+                val action = NewsFragmentDirections.actionNewsFragmentToProfileFragment(
+                    R.string.borrowoke
+                )
+                it.navigateTo(action)
+            }
         }
         setupRecyclerView()
     }
@@ -49,10 +64,22 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
     override fun onArgumentsSaved(arguments: Bundle?) {
     }
 
+    override fun handleFragmentBackPressed() {
+
+    }
+
     private fun setupRecyclerView() {
         binding.run {
             // init adapter
-            breakingNewsAdapter = BreakingNewsAdapter()
+            breakingNewsAdapter = BreakingNewsAdapter { binding, item ->
+                binding.root.showSnackBar(
+                    message = item.author,
+                    actionText = context?.getString(R.string.open)
+                ) {
+                    item.author ?: return@showSnackBar
+                    showToast(item.author)
+                }
+            }
 
             rcvBreakingNews.apply {
                 layoutManager = LinearLayoutManager(context)

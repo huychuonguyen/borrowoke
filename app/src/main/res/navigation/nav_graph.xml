@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+
+    <action
+        android:id="@+id/action_global_homeFragment"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/homeFragment"
+        app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.chuthi.borrowoke.ui.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="title"
+            android:defaultValue="Home Medal"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_homeFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newsFragment"
+        android:name="com.chuthi.borrowoke.ui.news.NewsFragment"
+        android:label="fragment_news"
+        tools:layout="@layout/fragment_news">
+        <argument
+            android:name="title"
+            android:defaultValue="News Fragment"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_newsFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.chuthi.borrowoke.ui.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <argument
+            android:name="profileTitle"
+            android:defaultValue="@string/app_name"
+            app:argType="reference" />
+    </fragment>
+
+</navigation>

@@ -7,12 +7,15 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.other.NOTIFICATION_GROUP_ID
 import com.chuthi.borrowoke.other.NOTIFICATION_GROUP_KEY
+import com.chuthi.borrowoke.service.broadcast.NotificationBroadcast
+import com.chuthi.borrowoke.service.broadcast.NotificationBroadcast.Companion.BROADCAST_LOVE_ARG
 import com.chuthi.borrowoke.ui.main.MainActivity
-import java.util.*
+import java.util.Date
 
 private val imageBlurringId = Date().time.toInt() + 1995
 
@@ -58,6 +61,7 @@ fun sendNotification(context: Context?, messageBody: Map<String, String>) {
 
             val notificationBuilder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_background)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
                 .setContentTitle(messageBody["title"] ?: "")
                 .setContentText(messageBody["body"] ?: "")
                 .setAutoCancel(true)
@@ -70,6 +74,7 @@ fun sendNotification(context: Context?, messageBody: Map<String, String>) {
             when {
                 badgeCount != null && badgeCount >= 0 ->
                     notificationBuilder.setNumber(badgeCount)
+
                 else -> notificationManager.cancelAll()
             }
 
@@ -139,8 +144,45 @@ fun notifyImageBlurred(context: Context?, title: String?, message: String?) {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
+            // region custom layout
+            val notificationContentLayout = RemoteViews(packageName, R.layout.notification_custom)
+            notificationContentLayout.apply {
+                val loveIntent = Intent(this@run, NotificationBroadcast::class.java)
+                    .apply {
+                        putExtra(BROADCAST_LOVE_ARG, "Love button clicked")
+                    }
+                val lovePendingIntent = PendingIntent.getBroadcast(
+                    this@run,
+                    notifyId,
+                    loveIntent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                setTextViewText(R.id.tvNotificationContent, "Love")
+                setOnClickPendingIntent(R.id.tvNotificationContent, lovePendingIntent)
+            }
+            // custom layout expend
+            val notificationContentLayoutExpend = RemoteViews(packageName, R.layout.notification_custom_expend)
+            notificationContentLayoutExpend.apply {
+                val loveIntent = Intent(this@run, NotificationBroadcast::class.java)
+                    .apply {
+                        putExtra(BROADCAST_LOVE_ARG, "Love button clicked - Expend")
+                    }
+                val lovePendingIntent = PendingIntent.getBroadcast(
+                    this@run,
+                    notifyId,
+                    loveIntent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                setTextViewText(R.id.tvNotificationContentExpend, "Love")
+                setOnClickPendingIntent(R.id.tvNotificationContentExpend, lovePendingIntent)
+            }
+            // endregion
+
             val notificationBuilder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_background)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(notificationContentLayout)
+                .setCustomBigContentView(notificationContentLayoutExpend)
                 .setContentTitle(title ?: "")
                 .setContentText(message)
                 .setAutoCancel(true)
@@ -148,7 +190,6 @@ fun notifyImageBlurred(context: Context?, title: String?, message: String?) {
                 .setGroup(NOTIFICATION_GROUP_KEY)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
-
 
             val groupBuilder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_background)
@@ -244,7 +285,7 @@ fun notifyImageBlurring(context: Context?, title: String?, message: String?, pro
 
             val channel = NotificationChannel(
                 channelId,
-                "Channel human readable title",
+                getString(R.string.channel_human_readable_title),
                 importantStatus
             )
 
@@ -263,23 +304,16 @@ fun notifyImageBlurring(context: Context?, title: String?, message: String?, pro
     }
 }
 
-/**
- * Get notification type enum based on response
- */
-/*private fun getNotifyType(messageBody: Map<String, String>): NotificationType {
-    // get notification type from messageBody
-    val notifyType = messageBody["type"] ?: "1"
-    return when (notifyType.toInt()) {
-        TYPE_NOTIFY_LIST -> NotificationType.NotifyList
-        TYPE_DETAIL -> {
-            val url = messageBody["url"]
-            NotificationType.Detail(
-                url = url
-            )
-        }
-        else -> NotificationType.Normal
+
+fun cancelNotification(context: Context?, notificationID: Int) {
+    context?.run {
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.cancel(notificationID)
     }
-}*/
+
+}
 
 private fun parseBadge(badge: String?): Int? {
     return try {

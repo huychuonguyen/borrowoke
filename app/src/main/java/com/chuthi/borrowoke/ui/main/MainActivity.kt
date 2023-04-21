@@ -1,5 +1,6 @@
 package com.chuthi.borrowoke.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -14,42 +15,44 @@ import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ui.auth.AuthenticationActivity
 import com.chuthi.borrowoke.ui.home.HomeFragment
 import com.chuthi.borrowoke.ui.news.NewsFragment
+import com.chuthi.borrowoke.ui.news.NewsViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity :
-    BaseActivity<ActivityMainBinding, MainViewModel>(ActivityMainBinding::inflate) {
+class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
+
 
     override val viewModel: MainViewModel by viewModel()
+
+    private val newsViewModel: NewsViewModel by viewModel()
+
+    override fun setMoreViewModels() = listOf(newsViewModel)
+
+    override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+    }
 
     override fun setupUI() {
         // get fcm token
         getFcmToken()
         // register callback
         registerCallback()
-
-        // open news
-        addNewsFragment()
-
-        //openAuthentication()
     }
 
     private fun openAuthentication() {
         // delay 2s to open AuthenticationActivity
         android.os.Handler(Looper.getMainLooper()).postDelayed({
-            openActivity(
-                targetActivity = AuthenticationActivity::class.java,
+            openActivity(targetActivity = AuthenticationActivity::class.java,
                 data = Bundle().apply {
                     putData(
                         "AUTH_DATA" to AuthModel(
                             name = "Medal Auth"
-                        ),
-                        "INT_DATA" to 500,
-                        "FLOAT_DATA" to 5f
+                        ), "INT_DATA" to 500, "FLOAT_DATA" to 5f
                     )
-                }
-            ) {
+                }) {
                 it?.let { result ->
                     val resultInt =
                         result.data?.extras?.getData<ParcelizeData>("AUTH_RESULT")?.getRawValue()
@@ -61,30 +64,20 @@ class MainActivity :
     }
 
     private fun addHomeFragment() {
-        supportFragmentManager.beginTransaction()
-            .add(
-                R.id.frameMain,
-                HomeFragment.newInstance("Medal Gumi"),
-                HomeFragment.TAG
-            )
-            .addToBackStack(HomeFragment.TAG)
-            .commit()
+        supportFragmentManager.beginTransaction().add(
+            R.id.frameMain, HomeFragment.newInstance("Medal Gumi"), HomeFragment.TAG
+        ).addToBackStack(HomeFragment.TAG).commit()
     }
 
     private fun addNewsFragment() {
-        supportFragmentManager.beginTransaction()
-            .add(
-                R.id.frameMain,
-                NewsFragment.newInstance(),
-                NewsFragment.TAG
-            )
-            .addToBackStack(NewsFragment.TAG)
-            .commit()
+        supportFragmentManager.beginTransaction().add(
+            R.id.frameMain, NewsFragment.newInstance(), NewsFragment.TAG
+        ).addToBackStack(NewsFragment.TAG).commit()
     }
 
     private fun registerCallback() {
         binding.tvQuote.setOnClickListener {
-            addHomeFragment()
+            //addHomeFragment()
         }
     }
 

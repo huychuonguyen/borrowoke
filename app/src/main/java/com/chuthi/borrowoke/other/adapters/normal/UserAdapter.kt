@@ -1,8 +1,6 @@
 package com.chuthi.borrowoke.other.adapters.normal
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import com.chibijob.ui.base.BaseAdapter
+import com.chuthi.borrowoke.base.BaseAdapter
 import com.chuthi.borrowoke.data.model.UserModel
 import com.chuthi.borrowoke.databinding.UserItemBinding
 import com.chuthi.borrowoke.other.enums.asString
@@ -10,10 +8,7 @@ import com.chuthi.borrowoke.other.enums.asString
 class UserAdapter(
     private val onItemClick: (item: UserModel, position: Int) -> Unit,
     private val onItemLongClick: (item: UserModel, position: Int) -> Unit
-) : BaseAdapter<UserModel, UserItemBinding>() {
-
-    override fun setViewBinding(parent: ViewGroup) = UserItemBinding
-        .inflate(LayoutInflater.from(parent.context), parent, false)
+) : BaseAdapter<UserModel, UserItemBinding>(UserItemBinding::inflate) {
 
     override fun onItemClicked(binding: UserItemBinding, item: UserModel, position: Int) {
         onItemClick.invoke(item, position)

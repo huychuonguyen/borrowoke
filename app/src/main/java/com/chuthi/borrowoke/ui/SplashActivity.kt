@@ -12,9 +12,11 @@ import com.chuthi.borrowoke.ui.main.MainActivity
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity(override val viewModel: BaseViewModel? = null) :
-    BaseActivity<ActivitySplashBinding, BaseViewModel>(ActivitySplashBinding::inflate) {
+    BaseActivity<ActivitySplashBinding, BaseViewModel>() {
 
     private var countDown: CountDownTimer? = null
+
+    override fun getViewBinding() = ActivitySplashBinding.inflate(layoutInflater)
 
     override fun onObserveData(): Nothing? = null
 
