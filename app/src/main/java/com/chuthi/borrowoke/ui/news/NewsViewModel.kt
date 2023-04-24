@@ -1,5 +1,6 @@
 package com.chuthi.borrowoke.ui.news
 
+import androidx.lifecycle.asLiveData
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.data.model.response.Article
 import com.chuthi.borrowoke.data.repo.NewsRepo
@@ -17,7 +18,7 @@ class NewsViewModel(
 ) : BaseViewModel() {
 
     private val _breakingNews = MutableStateFlow<List<Article>>(emptyList())
-    val breakingNews = _breakingNews.asStateFlow()
+    val breakingNews = _breakingNews.asLiveData()
 
     init {
         // fetch breaking news

@@ -8,14 +8,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
+import com.chuthi.borrowoke.ext.getFlowData
+import com.chuthi.borrowoke.ext.getFlowDataLasted
+import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.repeatOnLifecycle
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.enums.HttpError
 import com.chuthi.borrowoke.other.enums.asString
 import com.chuthi.borrowoke.ui.dialog.LoadingDialog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     LifecycleObserverActivity() {
@@ -69,7 +70,17 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
 
     abstract fun setupUI()
 
-    abstract fun onObserveData(): (suspend CoroutineScope.() -> Unit)?
+    /**
+     * - Use [getFlowData] or [getFlowDataLasted] extension
+     * to observe FlowData on here.
+     */
+    open fun observeFlowData(): (suspend CoroutineScope.() -> Unit)? = null
+
+    /**
+     * Use [getLiveData] extension
+     * to observe LiveData on here.
+     */
+    open fun observeLiveData(): (() -> Unit)? = null
 
     /**
      * Override this method to handle on back pressed new api
@@ -151,40 +162,16 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     private fun observeData() {
         val viewModels = setMoreViewModels().plus(viewModel)
         repeatOnLifecycle {
-            /* // observe loading
-             launch {
-                 viewModel?.isLoading?.collectLatest { isLoading ->
-                     if (isLoading) showLoading()
-                     else hideLoading()
-                 }
-             }
-             // observe error
-             launch {
-                 viewModel?.error?.collect { commonError ->
-                     val errorMess = commonError.message.asString(this@BaseActivity)
-
-                     when (commonError) {
-                         is HttpError.Unauthorized401 -> {
-                             // open authentication activity
-                             //openActivity(targetActivity = AuthenticationActivity::class.java)
-                         }
-
-                         else -> showToast(errorMess)
-                     }
-                 }
-             }*/
-            // also observe other viewModels besides the main viewModel
+            //  observe loading, error on each viewModel
             viewModels.forEach { viewModel ->
-                // observe loading
-                launch {
-                    viewModel?.isLoading?.collectLatest { isLoading ->
+                viewModel?.run {
+                    // observe loading
+                    getFlowDataLasted(isLoading) { isLoading ->
                         if (isLoading) showLoading()
                         else hideLoading()
                     }
-                }
-                // observe error
-                launch {
-                    viewModel?.error?.collect { commonError ->
+                    // observe error
+                    getFlowData(error) { commonError ->
                         val errorMess = commonError.message.asString(this@BaseActivity)
 
                         when (commonError) {
@@ -198,8 +185,10 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
                     }
                 }
             }
-            // raise observe data on coroutine
-            onObserveData()?.invoke(this)
+            // raise observe FlowData on coroutine
+            observeFlowData()?.invoke(this)
+            // raise observe LiveData
+            observeLiveData()?.invoke()
         }
     }
 

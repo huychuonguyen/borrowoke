@@ -1,6 +1,5 @@
 package com.chuthi.borrowoke.base
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +7,9 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.chuthi.borrowoke.ext.getFlowData
+import com.chuthi.borrowoke.ext.getFlowDataLasted
+import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.hideLoading
 import com.chuthi.borrowoke.ext.popBackStack
 import com.chuthi.borrowoke.ext.repeatOnLifecycle
@@ -16,8 +18,6 @@ import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.enums.HttpError
 import com.chuthi.borrowoke.other.enums.asString
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
 
@@ -39,13 +39,22 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
     abstract val viewModel: VM?
 
     protected abstract fun getViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
+        inflater: LayoutInflater, container: ViewGroup?
     ): VB
 
     abstract fun setupUI()
 
-    abstract fun onObserveData(): (suspend CoroutineScope.() -> Unit)?
+    /**
+     * - Use [getFlowData] or [getFlowDataLasted] extension
+     * to observe FlowData on here.
+     */
+    open fun observeFlowData(): (suspend CoroutineScope.() -> Unit)? = null
+
+    /**
+     * Use [getLiveData] extension
+     * to observe LiveData on here.
+     */
+    open fun observeLiveData(): (() -> Unit)? = null
 
     abstract fun onArgumentsSaved(arguments: Bundle?)
 
@@ -63,20 +72,17 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
         onArgumentsSaved(arguments)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        // register fragment back pressed
-        /* (context as? BaseActivity<*, *>)?.addFragmentBackPressed(
-             this,
-             fragmentBackPressedCallback
-         )*/
-
-    }
+    /* override fun onAttach(context: Context) {
+         super.onAttach(context)
+         // register fragment back pressed
+          (context as? BaseActivity<*, *>)?.addFragmentBackPressed(
+              this,
+              fragmentBackPressedCallback
+          )
+     }*/
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = getViewBinding(inflater, container)
         return binding.root
@@ -100,32 +106,32 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
      * Observe flow data from lifeCycle's [CoroutineScope] of viewLifecycleOwner
      */
     private fun observeData() {
+        // observe Live data
+        observeLiveData()?.invoke()
+        // observe Flow data
         repeatOnLifecycle {
             // observer loading
-            launch {
-                viewModel?.isLoading?.collectLatest { isLoading ->
-                    if (isLoading) showLoading()
-                    else hideLoading()
-                }
+            getFlowDataLasted(viewModel?.isLoading) { isLoading ->
+                if (isLoading) showLoading()
+                else hideLoading()
             }
             // observe error
-            launch {
-                viewModel?.error?.collect { commonError ->
-                    context?.run {
-                        val errorMess = commonError.message.asString(this)
+            getFlowData(viewModel?.error) { commonError ->
+                context?.run {
+                    val errorMess = commonError.message.asString(this)
 
-                        when (commonError) {
-                            is HttpError.Unauthorized401 -> {
-                                // open authentication activity
-                                //openActivity(targetActivity = AuthenticationActivity::class.java)
-                            }
-                            else -> showToast(errorMess)
+                    when (commonError) {
+                        is HttpError.Unauthorized401 -> {
+                            // open authentication activity
+                            //openActivity(targetActivity = AuthenticationActivity::class.java)
                         }
+
+                        else -> showToast(errorMess)
                     }
                 }
             }
             // raise observe data on coroutine
-            onObserveData()?.invoke(this)
+            observeFlowData()?.invoke(this)
         }
     }
 }

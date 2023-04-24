@@ -10,6 +10,7 @@ import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentHomeBinding
+import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.navigateTo
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.popBackStack
@@ -18,8 +19,6 @@ import com.chuthi.borrowoke.other.NO_DELAY_CLICK_INTERVAL
 import com.chuthi.borrowoke.other.adapters.normal.UserAdapter
 import com.chuthi.borrowoke.other.adapters.paging.UserPagingAdapter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -72,37 +71,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         setupRecyclerView()
     }
 
-    override fun onObserveData(): (suspend CoroutineScope.() -> Unit) = {
+    override fun observeFlowData(): (suspend CoroutineScope.() -> Unit) = {
         viewModel.run {
             binding.run {
-                launch {
-                    counter.collectLatest {
-                        tvCounter.text = it.toString()
-                    }
+                getFlowDataLasted(counter) {
+                    tvCounter.text = it.toString()
                 }
-                launch {
-                    countState.collectLatest {
-                        tvHomeTitle.text = it
-                    }
+
+                getFlowDataLasted(countState) {
+                    tvHomeTitle.text = it
                 }
-                launch {
-                    /* userState.collectLatest {
-                         userAdapter.submitList(it)
-                     }*/
-                }
-                launch {
-                    allUserModel.collectLatest {
-                        userAdapter.submitList(it)
-                    }
-                }
-                launch {
-                    /* userPaging.collectLatest {
-                         userPagingAdapter.submitData(it)
-                     }*/
+
+                getFlowDataLasted(allUserModel) {
+                    userAdapter.submitList(it)
                 }
                 // worker
-                launch {
-                    /*blurImageWorkInfo.collectLatest { workInfo ->
+                /*launch {
+                    blurImageWorkInfo.collectLatest { workInfo ->
                         workInfo ?: return@collectLatest
 
                         val progressValue = workInfo.progress.getInt(PROGRESS, -1)
@@ -113,8 +98,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             outputData.getString(OUTPUT_BLUR_WORKER) ?: return@collectLatest
                         Log.i("blur_worker_output", blurOutput)
                         showToast(blurOutput)
-                    }*/
-                }
+                    }
+                }*/
             }
         }
 

@@ -34,7 +34,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, BaseViewModel>() {
         }
     }
 
-    override fun onObserveData(): (suspend CoroutineScope.() -> Unit)? = null
+    override fun observeFlowData(): (suspend CoroutineScope.() -> Unit)? = null
 
     override fun onArgumentsSaved(arguments: Bundle?) {
     }

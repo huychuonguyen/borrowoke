@@ -18,8 +18,6 @@ class SplashActivity(override val viewModel: BaseViewModel? = null) :
 
     override fun getViewBinding() = ActivitySplashBinding.inflate(layoutInflater)
 
-    override fun onObserveData(): Nothing? = null
-
     override fun setupUI() {
         // delay splash screen
         Handler(Looper.getMainLooper()).postDelayed({

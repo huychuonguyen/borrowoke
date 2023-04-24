@@ -81,7 +81,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
-    override fun onObserveData(): suspend CoroutineScope.() -> Unit = {
+    override fun observeFlowData(): suspend CoroutineScope.() -> Unit = {
         /*  launch {
               viewModel.dummyData.collect { data ->
                   Log.i("dummyData", data.toString())

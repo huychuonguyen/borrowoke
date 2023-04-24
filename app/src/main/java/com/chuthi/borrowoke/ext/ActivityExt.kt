@@ -3,13 +3,9 @@ package com.chuthi.borrowoke.ext
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavDirections
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import com.chuthi.borrowoke.R
-import com.chuthi.borrowoke.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -43,13 +39,15 @@ fun AppCompatActivity.repeatOnLifecycle(
     }
 }
 
+inline fun <T> AppCompatActivity.getLiveData(
+    liveData: LiveData<T>,
+    crossinline result: (T) -> Unit
+) {
+    liveData.observe(this) { data ->
+        data ?: return@observe
+        result.invoke(data)
+    }
+}
+
 fun AppCompatActivity.popBackStack() = supportFragmentManager
     .popBackStack()
-
-fun MainActivity.navigateTo(action: NavDirections) {
-    val navHostFragment =
-        supportFragmentManager.findFragmentById(R.id.navHostFragment) as? NavHostFragment
-    val navController = navHostFragment?.navController
-    // navigate to destination via action
-    navController?.navigate(action)
-}

@@ -9,14 +9,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentNewsBinding
+import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.navigateTo
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.showSnackBar
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.adapters.normal.BreakingNewsAdapter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -49,17 +48,19 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
             }
         }
         setupRecyclerView()
+
     }
 
-    override fun onObserveData(): (suspend CoroutineScope.() -> Unit) = {
+
+    override fun observeLiveData(): (() -> Unit) =  {
         viewModel.run {
-            launch {
-                breakingNews.collectLatest { articles ->
-                    breakingNewsAdapter.submitList(articles)
-                }
+            getLiveData(breakingNews) {
+                breakingNewsAdapter.submitList(it)
             }
         }
     }
+
+    override fun observeFlowData(): (suspend CoroutineScope.() -> Unit)? = null
 
     override fun onArgumentsSaved(arguments: Bundle?) {
     }

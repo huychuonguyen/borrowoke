@@ -19,7 +19,7 @@
         tools:layout="@layout/fragment_home">
         <argument
             android:name="title"
-            android:defaultValue="Home Medal"
+            android:defaultValue="Welcome Home"
             app:argType="string" />
         <action
             android:id="@+id/action_homeFragment_to_newsFragment"

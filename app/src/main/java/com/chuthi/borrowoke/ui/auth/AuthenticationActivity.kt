@@ -9,7 +9,6 @@ import com.chuthi.borrowoke.data.model.ParcelizeData
 import com.chuthi.borrowoke.databinding.ActivityAuthenticationBinding
 import com.chuthi.borrowoke.ext.getData
 import com.chuthi.borrowoke.ext.putData
-import kotlinx.coroutines.CoroutineScope
 
 class AuthenticationActivity(override val viewModel: BaseViewModel? = null) :
     BaseActivity<ActivityAuthenticationBinding, BaseViewModel>() {
@@ -33,9 +32,6 @@ class AuthenticationActivity(override val viewModel: BaseViewModel? = null) :
             tvAuthTitle.text =
                 (authModel?.name ?: "nothing").plus(" | Int: $intData | Float: $floatData")
         }
-    }
-
-    override fun onObserveData(): (suspend CoroutineScope.() -> Unit) = {
     }
 
     override fun handleOnBackPressed() {
