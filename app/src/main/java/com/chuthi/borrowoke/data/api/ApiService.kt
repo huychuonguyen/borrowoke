@@ -13,7 +13,7 @@ interface ApiService {
         @Query("country")
         countryCode: String = "us",
         @Query("page")
-        pageNumber: Int = 1,
+        pageNumber: Int = 2,
         @Query("apiKey")
         apiKey: String = API_KEY
     ): Response<NewsResponse>

@@ -13,9 +13,9 @@ import java.util.concurrent.Executors
 
 /**************************************
 - Created by Chuong Nguyen
-- Email : chuong.nguyen@gumiviet.com
+- Email : huychuonguyen@gmail.com
 - Date : 10/17/2022
-- Project : Chibijob
+- Project : Base Kotlin
  **************************************/
 
 /**

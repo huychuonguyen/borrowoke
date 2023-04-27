@@ -9,6 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**************************************
+- Created by Chuong Nguyen
+- Email : huychuonguyen@gmail.com
+- Date : 24/04/2023
+- Project : Base Kotlin
+ **************************************/
 open class BaseViewModel : ViewModel() {
 
     private var _argumentData: Bundle? = null
@@ -18,6 +24,10 @@ open class BaseViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+    /**
+     * User [MutableSharedFlow] as onetime callback
+     * tp observe error
+     */
     protected val commonError = MutableSharedFlow<CommonError>()
     val error = commonError.asSharedFlow()
 

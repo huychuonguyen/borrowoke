@@ -2,7 +2,6 @@ package com.chuthi.borrowoke.ext
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.chuthi.borrowoke.base.BaseActivity
@@ -36,15 +35,5 @@ fun Fragment.repeatOnLifecycle(
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             action.invoke(this)
         }
-    }
-}
-
-inline fun <T> Fragment.getLiveData(
-    liveData: LiveData<T>,
-    crossinline result: (T) -> Unit
-) {
-    liveData.observe(viewLifecycleOwner) { data ->
-        data ?: return@observe
-        result.invoke(data)
     }
 }

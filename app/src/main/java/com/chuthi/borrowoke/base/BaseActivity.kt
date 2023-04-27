@@ -18,13 +18,18 @@ import com.chuthi.borrowoke.other.enums.asString
 import com.chuthi.borrowoke.ui.dialog.LoadingDialog
 import kotlinx.coroutines.CoroutineScope
 
+/**************************************
+- Created by Chuong Nguyen
+- Email : huychuonguyen@gmail.com
+- Date : 24/04/2023
+- Project : Base Kotlin
+ **************************************/
 abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     LifecycleObserverActivity() {
 
     private lateinit var _binding: VB
     protected val binding: VB
         get() = _binding
-
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -80,7 +85,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
      * Use [getLiveData] extension
      * to observe LiveData on here.
      */
-    open fun observeLiveData(): (() -> Unit)? = null
+    open fun observeLiveData(): (LifecycleOwner.() -> Unit)? = null
 
     /**
      * Override this method to handle on back pressed new api
@@ -187,9 +192,9 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
             }
             // raise observe FlowData on coroutine
             observeFlowData()?.invoke(this)
-            // raise observe LiveData
-            observeLiveData()?.invoke()
         }
+        // raise observe LiveData
+        observeLiveData()?.invoke(this)
     }
 
     /**

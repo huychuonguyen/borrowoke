@@ -6,7 +6,6 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.map
 import androidx.work.workDataOf
-import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.data.database.entity.toUserModel
 import com.chuthi.borrowoke.data.model.UserModel
@@ -14,7 +13,6 @@ import com.chuthi.borrowoke.data.model.toUserEntity
 import com.chuthi.borrowoke.data.repo.UserRepo
 import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.INPUT_BLUR_WORKER
-import com.chuthi.borrowoke.other.enums.UiText
 import com.chuthi.borrowoke.woker.MyWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,7 +87,7 @@ class HomeViewModel(
         // delete all users
         deleteAllUsers()
         // insert users
-        insertUsers(getDummyUsers())
+        //insertUsers(userRepo.getDummyUsers())
         /*launchViewModelScope {
             val data2 = fetchData2()
             val data1 = fetchData1()
@@ -172,62 +170,6 @@ class HomeViewModel(
     private fun deleteAllUsers() = launchViewModelScope {
         userRepo.deleteAll()
     }
-
-    fun getDummyUsers() = listOf(
-        UserModel(
-            userId = 0,
-            name = "huychuong",
-            value = UiText.DynamicString("huychuonguyen 1")
-        ),
-        UserModel(
-            userId = 1,
-            name = "huychuong1",
-            value = UiText.DynamicString("huychuonguyen 2")
-        ),
-        UserModel(
-            userId = 2,
-            name = "huychuong2",
-            value = UiText.DynamicString("huychuonguyen 3")
-        ),
-        UserModel(
-            userId = 3,
-            name = "huychuong3",
-            value = UiText.DynamicString("huychuonguyen 4")
-        ),
-        UserModel(
-            userId = 4,
-            name = "huychuong4",
-            value = UiText.DynamicString("huychuonguyen 5")
-        ),
-        UserModel(
-            userId = 5,
-            name = "huychuong5",
-            value = UiText.DynamicString("huychuonguyen 6")
-        ),
-        UserModel(
-            userId = 6,
-            name = "huychuong6",
-            value = UiText.DynamicString("huychuonguyen 7")
-        ),
-        UserModel(
-            userId = 7,
-            name = "huychuong7",
-            value = UiText.DynamicString("huychuonguyen 8")
-        ),
-        UserModel(
-            userId = 8,
-            name = "huychuong8",
-            value = UiText.DynamicString("huychuonguyen 9")
-        ),
-        UserModel(
-            userId = 9,
-            name = "huychuong9",
-            value = UiText.StringResource(
-                resId = R.string.sample_string,
-                "Huy Chương"
-            )
-        ),
-    )
 
     companion object {
         private const val COUNT_STATE_ARG = "COUNT_STATE_ARG"

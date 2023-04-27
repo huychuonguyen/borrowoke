@@ -4,20 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chuthi.borrowoke.R
-import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentHomeBinding
 import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.navigateTo
 import com.chuthi.borrowoke.ext.onSafeClick
-import com.chuthi.borrowoke.ext.popBackStack
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.NO_DELAY_CLICK_INTERVAL
 import com.chuthi.borrowoke.other.adapters.normal.UserAdapter
 import com.chuthi.borrowoke.other.adapters.paging.UserPagingAdapter
+import com.chuthi.borrowoke.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,6 +31,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private lateinit var userAdapter: UserAdapter
 
     private lateinit var userPagingAdapter: UserPagingAdapter
+
+    private val mainViewModel: MainViewModel by activityViewModels ()
 
     override val viewModel: HomeViewModel by viewModel()
 
@@ -62,10 +63,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
 
             tvCounter.onSafeClick { v ->
-                val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(
+               /* val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(
                     profileTitle = R.string.home_to_profile
                 )
-                v.navigateTo(action)
+                v.navigateTo(action)*/
+                mainViewModel.setSharedData(tvCounter.text.toString())
             }
         }
         setupRecyclerView()
@@ -73,6 +75,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun observeFlowData(): (suspend CoroutineScope.() -> Unit) = {
         viewModel.run {
+
+            getFlowDataLasted(mainViewModel.sharedData) {
+                showToast("shared: $it")
+            }
             binding.run {
                 getFlowDataLasted(counter) {
                     tvCounter.text = it.toString()
@@ -112,10 +118,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 // (it means from press system Back button)
                 showToast("backStack: ${it ?: ""}")
             }
-    }
-
-    override fun handleFragmentBackPressed() {
-        (context as? BaseActivity<*, *>)?.popBackStack()
     }
 
     private fun setupRecyclerView() {

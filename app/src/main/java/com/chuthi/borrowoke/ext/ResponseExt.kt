@@ -5,14 +5,13 @@ import retrofit2.Response
 
 /**
  * [Response] extension to call api and catch exceptions.
+ * @param onSuccess response success with data [T]
+ * @param onError response error with [ApiResponse.Error]
+ * @param onFinished finished response (success/error)
  */
 suspend fun <T> Response<T>.apiCall(
     onSuccess: suspend (ApiResponse.Success<T>) -> Unit,
     onError: suspend (ApiResponse.Error<T>) -> Unit,
-    /**
-     * Action raised when api call done. (success/fail/...),
-     * usually used to hide loading dialog
-     */
     onFinished: suspend () -> Unit = {}
 ) = when (isSuccessful) {
     // success

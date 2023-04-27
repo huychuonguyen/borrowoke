@@ -3,7 +3,6 @@ package com.chuthi.borrowoke.ext
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.CoroutineScope
@@ -38,16 +37,3 @@ fun AppCompatActivity.repeatOnLifecycle(
         }
     }
 }
-
-inline fun <T> AppCompatActivity.getLiveData(
-    liveData: LiveData<T>,
-    crossinline result: (T) -> Unit
-) {
-    liveData.observe(this) { data ->
-        data ?: return@observe
-        result.invoke(data)
-    }
-}
-
-fun AppCompatActivity.popBackStack() = supportFragmentManager
-    .popBackStack()

@@ -4,17 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentNewsBinding
+import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.getLiveData
-import com.chuthi.borrowoke.ext.navigateTo
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.showSnackBar
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.adapters.normal.BreakingNewsAdapter
+import com.chuthi.borrowoke.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -31,6 +35,8 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
 
     override val viewModel by viewModel<NewsViewModel>()
 
+    private val mainViewModel: MainViewModel by activityViewModels()
+
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -41,18 +47,19 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
             tvNewsTitle.text = newsArgs.title
 
             tvNewsTitle.onSafeClick {
-                val action = NewsFragmentDirections.actionNewsFragmentToProfileFragment(
+                /*val action = NewsFragmentDirections.actionNewsFragmentToProfileFragment(
                     R.string.borrowoke
                 )
-                it.navigateTo(action)
+                it.navigateTo(action)*/
+
+                val counter = mainViewModel.sharedData.value + " Nè"
+                mainViewModel.setSharedData(counter)
             }
         }
         setupRecyclerView()
-
     }
 
-
-    override fun observeLiveData(): (() -> Unit) =  {
+    override fun observeLiveData(): (LifecycleOwner.() -> Unit) = {
         viewModel.run {
             getLiveData(breakingNews) {
                 breakingNewsAdapter.submitList(it)
@@ -60,13 +67,13 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
         }
     }
 
-    override fun observeFlowData(): (suspend CoroutineScope.() -> Unit)? = null
-
-    override fun onArgumentsSaved(arguments: Bundle?) {
+    override fun observeFlowData(): (suspend CoroutineScope.() -> Unit) = {
+        getFlowDataLasted(mainViewModel.sharedData) {
+            showToast("Shared data: $it")
+        }
     }
 
-    override fun handleFragmentBackPressed() {
-
+    override fun onArgumentsSaved(arguments: Bundle?) {
     }
 
     private fun setupRecyclerView() {
@@ -77,8 +84,9 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
                     message = item.author,
                     actionText = context?.getString(R.string.open)
                 ) {
-                    item.author ?: return@showSnackBar
-                    showToast(item.author)
+                    /*  item.author ?: return@showSnackBar
+                      showToast(item.author)*/
+                    findNavController().popBackStack()
                 }
             }
 

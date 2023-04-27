@@ -1,17 +1,19 @@
 package com.chuthi.borrowoke.base
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.chuthi.borrowoke.ext.getFlowData
 import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.hideLoading
-import com.chuthi.borrowoke.ext.popBackStack
 import com.chuthi.borrowoke.ext.repeatOnLifecycle
 import com.chuthi.borrowoke.ext.showLoading
 import com.chuthi.borrowoke.ext.showToast
@@ -19,6 +21,12 @@ import com.chuthi.borrowoke.other.enums.HttpError
 import com.chuthi.borrowoke.other.enums.asString
 import kotlinx.coroutines.CoroutineScope
 
+/**************************************
+- Created by Chuong Nguyen
+- Email : huychuonguyen@gmail.com
+- Date : 24/04/2023
+- Project : Base Kotlin
+ **************************************/
 abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
 
     private lateinit var _binding: VB
@@ -54,7 +62,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
      * Use [getLiveData] extension
      * to observe LiveData on here.
      */
-    open fun observeLiveData(): (() -> Unit)? = null
+    open fun observeLiveData(): (LifecycleOwner.() -> Unit)? = null
 
     abstract fun onArgumentsSaved(arguments: Bundle?)
 
@@ -63,7 +71,22 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
      * Default action is raise activity's popBackStack
      */
     open fun handleFragmentBackPressed() {
-        (context as? BaseActivity<*, *>)?.popBackStack()
+        try {
+            findNavController().run {
+                // get start destination id
+                val startDesId = graph.startDestinationId
+                // true: pop success
+                // false: pop fail and current destination is start destination
+                val currentDest = findNavController().currentDestination
+
+                // false -> finish Activity
+                if (currentDest?.id == startDesId) {
+                    showToast("startDes: ${this@BaseFragment::class.java.simpleName}")
+                    //(context as? BaseActivity<*, *>)?.finish()
+                } else popBackStack()
+            }
+        } catch (_: Exception) {
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,14 +95,14 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
         onArgumentsSaved(arguments)
     }
 
-    /* override fun onAttach(context: Context) {
-         super.onAttach(context)
-         // register fragment back pressed
-          (context as? BaseActivity<*, *>)?.addFragmentBackPressed(
-              this,
-              fragmentBackPressedCallback
-          )
-     }*/
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        // register fragment back pressed
+        (context as? BaseActivity<*, *>)?.addFragmentBackPressed(
+            this,
+            fragmentBackPressedCallback
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -106,8 +129,6 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
      * Observe flow data from lifeCycle's [CoroutineScope] of viewLifecycleOwner
      */
     private fun observeData() {
-        // observe Live data
-        observeLiveData()?.invoke()
         // observe Flow data
         repeatOnLifecycle {
             // observer loading
@@ -133,5 +154,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
             // raise observe data on coroutine
             observeFlowData()?.invoke(this)
         }
+        // observe Live data
+        observeLiveData()?.invoke(viewLifecycleOwner)
     }
 }

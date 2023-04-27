@@ -1,6 +1,5 @@
 package com.chuthi.borrowoke.ui.main
 
-import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.enums.CommonError
@@ -27,9 +26,16 @@ class MainViewModel : BaseViewModel() {
     private var _errorSharedFlow = MutableSharedFlow<CommonError>()
     val errorSharedFlow = _errorSharedFlow.asSharedFlow()
 
+    private val _sharedData = MutableStateFlow("")
+    val sharedData = _sharedData.asStateFlow()
+
     init {
         fetchData()
         fetchDummyData()
+    }
+
+    fun setSharedData(value: String) = launchViewModelScope {
+        _sharedData.emit(value)
     }
 
     fun fetchData() {
