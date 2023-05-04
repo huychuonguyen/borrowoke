@@ -67,7 +67,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
         }
     }
 
-    override fun observeFlowData(): (suspend CoroutineScope.() -> Unit) = {
+    override fun observeFlowData(): CoroutineScope.() -> Unit = {
         getFlowDataLasted(mainViewModel.sharedData) {
             showToast("Shared data: $it")
         }

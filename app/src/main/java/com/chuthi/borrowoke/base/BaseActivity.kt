@@ -79,7 +79,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
      * - Use [getFlowData] or [getFlowDataLasted] extension
      * to observe FlowData on here.
      */
-    open fun observeFlowData(): (suspend CoroutineScope.() -> Unit)? = null
+    open fun observeFlowData(): (CoroutineScope.() -> Unit)? = null
 
     /**
      * Use [getLiveData] extension

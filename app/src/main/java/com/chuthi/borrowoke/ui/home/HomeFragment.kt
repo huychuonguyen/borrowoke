@@ -73,7 +73,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         setupRecyclerView()
     }
 
-    override fun observeFlowData(): (suspend CoroutineScope.() -> Unit) = {
+    override fun observeFlowData(): CoroutineScope.() -> Unit = {
         viewModel.run {
 
             getFlowDataLasted(mainViewModel.sharedData) {

@@ -32,11 +32,10 @@ class NewsViewModel(
     private fun getBreakingNews() = launchViewModelScope {
         showLoading()
         newsRepo.getBreakingNews().apiCall(
-            onSuccess = { news ->
+            { news ->
                 val articles = news.data?.articles ?: emptyList()
                 _breakingNews.emit(articles)
-            },
-            onError = {
+            }, {
                 val code = it.errorCode
                 val message = it.message ?: ""
                 commonError.emit(
@@ -45,8 +44,7 @@ class NewsViewModel(
                         code = code
                     )
                 )
-            },
-            onFinished = {
+            }, {
                 hideLoading()
             }
         )
