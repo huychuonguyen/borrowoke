@@ -71,7 +71,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
      * besides the main [viewModel] variable.
      * - Notice: Do not add the [viewModel] variable into this list.
      */
-    open fun setMoreViewModels(): List<BaseViewModel> = emptyList()
+    open fun getViewModels(): List<BaseViewModel> = emptyList()
 
     abstract fun setupUI()
 
@@ -165,7 +165,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
      * Observe flow data from lifeCycle's [CoroutineScope] of activity
      */
     private fun observeData() {
-        val viewModels = setMoreViewModels().plus(viewModel)
+        val viewModels = getViewModels().plus(viewModel).distinct()
         repeatOnLifecycle {
             //  observe loading, error on each viewModel
             viewModels.forEach { viewModel ->
@@ -178,7 +178,6 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
                     // observe error
                     getFlowData(error) { commonError ->
                         val errorMess = commonError.message.asString(this@BaseActivity)
-
                         when (commonError) {
                             is HttpError.Unauthorized401 -> {
                                 // open authentication activity

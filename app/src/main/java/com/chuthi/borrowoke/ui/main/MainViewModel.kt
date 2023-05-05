@@ -68,7 +68,7 @@ class MainViewModel : BaseViewModel() {
             // test error with dynamic string
             commonError.emit(
                 CommonError.NormalError(
-                    message = UiText.DynamicString("Medal không có chơi đồ"),
+                    message = UiText.Empty,
                     code = 1995
                 )
             )

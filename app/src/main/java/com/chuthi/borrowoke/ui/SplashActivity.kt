@@ -1,7 +1,6 @@
 package com.chuthi.borrowoke.ui
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
@@ -35,14 +34,12 @@ class SplashActivity(override val viewModel: BaseViewModel? = null) :
     }
 
     private fun moveToMain() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        openActivity(targetActivity = MainActivity::class.java)
         finish()
     }
 
     private fun startCountDown() {
         binding.run {
-            val tvCountDown = tvCountDown
             var countdownValue = COUNTDOWN_DURATION / 1000L
             countDown = object : CountDownTimer(COUNTDOWN_DURATION, 1000L) {
                 override fun onTick(millisUntilFinished: Long) {

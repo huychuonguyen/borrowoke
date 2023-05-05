@@ -9,19 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
- * Show loading from [BaseActivity]
- */
-fun Fragment.showLoading() = (context as? BaseActivity<*, *>)?.showLoading()
-
-/**
- * Hide loading from [BaseActivity]
- */
-fun Fragment.hideLoading() = (context as? BaseActivity<*, *>)?.hideLoading()
-
-/**
  * Show Toast
  */
-fun Fragment.showToast(mess: String, isLengthLong: Boolean = false) =
+fun Fragment.showToast(mess: String? = null, isLengthLong: Boolean = false) =
     (context as? BaseActivity<*, *>)?.showToast(mess, isLengthLong)
 
 /**
@@ -29,7 +19,7 @@ fun Fragment.showToast(mess: String, isLengthLong: Boolean = false) =
  * based on lifeCycle's [CoroutineScope] of viewLifecycleOwner
  */
 fun Fragment.repeatOnLifecycle(
-    action: suspend CoroutineScope.() -> Unit
+    action: CoroutineScope.() -> Unit
 ) {
     viewLifecycleOwner.lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {

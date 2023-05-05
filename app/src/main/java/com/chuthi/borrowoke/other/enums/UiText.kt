@@ -15,7 +15,8 @@ sealed class UiText {
     object Empty : UiText()
 }
 
-fun UiText.asString(context: Context): String {
+fun UiText.asString(context: Context?): String? {
+    context ?: return null
     return when (this) {
         is UiText.DynamicString -> value
         is UiText.StringResource -> context.getString(resId, *args)

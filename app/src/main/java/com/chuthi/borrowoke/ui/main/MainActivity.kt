@@ -15,19 +15,13 @@ import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ui.auth.AuthenticationActivity
 import com.chuthi.borrowoke.ui.home.HomeFragment
 import com.chuthi.borrowoke.ui.news.NewsFragment
-import com.chuthi.borrowoke.ui.news.NewsViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
-
     override val viewModel: MainViewModel by viewModel()
-
-    private val newsViewModel: NewsViewModel by viewModel()
-
-    override fun setMoreViewModels() = listOf(newsViewModel)
 
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
 

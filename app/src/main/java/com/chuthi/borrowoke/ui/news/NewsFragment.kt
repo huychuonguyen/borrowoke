@@ -1,12 +1,13 @@
 package com.chuthi.borrowoke.ui.news
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chuthi.borrowoke.R
@@ -16,8 +17,8 @@ import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.showSnackBar
-import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.adapters.normal.BreakingNewsAdapter
+import com.chuthi.borrowoke.ui.animate.AnimationFragment
 import com.chuthi.borrowoke.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -69,7 +70,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
 
     override fun observeFlowData(): CoroutineScope.() -> Unit = {
         getFlowDataLasted(mainViewModel.sharedData) {
-            showToast("Shared data: $it")
+            Log.i("Shared data:", it)
         }
     }
 
@@ -86,7 +87,8 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
                 ) {
                     /*  item.author ?: return@showSnackBar
                       showToast(item.author)*/
-                    findNavController().popBackStack()
+                    //findNavController().popBackStack()
+                    handleFragmentBackPressed()
                 }
             }
 
@@ -95,6 +97,20 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
                 adapter = breakingNewsAdapter
             }
         }
+    }
+
+    override fun handleFragmentBackPressed() {
+        (parentFragment as? AnimationFragment)?.run {
+            toggleNews()
+        } ?: super.handleFragmentBackPressed()
+    }
+
+    override fun showLoading() {
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideLoading() {
+        binding.progressBar.visibility = View.GONE
     }
 
     companion object {

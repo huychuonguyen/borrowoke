@@ -187,4 +187,5 @@
     <color name="icPressed">#AAFFFFFF</color>
 
     <color name="hashtagBackground">#D2D0D0</color>
+    <color name="color_loading">#000000</color>
 </resources>

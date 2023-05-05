@@ -29,7 +29,7 @@ fun AppCompatActivity.showToast(
  * based on lifeCycle's [CoroutineScope] of activity
  */
 fun AppCompatActivity.repeatOnLifecycle(
-    action: suspend CoroutineScope.() -> Unit
+    action: CoroutineScope.() -> Unit
 ) {
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {

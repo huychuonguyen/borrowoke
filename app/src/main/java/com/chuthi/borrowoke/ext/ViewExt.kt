@@ -1,11 +1,20 @@
 package com.chuthi.borrowoke.ext
 
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Guideline
 import androidx.core.content.ContextCompat
+import androidx.transition.Slide
+import androidx.transition.Transition
+import androidx.transition.Transition.TransitionListener
+import androidx.transition.TransitionManager
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.other.DEFAULT_CLICK_INTERVAL
 import com.chuthi.borrowoke.util.SafeClickListener
 import com.google.android.material.snackbar.Snackbar
+
 
 /**
  * Register safe click listener with delay time
@@ -47,3 +56,46 @@ fun View.showSnackBar(
         }
         .show()
 }
+
+// region Animation
+fun View.toggleSlideUpDown(
+    visibility: Int,
+    duration: Long = 300L,
+    onStart: () -> Unit = {},
+    onFinish: () -> Unit = {}
+) {
+    val transition: Transition = Slide(Gravity.BOTTOM).apply {
+        this.duration = duration
+        addTarget(id)
+        addListener(object : TransitionListener {
+            override fun onTransitionStart(transition: Transition) {
+                onStart.invoke()
+            }
+
+            override fun onTransitionEnd(transition: Transition) {
+                onFinish.invoke()
+            }
+
+            override fun onTransitionCancel(transition: Transition) {
+                onFinish.invoke()
+            }
+
+            override fun onTransitionPause(transition: Transition) {
+            }
+
+            override fun onTransitionResume(transition: Transition) {
+            }
+        })
+    }
+    TransitionManager.beginDelayedTransition(
+        parent as ViewGroup, transition
+    )
+    setVisibility(visibility)
+}
+
+fun Guideline.setPercent(ratio: Float) {
+    val glParams = layoutParams as? ConstraintLayout.LayoutParams
+    glParams?.guidePercent = ratio
+    layoutParams = glParams
+}
+// endregion

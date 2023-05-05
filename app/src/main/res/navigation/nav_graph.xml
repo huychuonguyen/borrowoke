@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/animationFragment">
 
 
     <action
@@ -36,7 +36,7 @@
         tools:layout="@layout/fragment_news">
         <argument
             android:name="title"
-            android:defaultValue="News Fragment"
+            android:defaultValue="News"
             app:argType="string" />
         <action
             android:id="@+id/action_newsFragment_to_profileFragment"
@@ -54,6 +54,15 @@
             android:name="profileTitle"
             android:defaultValue="@string/app_name"
             app:argType="reference" />
+    </fragment>
+    <fragment
+        android:id="@+id/animationFragment"
+        android:name="com.chuthi.borrowoke.ui.animate.AnimationFragment"
+        android:label="fragment_animation"
+        tools:layout="@layout/fragment_animation" >
+        <action
+            android:id="@+id/action_animationFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
     </fragment>
 
 </navigation>

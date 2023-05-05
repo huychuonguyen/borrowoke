@@ -13,9 +13,7 @@ import androidx.viewbinding.ViewBinding
 import com.chuthi.borrowoke.ext.getFlowData
 import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.getLiveData
-import com.chuthi.borrowoke.ext.hideLoading
 import com.chuthi.borrowoke.ext.repeatOnLifecycle
-import com.chuthi.borrowoke.ext.showLoading
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.enums.HttpError
 import com.chuthi.borrowoke.other.enums.asString
@@ -45,6 +43,13 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
     }
 
     abstract val viewModel: VM?
+
+    /**
+     * - Attach other viewModels if activity have more one viewModel
+     * besides the main [viewModel] variable.
+     * - Notice: Do not add the [viewModel] variable into this list.
+     */
+    open fun getViewModels(): List<BaseViewModel> = emptyList()
 
     protected abstract fun getViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -89,6 +94,18 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
         }
     }
 
+    /**
+     * Show loading from [BaseActivity]
+     */
+    open fun showLoading() =
+        (context as? BaseActivity<*, *>)?.showLoading() ?: Unit
+
+    /**
+     * Hide loading from [BaseActivity]
+     */
+    open fun hideLoading() =
+        (context as? BaseActivity<*, *>)?.hideLoading() ?: Unit
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // get data from arguments
@@ -129,32 +146,34 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
      * Observe flow data from lifeCycle's [CoroutineScope] of viewLifecycleOwner
      */
     private fun observeData() {
-        // observe Flow data
+        val viewModels = getViewModels().plus(viewModel).distinct()
         repeatOnLifecycle {
-            // observer loading
-            getFlowDataLasted(viewModel?.isLoading) { isLoading ->
-                if (isLoading) showLoading()
-                else hideLoading()
-            }
-            // observe error
-            getFlowData(viewModel?.error) { commonError ->
-                context?.run {
-                    val errorMess = commonError.message.asString(this)
+            //  observe loading, error on each viewModel
+            viewModels.forEach { viewModel ->
+                viewModel?.run {
+                    // observe loading
+                    getFlowDataLasted(isLoading) { isLoading ->
+                        if (isLoading) showLoading()
+                        else hideLoading()
+                    }
+                    // observe error
+                    getFlowData(error) { commonError ->
+                        val errorMess = commonError.message.asString(context)
+                        when (commonError) {
+                            is HttpError.Unauthorized401 -> {
+                                // open authentication activity
+                                //openActivity(targetActivity = AuthenticationActivity::class.java)
+                            }
 
-                    when (commonError) {
-                        is HttpError.Unauthorized401 -> {
-                            // open authentication activity
-                            //openActivity(targetActivity = AuthenticationActivity::class.java)
+                            else -> showToast(errorMess)
                         }
-
-                        else -> showToast(errorMess)
                     }
                 }
             }
-            // raise observe data on coroutine
+            // raise observe FlowData on coroutine
             observeFlowData()?.invoke(this)
         }
-        // observe Live data
+        // raise observe LiveData
         observeLiveData()?.invoke(viewLifecycleOwner)
     }
 }

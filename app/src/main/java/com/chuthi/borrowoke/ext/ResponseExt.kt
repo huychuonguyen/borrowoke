@@ -36,9 +36,10 @@ suspend fun <T> Response<T>.apiCall(
     // error
     else -> {
         val errorCode = code()
+        val errorMess = errorBody()?.toString()
         onError.invoke(
             ApiResponse.Error(
-                message = "Response exception",
+                message = errorMess ?: "Response exception",
                 errorCode = errorCode
             )
         )
