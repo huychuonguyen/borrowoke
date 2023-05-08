@@ -1,10 +1,12 @@
 package com.chuthi.borrowoke.ext
 
+import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.chuthi.borrowoke.other.enums.FragmentDataKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -36,4 +38,21 @@ fun AppCompatActivity.repeatOnLifecycle(
             action.invoke(this)
         }
     }
+}
+
+/**
+ * setFragmentResultListener.
+ * - Set result callback for fragment from Activity.
+ * @param requestKey the request key, type of [FragmentDataKey]
+ * @param callback result with [Key] and [Bundle]
+ */
+inline fun <Key : FragmentDataKey> AppCompatActivity.setOnFragmentResult(
+    requestKey: Key,
+    crossinline callback: (Key, Bundle) -> Unit
+) {
+    supportFragmentManager.onFragmentResult(
+        lifecycleOwner = this,
+        requestKey = requestKey,
+        callback = callback
+    )
 }

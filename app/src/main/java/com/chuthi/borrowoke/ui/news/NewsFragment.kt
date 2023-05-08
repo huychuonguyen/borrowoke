@@ -18,7 +18,7 @@ import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.showSnackBar
 import com.chuthi.borrowoke.other.adapters.normal.BreakingNewsAdapter
-import com.chuthi.borrowoke.ui.animate.AnimationFragment
+import com.chuthi.borrowoke.other.enums.FragmentDataKey
 import com.chuthi.borrowoke.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -85,10 +85,8 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
                     message = item.author,
                     actionText = context?.getString(R.string.open)
                 ) {
-                    /*  item.author ?: return@showSnackBar
-                      showToast(item.author)*/
-                    //findNavController().popBackStack()
-                    handleFragmentBackPressed()
+                    val animationFragmentKey = FragmentDataKey.AnimationFragmentKey()
+                    animationFragmentKey.setArticleResult(this@NewsFragment, item)
                 }
             }
 
@@ -100,9 +98,8 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
     }
 
     override fun handleFragmentBackPressed() {
-        (parentFragment as? AnimationFragment)?.run {
-            toggleNews()
-        } ?: super.handleFragmentBackPressed()
+        val animationFragmentKey = FragmentDataKey.AnimationFragmentKey()
+        animationFragmentKey.setNewsVisibilityResult(this, false)
     }
 
     override fun showLoading() {

@@ -31,6 +31,11 @@ sealed class ParcelizeData(open val value: Any?) : BaseModel() {
         override val value: Number
     ) : ParcelizeData(value)
 
+    @Parcelize
+    data class BooleanData(
+        override val value: Boolean
+    ) : ParcelizeData(value)
+
 
     // parsing to normal data type
     inline fun <reified T> getRawValue(): T? {

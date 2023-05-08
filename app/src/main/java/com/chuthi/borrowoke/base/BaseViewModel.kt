@@ -1,6 +1,5 @@
 package com.chuthi.borrowoke.base
 
-import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.enums.CommonError
@@ -16,10 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 - Project : Base Kotlin
  **************************************/
 open class BaseViewModel : ViewModel() {
-
-    private var _argumentData: Bundle? = null
-    val argumentData: Bundle?
-        get() = _argumentData
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -38,11 +33,5 @@ open class BaseViewModel : ViewModel() {
 
     protected fun hideLoading() = launchViewModelScope {
         _isLoading.emit(false)
-    }
-
-    fun setArguments(data: Bundle?) {
-        launchViewModelScope {
-            _argumentData = data
-        }
     }
 }

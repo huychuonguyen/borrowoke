@@ -1,5 +1,6 @@
 package com.chuthi.borrowoke.di
 
+import com.chuthi.borrowoke.ui.animate.AnimationViewModel
 import com.chuthi.borrowoke.ui.home.HomeViewModel
 import com.chuthi.borrowoke.ui.main.MainViewModel
 import com.chuthi.borrowoke.ui.news.NewsViewModel
@@ -13,5 +14,6 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel { MainViewModel() }
     viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { NewsViewModel(get(), get()) }
+    viewModel { NewsViewModel(get()) }
+    viewModel { AnimationViewModel(get()) }
 }

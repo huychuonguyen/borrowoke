@@ -8,11 +8,9 @@ import com.chuthi.borrowoke.ext.apiCall
 import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.UiText
-import com.chuthi.borrowoke.woker.MyWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class NewsViewModel(
-    myWorker: MyWorker,
     private val newsRepo: NewsRepo
 ) : BaseViewModel() {
 
