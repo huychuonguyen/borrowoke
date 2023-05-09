@@ -1,6 +1,5 @@
 package com.chuthi.borrowoke.ui.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -24,10 +23,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override val viewModel: MainViewModel by viewModel()
 
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-    }
 
     override fun setupUI() {
         // get fcm token

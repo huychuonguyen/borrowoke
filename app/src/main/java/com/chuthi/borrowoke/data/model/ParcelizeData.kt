@@ -7,27 +7,27 @@ import kotlinx.parcelize.Parcelize
 sealed class ParcelizeData(open val value: Any?) : BaseModel() {
 
     @Parcelize
-    data class ParcelizeInt(
+    data class IntData(
         override val value: Int
     ) : ParcelizeData(value)
 
     @Parcelize
-    data class ParcelizeString(
-        override val value: String
+    data class StringData(
+        override val value: kotlin.String
     ) : ParcelizeData(value)
 
     @Parcelize
-    data class ParcelizeFloat(
+    data class FloatData(
         override val value: Float
     ) : ParcelizeData(value)
 
     @Parcelize
-    data class ParcelizeDouble(
+    data class DoubleData(
         override val value: Double
     ) : ParcelizeData(value)
 
     @Parcelize
-    data class ParcelizeNumber(
+    data class NumberData(
         override val value: Number
     ) : ParcelizeData(value)
 

@@ -14,11 +14,12 @@ import com.chuthi.borrowoke.data.model.ParcelizeData
 fun Any.toParcelable(): BaseModel? {
     return when (this) {
         is BaseModel -> this
-        is String -> ParcelizeData.ParcelizeString(this)
-        is Int -> ParcelizeData.ParcelizeInt(this)
-        is Float -> ParcelizeData.ParcelizeFloat(this)
-        is Double -> ParcelizeData.ParcelizeDouble(this)
-        is Number -> ParcelizeData.ParcelizeNumber(this)
+        is String -> ParcelizeData.StringData(this)
+        is Int -> ParcelizeData.IntData(this)
+        is Float -> ParcelizeData.FloatData(this)
+        is Double -> ParcelizeData.DoubleData(this)
+        is Number -> ParcelizeData.NumberData(this)
+        is Boolean -> ParcelizeData.BooleanData(this)
         else -> null
     }
 }
@@ -45,15 +46,18 @@ fun Any.navigateTo(
             action,
             if (isAnimation) navOptions else null
         )
+
         is Fragment -> findNavController().navigate(
             action,
             if (isAnimation) navOptions else null
         )
+
         is Activity -> if (viewId != null)
             findNavController(viewId).navigate(
                 action,
                 if (isAnimation) navOptions else null
             )
+
         else -> Unit
     }
 }
