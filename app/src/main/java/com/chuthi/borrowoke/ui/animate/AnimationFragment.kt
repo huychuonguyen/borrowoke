@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
-import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.databinding.FragmentAnimationBinding
@@ -79,25 +78,25 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
     }
 
     private fun toggleNews(visible: Boolean) {
-       val a = binding.run {
-            visible.let { visibility ->
-                when (visibility) {
-                    false -> {
-                        glBetween.setPercent(1f)
-                        frContents.toggleSlideUpDown(View.GONE, onStart = {
-                            childFragmentManager.popBackStack()
-                        })
-                    }
+        binding.run {
+             visible.let { visibility ->
+                 when (visibility) {
+                     false -> {
+                         glBetween.setPercent(1f)
+                         frContents.toggleSlideUpDown(View.GONE, onStart = {
+                             childFragmentManager.popBackStack()
+                         })
+                     }
 
-                    else -> {
-                        glBetween.setPercent(0.33f)
-                        frContents.toggleSlideUpDown(View.VISIBLE, onStart = {
-                            addNewsContents()
-                        })
-                    }
-                }
-            }
-        }
+                     else -> {
+                         glBetween.setPercent(0.33f)
+                         frContents.toggleSlideUpDown(View.VISIBLE, onStart = {
+                             addNewsContents()
+                         })
+                     }
+                 }
+             }
+         }
     }
 
     private fun addNewsContents() {
