@@ -8,7 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.chuthi.borrowoke.base.BaseActivity
-import com.chuthi.borrowoke.other.enums.FragmentDataKey
+import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -38,16 +38,16 @@ fun Fragment.repeatOnLifecycle(
  * onFragmentResultListener.
  * - Set result callback for fragment
  * based on AppcompatActivity.supportFragmentManager
- * @param requestKey the request key, type of [FragmentDataKey]
+ * @param requestKey the request key, type of [FragmentResultKey]
  * @param callback result with [Key] and [Bundle]
  */
-fun <Key : FragmentDataKey> Fragment.onFragmentResult(
+fun <Key : FragmentResultKey> Fragment.onFragmentResult(
     requestKey: Key,
     callback: (Key, Bundle) -> Unit
 ) {
     // Re-use onFragmentResultListener extension of Activity
     (context as? AppCompatActivity)?.run {
-        this.setOnFragmentResult(requestKey, callback)
+        this.onFragmentResult(requestKey, callback)
     }
 }
 
@@ -55,10 +55,10 @@ fun <Key : FragmentDataKey> Fragment.onFragmentResult(
  * onChildFragmentResultListener.
  * - Set result callback for fragment
  * based on Fragment.childFragmentManager.
- * @param requestKey the request key, type of [FragmentDataKey]
+ * @param requestKey the request key, type of [FragmentResultKey]
  * @param callback result with [Key] and [Bundle]
  */
-inline fun <Key : FragmentDataKey> Fragment.onChildFragmentResult(
+inline fun <Key : FragmentResultKey> Fragment.onChildFragmentResult(
     requestKey: Key,
     crossinline callback: (Key, Bundle) -> Unit
 ) {
@@ -74,10 +74,10 @@ inline fun <Key : FragmentDataKey> Fragment.onChildFragmentResult(
  * setResultCallback.
  *  - Set the callback result for fragment,
  *  then listen on [onChildFragmentResult] or [onFragmentResult]
- *  @param key the request key, type of [FragmentDataKey]
+ *  @param key the request key, type of [FragmentResultKey]
  *
  */
-fun <Key : FragmentDataKey> Fragment.setFragmentResultData(
+fun <Key : FragmentResultKey> Fragment.setFragmentResultData(
     key: Key,
     vararg data: Pair<String, Any?>
 ) {

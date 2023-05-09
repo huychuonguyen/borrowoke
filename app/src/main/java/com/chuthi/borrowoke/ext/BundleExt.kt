@@ -14,14 +14,15 @@ fun <T : Any> Bundle.putData(
     for ((key, value) in pairs) {
         putParcelable(
             key,
-            value?.toParcelable()
+            value?.toParcelableData()
         )
     }
 }
 
 /**
- * get Parcelize data
+ * get Parcelize data.
  */
+@Suppress("DEPRECATION")
 inline fun <reified T : Parcelable> Bundle.getData(
     key: String
 ): T? {

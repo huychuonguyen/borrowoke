@@ -20,7 +20,7 @@ import com.chuthi.borrowoke.ext.setFragmentResultData
  * @param resultKey the key to retrieve with [data]
  * @param data the result data
  */
-private fun <T> FragmentDataKey.setResultData(
+private fun <T> FragmentResultKey.setResultData(
     fragment: Fragment,
     resultKey: String,
     data: T
@@ -29,11 +29,9 @@ private fun <T> FragmentDataKey.setResultData(
     data = arrayOf(Pair(resultKey, data))
 )
 
-sealed class FragmentDataKey(
-    val requestKey: String
-) {
+sealed class FragmentResultKey(val requestKey: String) {
 
-    class AnimationFragmentKey : FragmentDataKey(REQUEST_KEY) {
+    class AnimationFragmentKey : FragmentResultKey(REQUEST_KEY) {
 
         fun onNewsVisible(bundle: Bundle, callback: (Boolean) -> Unit) {
             val isVisible =

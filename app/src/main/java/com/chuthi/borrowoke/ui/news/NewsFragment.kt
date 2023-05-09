@@ -3,7 +3,6 @@ package com.chuthi.borrowoke.ui.news
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -11,14 +10,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chuthi.borrowoke.R
-import com.chuthi.borrowoke.base.BaseFragment
+import com.chuthi.borrowoke.base.SwipeRefreshFragment
 import com.chuthi.borrowoke.databinding.FragmentNewsBinding
 import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.showSnackBar
 import com.chuthi.borrowoke.other.adapters.normal.BreakingNewsAdapter
-import com.chuthi.borrowoke.other.enums.FragmentDataKey
+import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -28,11 +27,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * Use the [NewsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
+class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewModel>() {
 
     private lateinit var breakingNewsAdapter: BreakingNewsAdapter
 
     private val newsArgs: NewsFragmentArgs by navArgs()
+    override fun swipeRefreshId() = binding.swipeRefresh
 
     override val viewModel by viewModel<NewsViewModel>()
 
@@ -85,7 +85,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
                     message = item.author,
                     actionText = context?.getString(R.string.open)
                 ) {
-                    val animationFragmentKey = FragmentDataKey.AnimationFragmentKey()
+                    val animationFragmentKey = FragmentResultKey.AnimationFragmentKey()
                     animationFragmentKey.setArticleResult(this@NewsFragment, item)
                 }
             }
@@ -98,16 +98,26 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>() {
     }
 
     override fun handleFragmentBackPressed() {
-        val animationFragmentKey = FragmentDataKey.AnimationFragmentKey()
+        val animationFragmentKey = FragmentResultKey.AnimationFragmentKey()
         animationFragmentKey.setNewsVisibilityResult(this, false)
     }
 
     override fun showLoading() {
-        binding.progressBar.visibility = View.VISIBLE
+        // binding.progressBar.visibility = View.VISIBLE
+        showRefreshing()
     }
 
     override fun hideLoading() {
-        binding.progressBar.visibility = View.GONE
+        //binding.progressBar.visibility = View.GONE
+        hideRefreshing()
+    }
+
+    override fun onRefresh() {
+        super.onRefresh()
+        // clear all current
+        viewModel.clearBreakingNews()
+        // get new list
+        viewModel.getBreakingNews()
     }
 
     companion object {

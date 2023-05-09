@@ -118,4 +118,6 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     // Feature module Support
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+    // swipe refresh
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

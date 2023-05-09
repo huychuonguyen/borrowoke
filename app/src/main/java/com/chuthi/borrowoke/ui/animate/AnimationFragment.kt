@@ -15,7 +15,7 @@ import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.setPercent
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ext.toggleSlideUpDown
-import com.chuthi.borrowoke.other.enums.FragmentDataKey
+import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.ui.news.NewsFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -60,7 +60,7 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
 
     private fun handleCallbacks() {
         onChildFragmentResult(
-            requestKey = FragmentDataKey.AnimationFragmentKey()
+            requestKey = FragmentResultKey.AnimationFragmentKey()
         ) { key, bundle ->
             // visible news
             key.onNewsVisible(bundle) { isVisible ->

@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.chuthi.borrowoke.other.enums.FragmentDataKey
+import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -43,10 +43,10 @@ fun AppCompatActivity.repeatOnLifecycle(
 /**
  * setFragmentResultListener.
  * - Set result callback for fragment from Activity.
- * @param requestKey the request key, type of [FragmentDataKey]
+ * @param requestKey the request key, type of [FragmentResultKey]
  * @param callback result with [Key] and [Bundle]
  */
-inline fun <Key : FragmentDataKey> AppCompatActivity.setOnFragmentResult(
+inline fun <Key : FragmentResultKey> AppCompatActivity.onFragmentResult(
     requestKey: Key,
     crossinline callback: (Key, Bundle) -> Unit
 ) {

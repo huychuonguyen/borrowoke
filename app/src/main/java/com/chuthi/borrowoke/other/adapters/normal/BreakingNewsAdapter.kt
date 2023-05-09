@@ -12,8 +12,8 @@ class BreakingNewsAdapter(
 
     override fun onBindData(binding: ArticleItemBinding, item: Article, position: Int) {
         binding.run {
-            tvAuthor.text = item.author ?: "Đéo có tác giả"
-            tvContent.text = item.content ?: "Đéo có nội dung"
+            tvAuthor.text = item.author ?: "Unknown Author"
+            tvContent.text = item.content ?: "No content"
         }
     }
 

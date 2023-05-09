@@ -18,16 +18,12 @@ class NewsViewModel(
     val breakingNews = _breakingNews.asLiveData()
 
     init {
-        // fetch breaking news
         getBreakingNews()
-        // run news worker
-        // myWorker.runNewsWork()
     }
-
     /**
      * Get articles of breaking news
      */
-    private fun getBreakingNews() = launchViewModelScope {
+    fun getBreakingNews() = launchViewModelScope {
         showLoading()
         newsRepo.getBreakingNews().apiCall(
             { news ->
@@ -46,5 +42,12 @@ class NewsViewModel(
                 hideLoading()
             }
         )
+    }
+
+    /**
+     * Clear all news
+     */
+    fun clearBreakingNews() = launchViewModelScope {
+        _breakingNews.emit(emptyList())
     }
 }

@@ -13,7 +13,7 @@ sealed class ParcelizeData(open val value: Any?) : BaseModel() {
 
     @Parcelize
     data class StringData(
-        override val value: kotlin.String
+        override val value: String
     ) : ParcelizeData(value)
 
     @Parcelize
@@ -37,8 +37,8 @@ sealed class ParcelizeData(open val value: Any?) : BaseModel() {
     ) : ParcelizeData(value)
 
 
-    // parsing to normal data type
-    inline fun <reified T> getRawValue(): T? {
-        return value as? T
-    }
+    /**
+     *  Parsing from [ParcelizeData] to normal data type.
+     */
+    inline fun <reified T> getRawValue() = value as? T
 }

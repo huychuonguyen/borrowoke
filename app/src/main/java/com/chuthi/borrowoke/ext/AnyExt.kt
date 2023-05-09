@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.chuthi.borrowoke.base.BaseModel
 import com.chuthi.borrowoke.data.model.ParcelizeData
 
-fun Any.toParcelable(): BaseModel? {
+fun Any.toParcelableData(): BaseModel? {
     return when (this) {
         is BaseModel -> this
         is String -> ParcelizeData.StringData(this)

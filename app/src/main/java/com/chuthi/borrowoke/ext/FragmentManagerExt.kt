@@ -1,9 +1,10 @@
 package com.chuthi.borrowoke.ext
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
-import com.chuthi.borrowoke.other.enums.FragmentDataKey
+import com.chuthi.borrowoke.other.enums.FragmentResultKey
 
 /**************************************
 - Created by Chuong Nguyen
@@ -18,18 +19,19 @@ import com.chuthi.borrowoke.other.enums.FragmentDataKey
 /**
  * setResultListener.
  * - Set result callback for fragment
- * @param requestKey the request key, type of [FragmentDataKey]
- * @param callback result with [Keys] and [Bundle]
+ * @param requestKey the request key, type of [FragmentResultKey]
+ * @param callback result with [Key] and [Bundle]
  */
-inline fun <Keys : FragmentDataKey> FragmentManager.onFragmentResult(
+inline fun <Key : FragmentResultKey> FragmentManager.onFragmentResult(
     lifecycleOwner: LifecycleOwner,
-    requestKey: Keys,
-    crossinline callback: (Keys, Bundle) -> Unit
+    requestKey: Key,
+    crossinline callback: (Key, Bundle) -> Unit
 ) {
     setFragmentResultListener(
         requestKey.requestKey,
         lifecycleOwner
-    ) { _, bundle ->
+    ) { key, bundle ->
+        Log.i("onFragmentResult", "Key: $key | Data: $bundle")
         callback.invoke(requestKey, bundle)
     }
 }
