@@ -13,7 +13,7 @@ class BreakingNewsAdapter(
     override fun onBindData(binding: ArticleItemBinding, item: Article, position: Int) {
         binding.run {
             tvAuthor.text = item.author ?: "Unknown Author"
-            tvContent.text = item.content ?: "No content"
+            tvContent.text = item.description ?: "No description"
         }
     }
 

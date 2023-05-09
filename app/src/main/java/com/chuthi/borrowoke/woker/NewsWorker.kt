@@ -6,7 +6,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.chuthi.borrowoke.data.repo.NewsRepo
 import com.chuthi.borrowoke.ext.apiCall
-import kotlinx.coroutines.delay
 
 class NewsWorker(
     private val newsRepo: NewsRepo,
@@ -16,8 +15,7 @@ class NewsWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            delay(3000)
-            newsRepo.getBreakingNews().apiCall(
+            newsRepo.getBreakingNews(pageNumber = 1).apiCall(
                 onSuccess = {
                     val articles = it.data?.articles ?: emptyList()
                     Log.i("NewsWorker_Success", articles.toString())

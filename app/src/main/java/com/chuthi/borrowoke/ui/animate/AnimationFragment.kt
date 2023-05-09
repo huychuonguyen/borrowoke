@@ -12,6 +12,7 @@ import com.chuthi.borrowoke.databinding.FragmentAnimationBinding
 import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.onChildFragmentResult
 import com.chuthi.borrowoke.ext.onSafeClick
+import com.chuthi.borrowoke.ext.replaceFragment
 import com.chuthi.borrowoke.ext.setPercent
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ext.toggleSlideUpDown
@@ -71,14 +72,14 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
             key.onArticleResult(bundle) { article ->
                 // hide news
                 viewModel.setVisibleNews(false)
-                val author = article.author ?: "No-Name"
-                showToast(author)
+                val description = article.description ?: "No-desc"
+                showToast(description)
             }
         }
     }
 
     private fun toggleNews(visible: Boolean) {
-        binding.run {
+       val a = binding.run {
             visible.let { visibility ->
                 when (visibility) {
                     false -> {
@@ -101,9 +102,11 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
 
     private fun addNewsContents() {
         val newsFragment = NewsFragment.newInstance()
-        childFragmentManager.beginTransaction()
-            .replace(R.id.frContents, newsFragment, NewsFragment.TAG)
-            .addToBackStack(NewsFragment.TAG)
-            .commit()
+        childFragmentManager.replaceFragment(
+            containerId = binding.frContents.id,
+            fragment = newsFragment,
+            tag = NewsFragment.TAG,
+            isAddToBackStack = true
+        )
     }
 }

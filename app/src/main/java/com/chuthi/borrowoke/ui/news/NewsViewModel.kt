@@ -23,9 +23,9 @@ class NewsViewModel(
     /**
      * Get articles of breaking news
      */
-    fun getBreakingNews() = launchViewModelScope {
+    fun getBreakingNews(pageNumber: Int = 1) = launchViewModelScope {
         showLoading()
-        newsRepo.getBreakingNews().apiCall(
+        newsRepo.getBreakingNews(pageNumber).apiCall(
             { news ->
                 val articles = news.data?.articles ?: emptyList()
                 _breakingNews.emit(articles)

@@ -32,11 +32,12 @@ class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewModel>() 
     private lateinit var breakingNewsAdapter: BreakingNewsAdapter
 
     private val newsArgs: NewsFragmentArgs by navArgs()
-    override fun swipeRefreshId() = binding.swipeRefresh
 
     override val viewModel by viewModel<NewsViewModel>()
 
     private val mainViewModel: MainViewModel by activityViewModels()
+
+    override fun swipeRefreshLayout() = binding.swipeRefresh
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -117,7 +118,7 @@ class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewModel>() 
         // clear all current
         viewModel.clearBreakingNews()
         // get new list
-        viewModel.getBreakingNews()
+        viewModel.getBreakingNews(pageNumber = 2)
     }
 
     companion object {

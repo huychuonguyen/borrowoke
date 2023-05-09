@@ -7,5 +7,5 @@ class NewsRepo(
     private val apiService: ApiService
 ) : BaseRepo() {
 
-    suspend fun getBreakingNews() = apiService.getBreakingNews()
+    suspend fun getBreakingNews(pageNumber: Int) = apiService.getBreakingNews(pageNumber = pageNumber)
 }

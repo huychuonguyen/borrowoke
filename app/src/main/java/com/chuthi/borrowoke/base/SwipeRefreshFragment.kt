@@ -22,12 +22,26 @@ abstract class SwipeRefreshFragment<VB : ViewBinding, VM : BaseViewModel>
     /**
      * the [SwipeRefreshLayout] component to handle pull to refresh.
      */
-    protected abstract fun swipeRefreshId(): SwipeRefreshLayout
+    protected abstract fun swipeRefreshLayout(): SwipeRefreshLayout
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // init swipe refresh component
         initRefreshLayout()
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    @CallSuper
+    override fun onRefresh() {
+        // set timeout to hide refreshing
+        setRefreshTimeout {
+            hideRefreshing()
+        }
+    }
+
+    override fun onDestroyView() {
+        // clear timeout callback
+        clearRefreshTimeout()
+        super.onDestroyView()
     }
 
     protected fun showRefreshing() = _swipeRefreshLayout.run {
@@ -40,8 +54,7 @@ abstract class SwipeRefreshFragment<VB : ViewBinding, VM : BaseViewModel>
     protected fun hideRefreshing() {
         _swipeRefreshLayout.isRefreshing = false
         // clear timeout callback
-        _loadingHandler?.removeCallbacksAndMessages(null)
-        _loadingHandler = null
+        clearRefreshTimeout()
     }
 
     protected fun refreshScreen() {
@@ -52,14 +65,6 @@ abstract class SwipeRefreshFragment<VB : ViewBinding, VM : BaseViewModel>
                 // raise action
                 onRefresh()
             }
-        }
-    }
-
-    @CallSuper
-    override fun onRefresh() {
-        // set timeout to hide refreshing
-        setRefreshTimeout {
-            hideRefreshing()
         }
     }
 
@@ -78,10 +83,18 @@ abstract class SwipeRefreshFragment<VB : ViewBinding, VM : BaseViewModel>
         }, LOADING_TIMEOUT)
     }
 
+    /**
+     * Clear [_loadingHandler] callback.
+     */
+    private fun clearRefreshTimeout() {
+        _loadingHandler?.removeCallbacksAndMessages(null)
+        _loadingHandler = null
+    }
+
 
     private fun initRefreshLayout() {
         // get swipe refresh component by id
-        _swipeRefreshLayout = swipeRefreshId().apply {
+        _swipeRefreshLayout = swipeRefreshLayout().apply {
             setOnRefreshListener(this@SwipeRefreshFragment)
         }
     }

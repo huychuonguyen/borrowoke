@@ -2,6 +2,8 @@ package com.chuthi.borrowoke.ext
 
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
@@ -26,12 +28,28 @@ inline fun <Key : FragmentResultKey> FragmentManager.onFragmentResult(
     lifecycleOwner: LifecycleOwner,
     requestKey: Key,
     crossinline callback: (Key, Bundle) -> Unit
-) {
-    setFragmentResultListener(
-        requestKey.requestKey,
-        lifecycleOwner
-    ) { key, bundle ->
-        Log.i("onFragmentResult", "Key: $key | Data: $bundle")
-        callback.invoke(requestKey, bundle)
-    }
+) = setFragmentResultListener(
+    requestKey.requestKey,
+    lifecycleOwner
+) { key, bundle ->
+    Log.i("onFragmentResult", "Key: $key | Data: $bundle")
+    callback.invoke(requestKey, bundle)
 }
+
+
+/**
+ * Replace fragment
+ */
+fun FragmentManager.replaceFragment(
+    @IdRes containerId: Int,
+    fragment: Fragment,
+    tag: String? = null,
+    isAddToBackStack: Boolean = false
+) = beginTransaction()
+    .replace(containerId, fragment, tag)
+    .apply {
+        if (isAddToBackStack)
+            addToBackStack(tag ?: fragment::class.java.simpleName)
+    }.commit()
+
+
