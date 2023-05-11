@@ -2,7 +2,6 @@ package com.chuthi.borrowoke.other.enums
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.chuthi.borrowoke.data.model.ParcelizeData
 import com.chuthi.borrowoke.data.model.response.Article
 import com.chuthi.borrowoke.ext.getData
 import com.chuthi.borrowoke.ext.setFragmentResultData
@@ -34,8 +33,7 @@ sealed class FragmentResultKey(val requestKey: String) {
     class AnimationFragmentKey : FragmentResultKey(REQUEST_KEY) {
 
         fun onNewsVisible(bundle: Bundle, callback: (Boolean) -> Unit) {
-            val isVisible =
-                bundle.getData<ParcelizeData>(VISIBILITY_NEWS_KEY)?.getRawValue<Boolean>()
+            val isVisible = bundle.getData<Boolean>(VISIBILITY_NEWS_KEY)
             isVisible ?: return
             callback.invoke(isVisible)
         }

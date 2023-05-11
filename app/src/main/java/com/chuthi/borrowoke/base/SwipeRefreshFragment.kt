@@ -91,7 +91,6 @@ abstract class SwipeRefreshFragment<VB : ViewBinding, VM : BaseViewModel>
         _loadingHandler = null
     }
 
-
     private fun initRefreshLayout() {
         // get swipe refresh component by id
         _swipeRefreshLayout = swipeRefreshLayout().apply {

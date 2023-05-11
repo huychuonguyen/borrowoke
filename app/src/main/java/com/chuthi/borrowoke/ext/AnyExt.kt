@@ -8,21 +8,9 @@ import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.chuthi.borrowoke.base.BaseModel
 import com.chuthi.borrowoke.data.model.ParcelizeData
 
-fun Any.toParcelableData(): BaseModel? {
-    return when (this) {
-        is BaseModel -> this
-        is String -> ParcelizeData.StringData(this)
-        is Int -> ParcelizeData.IntData(this)
-        is Float -> ParcelizeData.FloatData(this)
-        is Double -> ParcelizeData.DoubleData(this)
-        is Number -> ParcelizeData.NumberData(this)
-        is Boolean -> ParcelizeData.BooleanData(this)
-        else -> null
-    }
-}
+fun <T> T.toParcelableData() = ParcelizeData(this)
 
 fun Any.navigateTo(
     action: NavDirections,

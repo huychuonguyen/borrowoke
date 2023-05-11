@@ -2,15 +2,15 @@ package com.chuthi.borrowoke.ext
 
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
+import com.chuthi.borrowoke.data.model.ParcelizeData
 
 
 /**
- * put parcelize data
+ * convert [T] to [ParcelizeData] and put it to bundle.
  */
-fun <T : Any> Bundle.putData(
+fun <T> Bundle.putData(
     vararg pairs: Pair<String, T?>
-) = apply {
+) = run {
     for ((key, value) in pairs) {
         putParcelable(
             key,
@@ -20,17 +20,21 @@ fun <T : Any> Bundle.putData(
 }
 
 /**
- * get Parcelize data.
+ * get [ParcelizeData] data and convert to [T].
  */
 @Suppress("DEPRECATION")
-inline fun <reified T : Parcelable> Bundle.getData(
+inline fun <reified T> Bundle.getData(
     key: String
 ): T? {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        getParcelable(key, T::class.java)
+    // get ParcelizeData
+    val parcelizeData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        getParcelable(key, ParcelizeData::class.java)
     else
-        getParcelable(key) as? T
+        getParcelable(key) as? ParcelizeData<T>
+    // then return raw value as T
+    return parcelizeData?.value as? T
 }
+
 
 
 

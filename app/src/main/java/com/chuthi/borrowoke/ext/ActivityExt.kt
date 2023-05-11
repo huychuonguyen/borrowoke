@@ -56,3 +56,9 @@ inline fun <Key : FragmentResultKey> AppCompatActivity.onFragmentResult(
         callback = callback
     )
 }
+
+fun AppCompatActivity.runOnCoroutine(action: CoroutineScope.() -> Unit) {
+    lifecycleScope.launch {
+        action.invoke(this)
+    }
+}

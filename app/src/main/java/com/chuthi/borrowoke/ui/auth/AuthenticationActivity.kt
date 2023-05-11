@@ -5,7 +5,6 @@ import android.os.Bundle
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.data.model.AuthModel
-import com.chuthi.borrowoke.data.model.ParcelizeData
 import com.chuthi.borrowoke.databinding.ActivityAuthenticationBinding
 import com.chuthi.borrowoke.ext.getData
 import com.chuthi.borrowoke.ext.putData
@@ -22,8 +21,8 @@ class AuthenticationActivity(override val viewModel: BaseViewModel? = null) :
     override fun onArgumentsSaved(arguments: Bundle?) {
         arguments?.run {
             authModel = getData("AUTH_DATA")
-            intData = getData<ParcelizeData>("INT_DATA")?.getRawValue() ?: 0
-            floatData = getData<ParcelizeData>("FLOAT_DATA")?.getRawValue() ?: 0f
+            intData = getData("INT_DATA") ?: 0
+            floatData = getData("FLOAT_DATA") ?: 0f
         }
     }
 
