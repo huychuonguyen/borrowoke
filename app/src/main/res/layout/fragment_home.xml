@@ -44,19 +44,30 @@
         android:textSize="@dimen/_20sp"
         app:layout_constraintTop_toBottomOf="@+id/tvHomeTitle" />
 
+    <TextView
+        android:id="@+id/tvAnimation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="@string/animation_fragment"
+        android:textSize="@dimen/_20sp"
+        app:layout_constraintTop_toBottomOf="@+id/tvCounter" />
 
     <Button
         android:id="@+id/btnIncreaseSecond"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="increase second"
+        android:text="@string/increase_second"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
         android:id="@+id/btnIncreaseFirst"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="increase first"
+        android:text="@string/increase_first"
         app:layout_constraintBottom_toTopOf="@+id/btnIncreaseSecond" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

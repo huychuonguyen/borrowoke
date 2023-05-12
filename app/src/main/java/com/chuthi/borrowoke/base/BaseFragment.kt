@@ -6,17 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
-import com.chuthi.borrowoke.ext.getFlowData
-import com.chuthi.borrowoke.ext.getFlowDataLasted
-import com.chuthi.borrowoke.ext.getLiveData
-import com.chuthi.borrowoke.ext.repeatOnLifecycle
+import com.chuthi.borrowoke.base.interfaces.LifecycleObserverFragment
 import com.chuthi.borrowoke.ext.showToast
-import com.chuthi.borrowoke.other.enums.HttpError
-import com.chuthi.borrowoke.other.enums.asString
 import kotlinx.coroutines.CoroutineScope
 
 /**************************************
@@ -25,7 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 - Date : 24/04/2023
 - Project : Base Kotlin
  **************************************/
-abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
+abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObserverFragment() {
 
     private lateinit var _binding: VB
     protected val binding: VB
@@ -34,13 +27,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
     /**
      * Fragment back pressed callback
      */
-    private val fragmentBackPressedCallback = object : OnBackPressedCallback(
-        true // default to enabled
-    ) {
-        override fun handleOnBackPressed() {
-            handleFragmentBackPressed()
-        }
-    }
+    private var fragmentBackPressedCallback: OnBackPressedCallback? = null
 
     abstract val viewModel: VM?
 
@@ -57,68 +44,37 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
 
     abstract fun setupUI()
 
-    /**
-     * - Use [getFlowData] or [getFlowDataLasted] extension
-     * to observe FlowData on here.
-     */
-    open fun observeFlowData(): (CoroutineScope.() -> Unit)? = null
-
-    /**
-     * Use [getLiveData] extension
-     * to observe LiveData on here.
-     */
-    open fun observeLiveData(): (LifecycleOwner.() -> Unit)? = null
-
     abstract fun onArgumentsSaved(arguments: Bundle?)
 
     /**
      * Override this method to custom fragment back pressed.
      * Default action is raise activity's popBackStack
      */
-    open fun handleFragmentBackPressed() {
-        try {
-            findNavController().run {
-                // get start destination id
-                val startDesId = graph.startDestinationId
-                // true: pop success
-                // false: pop fail and current destination is start destination
-                val currentDest = findNavController().currentDestination
-
-                // false -> finish Activity
-                if (currentDest?.id == startDesId) {
-                    showToast("startDes: ${this@BaseFragment::class.java.simpleName}")
-                    //(context as? BaseActivity<*, *>)?.finish()
-                } else popBackStack()
-            }
-        } catch (_: Exception) {
-        }
-    }
+    open fun handleFragmentBackPressed(): (() -> Unit)? = null
 
     /**
      * Show loading from [BaseActivity]
      */
-    open fun showLoading() =
+    override fun showLoading() =
         (context as? BaseActivity<*, *>)?.showLoading() ?: Unit
 
     /**
      * Hide loading from [BaseActivity]
      */
-    open fun hideLoading() =
+    override fun hideLoading() =
         (context as? BaseActivity<*, *>)?.hideLoading() ?: Unit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        registerLifecycleOwner(this)
         // get data from arguments
         onArgumentsSaved(arguments)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        // register fragment back pressed
-        (context as? BaseActivity<*, *>)?.addFragmentBackPressed(
-            this,
-            fragmentBackPressedCallback
-        )
+        // register backPressed
+        registerFragmentBackPressed()
     }
 
     override fun onCreateView(
@@ -143,37 +99,49 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
     }
 
     /**
+     * Register fragment back pressed
+     */
+    private fun registerFragmentBackPressed() {
+        handleFragmentBackPressed()?.run {
+            fragmentBackPressedCallback = object : OnBackPressedCallback(
+                true // default to enabled
+            ) {
+                override fun handleOnBackPressed() {
+                    this@run.invoke()
+                }
+            }
+        }
+        // register fragment back pressed
+        fragmentBackPressedCallback?.let { callback ->
+            (context as? BaseActivity<*, *>)?.addFragmentBackPressed(
+                this,
+                callback
+            )
+        }
+    }
+
+    private fun handleBackPressed() {
+        try {
+            findNavController().run {
+                // get start destination id
+                val startDesId = graph.startDestinationId
+                // true: pop success
+                // false: pop fail and current destination is start destination
+                val currentDest = findNavController().currentDestination
+                // false -> finish Activity
+                if (currentDest?.id == startDesId) {
+                    showToast("startDes: ${this@BaseFragment::class.java.simpleName}")
+                } else popBackStack()
+            }
+        } catch (_: Exception) {
+        }
+    }
+
+    /**
      * Observe flow data from lifeCycle's [CoroutineScope] of viewLifecycleOwner
      */
     private fun observeData() {
         val viewModels = getViewModels().plus(viewModel).distinct()
-        repeatOnLifecycle {
-            //  observe loading, error on each viewModel
-            viewModels.forEach { viewModel ->
-                viewModel?.run {
-                    // observe loading
-                    getFlowDataLasted(isLoading) { isLoading ->
-                        if (isLoading) showLoading()
-                        else hideLoading()
-                    }
-                    // observe error
-                    getFlowData(error) { commonError ->
-                        val errorMess = commonError.message.asString(context)
-                        when (commonError) {
-                            is HttpError.Unauthorized401 -> {
-                                // open authentication activity
-                                //openActivity(targetActivity = AuthenticationActivity::class.java)
-                            }
-
-                            else -> showToast(errorMess)
-                        }
-                    }
-                }
-            }
-            // raise observe FlowData on coroutine
-            observeFlowData()?.invoke(this)
-        }
-        // raise observe LiveData
-        observeLiveData()?.invoke(viewLifecycleOwner)
+        observeEvents(this, viewModels)
     }
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chuthi.borrowoke.base.BaseFragment
@@ -32,7 +33,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private lateinit var userPagingAdapter: UserPagingAdapter
 
-    private val mainViewModel: MainViewModel by activityViewModels ()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override val viewModel: HomeViewModel by viewModel()
 
@@ -62,12 +63,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 v.navigateTo(action)
             }
 
-            tvCounter.onSafeClick { v ->
-               /* val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(
-                    profileTitle = R.string.home_to_profile
-                )
-                v.navigateTo(action)*/
+            tvCounter.onSafeClick {
+                /* val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(
+                     profileTitle = R.string.home_to_profile
+                 )
+                 v.navigateTo(action)*/
                 mainViewModel.setSharedData(tvCounter.text.toString())
+            }
+
+            tvAnimation.onSafeClick {
+                val action = HomeFragmentDirections.actionHomeFragmentToAnimationFragment()
+                it.navigateTo(action)
             }
         }
         setupRecyclerView()
@@ -77,7 +83,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewModel.run {
 
             getFlowDataLasted(mainViewModel.sharedData) {
-                showToast("shared: $it")
+                //showToast("shared: $it")
             }
             binding.run {
                 getFlowDataLasted(counter) {
@@ -108,7 +114,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }*/
             }
         }
+    }
 
+    override fun observeLiveData(): (LifecycleOwner.() -> Unit) = {
         // observe back stack
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("key")
             ?.observe(

@@ -27,7 +27,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * Use the [NewsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewModel>() {
+open class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewModel>() {
 
     private lateinit var breakingNewsAdapter: BreakingNewsAdapter
 
@@ -96,11 +96,6 @@ class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewModel>() 
                 adapter = breakingNewsAdapter
             }
         }
-    }
-
-    override fun handleFragmentBackPressed() {
-        val animationFragmentKey = FragmentResultKey.AnimationFragmentKey()
-        animationFragmentKey.setNewsVisibilityResult(this, false)
     }
 
     override fun showLoading() {

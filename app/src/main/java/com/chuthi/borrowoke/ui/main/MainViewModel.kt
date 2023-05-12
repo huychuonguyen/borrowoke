@@ -64,14 +64,13 @@ class MainViewModel : BaseViewModel() {
 
 
 
-            delay(2000)
             // test error with dynamic string
-            commonError.emit(
+           /* commonError.emit(
                 CommonError.NormalError(
                     message = UiText.Empty,
                     code = 1995
                 )
-            )
+            )*/
             /*showLoading()
             delay(2000)
             hideLoading()*/

@@ -16,6 +16,7 @@ import com.chuthi.borrowoke.ext.setPercent
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ext.toggleSlideUpDown
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
+import com.chuthi.borrowoke.ui.news.ChildNewsFragment
 import com.chuthi.borrowoke.ui.news.NewsFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -50,13 +51,11 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
     override fun onArgumentsSaved(arguments: Bundle?) {
     }
 
-    override fun handleFragmentBackPressed() {
+    /*override fun handleFragmentBackPressed(): (() -> Unit) = {
         val alreadyNews = childFragmentManager.findFragmentByTag(NewsFragment.TAG)
         if (alreadyNews == null) super.handleFragmentBackPressed()
-        else {
-            childFragmentManager.popBackStack()
-        }
-    }
+        else childFragmentManager.popBackStack()
+    }*/
 
     private fun handleCallbacks() {
         onChildFragmentResult(
@@ -79,32 +78,32 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
 
     private fun toggleNews(visible: Boolean) {
         binding.run {
-             visible.let { visibility ->
-                 when (visibility) {
-                     false -> {
-                         glBetween.setPercent(1f)
-                         frContents.toggleSlideUpDown(View.GONE, onStart = {
-                             childFragmentManager.popBackStack()
-                         })
-                     }
+            visible.let { visibility ->
+                when (visibility) {
+                    false -> {
+                        glBetween.setPercent(1f)
+                        frContents.toggleSlideUpDown(View.GONE, onStart = {
+                            childFragmentManager.popBackStack()
+                        })
+                    }
 
-                     else -> {
-                         glBetween.setPercent(0.33f)
-                         frContents.toggleSlideUpDown(View.VISIBLE, onStart = {
-                             addNewsContents()
-                         })
-                     }
-                 }
-             }
-         }
+                    else -> {
+                        glBetween.setPercent(0.33f)
+                        frContents.toggleSlideUpDown(View.VISIBLE, onStart = {
+                            addNewsContents()
+                        })
+                    }
+                }
+            }
+        }
     }
 
     private fun addNewsContents() {
-        val newsFragment = NewsFragment.newInstance()
+        val newsFragment = ChildNewsFragment.newInstance()
         childFragmentManager.replaceFragment(
             containerId = binding.frContents.id,
             fragment = newsFragment,
-            tag = NewsFragment.TAG,
+            tag = ChildNewsFragment.TAG,
             isAddToBackStack = true
         )
     }

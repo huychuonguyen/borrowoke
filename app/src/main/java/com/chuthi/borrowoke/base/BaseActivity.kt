@@ -8,13 +8,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
+import com.chuthi.borrowoke.base.interfaces.LifecycleObserverActivity
 import com.chuthi.borrowoke.ext.getFlowData
 import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.getLiveData
-import com.chuthi.borrowoke.ext.repeatOnLifecycle
-import com.chuthi.borrowoke.ext.showToast
-import com.chuthi.borrowoke.other.enums.HttpError
-import com.chuthi.borrowoke.other.enums.asString
 import com.chuthi.borrowoke.ui.dialog.LoadingDialog
 import kotlinx.coroutines.CoroutineScope
 
@@ -27,9 +24,11 @@ import kotlinx.coroutines.CoroutineScope
 abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     LifecycleObserverActivity() {
 
-    private lateinit var _binding: VB
-    protected val binding: VB
-        get() = _binding
+    protected val binding by lazy {
+        getViewBinding()
+    }
+
+    abstract fun getViewBinding(): VB
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -64,8 +63,6 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
 
     open fun onArgumentsSaved(arguments: Bundle?) {}
 
-    protected abstract fun getViewBinding(): VB
-
     /**
      * - Attach other viewModels if activity have more one viewModel
      * besides the main [viewModel] variable.
@@ -75,17 +72,19 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
 
     abstract fun setupUI()
 
+    /*    */
     /**
      * - Use [getFlowData] or [getFlowDataLasted] extension
      * to observe FlowData on here.
-     */
+     *//*
     open fun observeFlowData(): (CoroutineScope.() -> Unit)? = null
 
+    */
     /**
      * Use [getLiveData] extension
      * to observe LiveData on here.
-     */
-    open fun observeLiveData(): (LifecycleOwner.() -> Unit)? = null
+     *//*
+    open fun observeLiveData(): (LifecycleOwner.() -> Unit)? = null*/
 
     /**
      * Override this method to handle on back pressed new api
@@ -97,7 +96,6 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerLifecycleOwner(this)
-        _binding = getViewBinding()
         // raise arguments saved callback
         onArgumentsSaved(intent?.extras)
         // set layout id
@@ -129,7 +127,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         _loadingDialog = LoadingDialog()
     }
 
-    fun showLoading() {
+    override fun showLoading() {
         val dialogAlreadyShown =
             supportFragmentManager.findFragmentByTag(LoadingDialog.TAG)
                     as? LoadingDialog
@@ -154,7 +152,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         }
     }
 
-    fun hideLoading() {
+    override fun hideLoading() {
         _loadingDialog?.let { dialog ->
             if (dialog.isAdded)
                 dialog.dismiss()
@@ -166,34 +164,8 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
      */
     private fun observeData() {
         val viewModels = getViewModels().plus(viewModel).distinct()
-        repeatOnLifecycle {
-            //  observe loading, error on each viewModel
-            viewModels.forEach { viewModel ->
-                viewModel?.run {
-                    // observe loading
-                    getFlowDataLasted(isLoading) { isLoading ->
-                        if (isLoading) showLoading()
-                        else hideLoading()
-                    }
-                    // observe error
-                    getFlowData(error) { commonError ->
-                        val errorMess = commonError.message.asString(this@BaseActivity)
-                        when (commonError) {
-                            is HttpError.Unauthorized401 -> {
-                                // open authentication activity
-                                //openActivity(targetActivity = AuthenticationActivity::class.java)
-                            }
-
-                            else -> showToast(errorMess)
-                        }
-                    }
-                }
-            }
-            // raise observe FlowData on coroutine
-            observeFlowData()?.invoke(this)
-        }
-        // raise observe LiveData
-        observeLiveData()?.invoke(this)
+        //  observe loading, error on each viewModel
+        observeEvents(this@BaseActivity, viewModels)
     }
 
     /**
