@@ -52,6 +52,21 @@ fun <Key : FragmentResultKey> Fragment.onFragmentResult(
 }
 
 /**
+ * Retrieve result between fragments on NavHostFragment
+ */
+fun <Key : FragmentResultKey> Fragment.onNavFragmentResult(
+    requestKey: Key,
+    callback: (Key, Bundle) -> Unit
+) {
+    // Re-use onFragmentResultListener extension of Activity
+    parentFragmentManager.onFragmentResult(
+        lifecycleOwner = viewLifecycleOwner,
+        requestKey = requestKey,
+        callback = callback
+    )
+}
+
+/**
  * onChildFragmentResultListener.
  * - Set result callback for fragment
  * based on Fragment.childFragmentManager.

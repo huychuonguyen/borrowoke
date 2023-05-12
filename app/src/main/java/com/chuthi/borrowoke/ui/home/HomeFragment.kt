@@ -12,11 +12,15 @@ import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentHomeBinding
 import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.navigateTo
+import com.chuthi.borrowoke.ext.onChildFragmentResult
+import com.chuthi.borrowoke.ext.onFragmentResult
+import com.chuthi.borrowoke.ext.onNavFragmentResult
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.NO_DELAY_CLICK_INTERVAL
 import com.chuthi.borrowoke.other.adapters.normal.UserAdapter
 import com.chuthi.borrowoke.other.adapters.paging.UserPagingAdapter
+import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -77,6 +81,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         }
         setupRecyclerView()
+
+        handleCallbacks()
+    }
+
+    private fun handleCallbacks() {
+        val requestKey = FragmentResultKey.AnimationFragmentKey()
+        onNavFragmentResult(requestKey) { key, bundle ->
+            key.onArticleResult(bundle) {
+                showToast("From News BackPressed")
+            }
+        }
     }
 
     override fun observeFlowData(): CoroutineScope.() -> Unit = {
@@ -126,6 +141,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 // (it means from press system Back button)
                 showToast("backStack: ${it ?: ""}")
             }
+    }
+
+    override fun handleFragmentBackPressed(): (() -> Unit) = {
+        // return empty unit to prevent back pressed
+        showToast(this::class.simpleName)
     }
 
     private fun setupRecyclerView() {

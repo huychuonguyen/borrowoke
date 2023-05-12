@@ -17,7 +17,6 @@ import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ext.toggleSlideUpDown
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.ui.news.ChildNewsFragment
-import com.chuthi.borrowoke.ui.news.NewsFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -50,12 +49,6 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
 
     override fun onArgumentsSaved(arguments: Bundle?) {
     }
-
-    /*override fun handleFragmentBackPressed(): (() -> Unit) = {
-        val alreadyNews = childFragmentManager.findFragmentByTag(NewsFragment.TAG)
-        if (alreadyNews == null) super.handleFragmentBackPressed()
-        else childFragmentManager.popBackStack()
-    }*/
 
     private fun handleCallbacks() {
         onChildFragmentResult(
