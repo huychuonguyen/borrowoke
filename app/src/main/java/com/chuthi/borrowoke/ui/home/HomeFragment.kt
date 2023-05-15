@@ -12,9 +12,7 @@ import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentHomeBinding
 import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.navigateTo
-import com.chuthi.borrowoke.ext.onChildFragmentResult
-import com.chuthi.borrowoke.ext.onFragmentResult
-import com.chuthi.borrowoke.ext.onNavFragmentResult
+import com.chuthi.borrowoke.ext.onParentFragmentResult
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.NO_DELAY_CLICK_INTERVAL
@@ -87,7 +85,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun handleCallbacks() {
         val requestKey = FragmentResultKey.AnimationFragmentKey()
-        onNavFragmentResult(requestKey) { key, bundle ->
+        onParentFragmentResult(requestKey) { key, bundle ->
             key.onArticleResult(bundle) {
                 showToast("From News BackPressed")
             }

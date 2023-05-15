@@ -13,10 +13,10 @@ import com.chuthi.borrowoke.ext.onChildFragmentResult
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.replaceFragment
 import com.chuthi.borrowoke.ext.setPercent
-import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ext.toggleSlideUpDown
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
-import com.chuthi.borrowoke.ui.news.ChildNewsFragment
+import com.chuthi.borrowoke.other.enums.asString
+import com.chuthi.borrowoke.ui.dog.DogFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -34,7 +34,7 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
         binding.run {
             lnTitle.onSafeClick {
                 val isVisible = frContents.visibility != View.VISIBLE
-                viewModel.setVisibleNews(isVisible)
+                viewModel.setVisibleContent(isVisible)
             }
         }
 
@@ -42,9 +42,16 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
     }
 
     override fun observeLiveData(): (LifecycleOwner.() -> Unit) = {
-        getLiveData(viewModel.newsVisibility) { visible ->
-            toggleNews(visible)
+        viewModel.run {
+            getLiveData(contentVisibility) { visible ->
+                toggleNews(visible)
+            }
+
+            getLiveData(manualText) {
+                binding.tvTitle.text = it.asString(context)
+            }
         }
+
     }
 
     override fun onArgumentsSaved(arguments: Bundle?) {
@@ -52,19 +59,12 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
 
     private fun handleCallbacks() {
         onChildFragmentResult(
-            requestKey = FragmentResultKey.AnimationFragmentKey()
+            requestKey = FragmentResultKey.DogFragmentKey()
         ) { key, bundle ->
             // visible news
-            key.onNewsVisible(bundle) { isVisible ->
-                if (isVisible != viewModel.newsVisibility.value)
-                    viewModel.setVisibleNews(isVisible)
-            }
-            // article
-            key.onArticleResult(bundle) { article ->
-                // hide news
-                viewModel.setVisibleNews(false)
-                val description = article.description ?: "No-desc"
-                showToast(description)
+            key.onVisible(bundle) { isVisible ->
+                if (isVisible != viewModel.contentVisibility.value)
+                    viewModel.setVisibleContent(isVisible)
             }
         }
     }
@@ -83,7 +83,7 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
                     else -> {
                         glBetween.setPercent(0.33f)
                         frContents.toggleSlideUpDown(View.VISIBLE, onStart = {
-                            addNewsContents()
+                            addDogContents()
                         })
                     }
                 }
@@ -91,12 +91,12 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
         }
     }
 
-    private fun addNewsContents() {
-        val newsFragment = ChildNewsFragment.newInstance()
+    private fun addDogContents() {
+        val newsFragment = DogFragment.newInstance()
         childFragmentManager.replaceFragment(
             containerId = binding.frContents.id,
             fragment = newsFragment,
-            tag = ChildNewsFragment.TAG,
+            tag = DogFragment.TAG,
             isAddToBackStack = true
         )
     }

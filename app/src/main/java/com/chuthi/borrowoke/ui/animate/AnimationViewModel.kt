@@ -1,28 +1,23 @@
 package com.chuthi.borrowoke.ui.animate
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.map
+import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseViewModel
-import com.chuthi.borrowoke.ext.launchViewModelScope
-import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.UiText
-import kotlinx.coroutines.delay
 
 class AnimationViewModel(private val savedStateHandle: SavedStateHandle) : BaseViewModel() {
 
-    init {
-        launchViewModelScope {
-            delay(2000)
-            commonError.emit(
-                CommonError.NormalError(UiText.DynamicString("Má nó"),0)
-            )
-        }
+    val contentVisibility = savedStateHandle.getLiveData(CONTENT_VISIBLE_KEY, false)
+
+    val manualText = contentVisibility.map {
+        if (!it) UiText.StringResource(R.string.tap_sam_to_see_dogs)
+        else UiText.StringResource(R.string.tap_sam_to_hide_dogs)
     }
 
-    val newsVisibility = savedStateHandle.getLiveData(NEWS_VISIBLE_KEY, false)
-
-    fun setVisibleNews(visible: Boolean) = savedStateHandle.set(NEWS_VISIBLE_KEY, visible)
+    fun setVisibleContent(visible: Boolean) = savedStateHandle.set(CONTENT_VISIBLE_KEY, visible)
 
     companion object {
-        private const val NEWS_VISIBLE_KEY = "NEWS_VISIBLE_KEY"
+        private const val CONTENT_VISIBLE_KEY = "NEWS_VISIBLE_KEY"
     }
 }

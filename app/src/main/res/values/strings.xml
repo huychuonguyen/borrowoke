@@ -18,10 +18,12 @@
     <string name="channel_human_readable_title">Channel human readable title</string>
     <string name="authentication">Authentication</string>
     <string name="open">Open</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="animation_fragment">Animation Fragment</string>
     <string name="medal_play_nothing">Medal không có chơi đồ</string>
     <string name="increase_second">increase second</string>
     <string name="increase_first">increase first</string>
+    <string name="dogs">Dogs</string>
+    <string name="wait_a_sec">Mấy con chó are coming…</string>
+    <string name="tap_sam_to_see_dogs">Click Sam to see dogs</string>
+    <string name="tap_sam_to_hide_dogs">Click Sam to hide dogs</string>
 </resources>

@@ -56,4 +56,21 @@ sealed class FragmentResultKey(val requestKey: String) {
             private const val ARTICLE_KEY = "ARTICLE_KEY"
         }
     }
+
+    class DogFragmentKey : FragmentResultKey(REQUEST_KEY) {
+
+        fun setVisibilityResult(fragment: Fragment, visible: Boolean) =
+            setResultData(fragment, VISIBILITY_DOG_KEY, visible)
+
+        fun onVisible(bundle: Bundle, callback: (Boolean) -> Unit) {
+            val isVisible = bundle.getData<Boolean>(VISIBILITY_DOG_KEY)
+            isVisible ?: return
+            callback.invoke(isVisible)
+        }
+
+        companion object {
+            private const val REQUEST_KEY = "DOG_FRAGMENT_KEY"
+            private const val VISIBILITY_DOG_KEY = "VISIBILITY_DOG_KEY"
+        }
+    }
 }

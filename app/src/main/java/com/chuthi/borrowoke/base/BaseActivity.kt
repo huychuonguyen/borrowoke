@@ -9,9 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import com.chuthi.borrowoke.base.interfaces.LifecycleObserverActivity
-import com.chuthi.borrowoke.ext.getFlowData
-import com.chuthi.borrowoke.ext.getFlowDataLasted
-import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ui.dialog.LoadingDialog
 import kotlinx.coroutines.CoroutineScope
 
@@ -72,19 +69,6 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
 
     abstract fun setupUI()
 
-    /*    */
-    /**
-     * - Use [getFlowData] or [getFlowDataLasted] extension
-     * to observe FlowData on here.
-     *//*
-    open fun observeFlowData(): (CoroutineScope.() -> Unit)? = null
-
-    */
-    /**
-     * Use [getLiveData] extension
-     * to observe LiveData on here.
-     *//*
-    open fun observeLiveData(): (LifecycleOwner.() -> Unit)? = null*/
 
     /**
      * Override this method to handle on back pressed new api
@@ -165,7 +149,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     private fun observeData() {
         val viewModels = getViewModels().plus(viewModel).distinct()
         //  observe loading, error on each viewModel
-        observeEvents(this@BaseActivity, viewModels)
+        observeData(this@BaseActivity, viewModels)
     }
 
     /**

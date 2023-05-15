@@ -9,13 +9,24 @@ import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.ext.getFlowData
 import com.chuthi.borrowoke.ext.getFlowDataLasted
 import com.chuthi.borrowoke.ext.getLiveData
-import com.chuthi.borrowoke.ext.repeatOnLifecycle
+import com.chuthi.borrowoke.ext.repeatOnLifeCycle
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.HttpError
 import com.chuthi.borrowoke.other.enums.asString
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * - The interface with common data handling and ui event.
+ * - Include abstract methods:
+ *      - showLoading
+ *      - hideLoading
+ *      - observeEvents
+ *      - observeFlowData
+ *      - observeLiveData
+ *      - handleError
+ *      - ...
+ */
 interface IDataObserver {
 
     fun showLoading()
@@ -34,34 +45,44 @@ interface IDataObserver {
      */
     fun observeLiveData(): (LifecycleOwner.() -> Unit)? = null
 
-    fun observeEvents(
-        activity: BaseActivity<*, *>,
-        viewModels: List<BaseViewModel?>
-    ) {
-        activity.run {
-            repeatOnLifecycle {
-                handleEvents(activity, viewModels, this)
+    /**
+     * Observe viewModel data on lifecycle of [view].
+     * @param view the view contains [Context] and [LifecycleOwner].
+     * @param viewModels list of [BaseViewModel] contains data (Flow data, Live data) to be observed.
+     */
+    fun <T, VM : BaseViewModel> observeData(view: T, viewModels: List<VM?>) {
+        // get context and lifecycle owner
+        val (context, lifeCycleOwner) = when (view) {
+            is BaseActivity<*, *> -> {
+                Pair(view, view)
+            }
+
+            is BaseFragment<*, *> -> {
+                Pair(view.context, view.viewLifecycleOwner)
+            }
+            // return null if not Activity or Fragment
+            else -> Pair(null, null)
+        }
+        // return when null
+        context ?: return
+        lifeCycleOwner ?: return
+
+        // observe events
+        lifeCycleOwner.run {
+            // handle FlowData
+            repeatOnLifeCycle {
+                handleEvents(context, viewModels, this)
+                // raise observe FlowData on coroutine
+                observeFlowData()?.invoke(this)
             }
             // raise observe LiveData
             observeLiveData()?.invoke(this)
         }
     }
 
-    fun observeEvents(
-        fragment: BaseFragment<*, *>,
-        viewModels: List<BaseViewModel?>
-    ) {
-        fragment.run {
-            repeatOnLifecycle {
-                context?.let { activity ->
-                    handleEvents(activity, viewModels, this)
-                }
-            }
-            // raise observe LiveData
-            observeLiveData()?.invoke(viewLifecycleOwner)
-        }
-    }
-
+    /**
+     * Handle FlowData on lifecycle with coroutine.
+     */
     private fun handleEvents(
         context: Context,
         viewModels: List<BaseViewModel?>,
@@ -81,11 +102,12 @@ interface IDataObserver {
                     }
                 }
             }
-            // raise observe FlowData on coroutine
-            observeFlowData()?.invoke(this)
         }
     }
 
+    /**
+     * Handle error.
+     */
     private fun handleError(context: Context?, error: CommonError) {
         (context as? AppCompatActivity)?.run {
             val errorMess = error.message.asString(this)

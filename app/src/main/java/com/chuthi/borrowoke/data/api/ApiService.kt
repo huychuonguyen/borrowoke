@@ -1,5 +1,6 @@
 package com.chuthi.borrowoke.data.api
 
+import com.chuthi.borrowoke.data.model.response.DogResponse
 import com.chuthi.borrowoke.data.model.response.NewsResponse
 import com.chuthi.borrowoke.other.API_KEY
 import retrofit2.Response
@@ -17,4 +18,15 @@ interface ApiService {
         @Query("apiKey")
         apiKey: String = API_KEY
     ): Response<NewsResponse>
+
+    @GET("v1/images/search")
+    suspend fun getDogs(
+        @Query("size")
+        size: String = "small",
+        @Query("page")
+        pageNumber: Int = 1,
+        @Query("limit")
+        limit: Int = 25
+    ): Response<List<DogResponse>>
+
 }

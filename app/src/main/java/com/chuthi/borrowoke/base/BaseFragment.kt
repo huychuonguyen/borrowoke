@@ -48,7 +48,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObs
 
     /**
      * Override this method to custom fragment back pressed.
-     * Default action is raise activity's popBackStack
+     * Default action is null -> system back pressed.
      */
     open fun handleFragmentBackPressed(): (() -> Unit)? = null
 
@@ -99,7 +99,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObs
     }
 
     /**
-     * Register fragment back pressed
+     * Register fragment back pressed.
      */
     private fun registerFragmentBackPressed() {
         handleFragmentBackPressed()?.run {
@@ -142,6 +142,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObs
      */
     private fun observeData() {
         val viewModels = getViewModels().plus(viewModel).distinct()
-        observeEvents(this, viewModels)
+        //  observe loading, error on each viewModel
+        observeData(this, viewModels)
     }
 }

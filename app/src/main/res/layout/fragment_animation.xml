@@ -21,13 +21,25 @@
         tools:ignore="UseCompoundDrawables">
 
         <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_10dp"
             android:text="@string/animation_fragment"
             android:textColor="@color/black"
-            android:textSize="@dimen/_18sp"
+            android:textSize="@dimen/_20sp"
             android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/tvManual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30dp"
+            android:textAlignment="center"
+            android:textStyle="italic"
+            android:visibility="gone"
+            tools:text="@string/tap_sam_to_see_dogs" />
 
         <ImageView
             android:layout_width="match_parent"

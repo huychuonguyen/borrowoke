@@ -20,6 +20,7 @@ class NewsViewModel(
     init {
         getBreakingNews()
     }
+
     /**
      * Get articles of breaking news
      */

@@ -18,26 +18,12 @@ import kotlinx.coroutines.launch
 fun Fragment.showToast(mess: String? = null, isLengthLong: Boolean = false) =
     (context as? BaseActivity<*, *>)?.showToast(mess, isLengthLong)
 
-/**
- * repeatOnLifecycle extension
- * based on lifeCycle's [CoroutineScope] of viewLifecycleOwner
- */
-fun Fragment.repeatOnLifecycle(
-    action: CoroutineScope.() -> Unit
-) {
-    viewLifecycleOwner.lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            action.invoke(this)
-        }
-    }
-}
-
 
 // region Fragment Result
 /**
  * onFragmentResultListener.
  * - Set result callback for fragment
- * based on AppcompatActivity.supportFragmentManager
+ * based on AppCompatActivity.supportFragmentManager
  * @param requestKey the request key, type of [FragmentResultKey]
  * @param callback result with [Key] and [Bundle]
  */
@@ -54,7 +40,7 @@ fun <Key : FragmentResultKey> Fragment.onFragmentResult(
 /**
  * Retrieve result between fragments on NavHostFragment
  */
-fun <Key : FragmentResultKey> Fragment.onNavFragmentResult(
+fun <Key : FragmentResultKey> Fragment.onParentFragmentResult(
     requestKey: Key,
     callback: (Key, Bundle) -> Unit
 ) {

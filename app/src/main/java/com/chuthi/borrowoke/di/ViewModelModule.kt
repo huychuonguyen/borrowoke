@@ -1,6 +1,7 @@
 package com.chuthi.borrowoke.di
 
 import com.chuthi.borrowoke.ui.animate.AnimationViewModel
+import com.chuthi.borrowoke.ui.dog.DogViewModel
 import com.chuthi.borrowoke.ui.home.HomeViewModel
 import com.chuthi.borrowoke.ui.main.MainViewModel
 import com.chuthi.borrowoke.ui.news.NewsViewModel
@@ -16,4 +17,5 @@ val viewModelModule = module {
     viewModel { HomeViewModel(get(), get(), get()) }
     viewModel { NewsViewModel(get()) }
     viewModel { AnimationViewModel(get()) }
+    viewModel { DogViewModel(get()) }
 }
