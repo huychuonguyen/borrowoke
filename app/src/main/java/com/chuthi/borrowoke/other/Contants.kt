@@ -5,10 +5,12 @@ import com.chuthi.borrowoke.BuildConfig
 const val APP_DATABASE_NAME = "${BuildConfig.APPLICATION_ID}_db"
 
 const val API_KEY = "6953a7421bb749c589e687746c85eee8"
-const val BASE_URL = "https://api.thedogapi.com"
+const val OPENAI_API_KEY = "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"
+//const val BASE_URL = "https://api.openai.com"
+const val BASE_URL ="https://api.thedogapi.com"
 
 // doggo api
-const val DOGGO_API_KEY =  "live_atVDl6gK4THphS192DTforoviHnKIVATf8sFzgOWAkr1uX8UvUEMtNnH9zZraLXP"
+const val DOGGO_API_KEY = "live_atVDl6gK4THphS192DTforoviHnKIVATf8sFzgOWAkr1uX8UvUEMtNnH9zZraLXP"
 
 const val NOTIFICATION_GROUP_ID = 9373
 const val NOTIFICATION_GROUP_KEY = BuildConfig.APPLICATION_ID

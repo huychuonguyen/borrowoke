@@ -1,6 +1,5 @@
 package com.chuthi.borrowoke.ui.dog
 
-import androidx.lifecycle.asLiveData
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.data.model.response.DogResponse
 import com.chuthi.borrowoke.data.repo.DogRepo
@@ -13,7 +12,6 @@ class DogViewModel(private val dogRepo: DogRepo) : BaseViewModel() {
 
     private val _dogs = MutableStateFlow<List<DogResponse>>(emptyList())
     val dog = _dogs.asStateFlow()
-
 
     init {
         getDogs()

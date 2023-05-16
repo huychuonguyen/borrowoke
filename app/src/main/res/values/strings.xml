@@ -26,4 +26,6 @@
     <string name="wait_a_sec">Mấy con chó are coming…</string>
     <string name="tap_sam_to_see_dogs">Click Sam to see dogs</string>
     <string name="tap_sam_to_hide_dogs">Click Sam to hide dogs</string>
+    <string name="gumi_demo_chatgpt">Gumi-Demo-ChatGPT</string>
+    <string name="your_question">Your question…</string>
 </resources>

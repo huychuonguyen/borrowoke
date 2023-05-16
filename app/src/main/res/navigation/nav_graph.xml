@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/animationFragment">
+    app:startDestination="@id/chatFragment">
 
 
     <action
@@ -72,5 +72,10 @@
         android:name="com.chuthi.borrowoke.ui.dog.DogFragment"
         android:label="fragment_dog"
         tools:layout="@layout/fragment_dog" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.chuthi.borrowoke.ui.chat.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 
 </navigation>

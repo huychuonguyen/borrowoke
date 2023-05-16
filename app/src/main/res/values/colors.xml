@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="background">#F1EFF2</color>
 
-    <color name="color_button_effect">#1A85BEF8</color>
+    <color name="color_button_effect"><!--#1A85BEF8 -->#FFBB86FC</color>
 
 
     <color name="purple200">#FFBB86FC</color>
@@ -188,4 +188,6 @@
 
     <color name="hashtagBackground">#D2D0D0</color>
     <color name="color_loading">#000000</color>
+
+    <color name="color_chat">@color/grey150</color>
 </resources>

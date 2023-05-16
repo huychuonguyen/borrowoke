@@ -30,9 +30,9 @@ fun View.onSafeClick(
     }
     setOnClickListener(safeClickListener)
     // set background effect
-    background ?: run {
-        background = ContextCompat.getDrawable(context, R.drawable.bg_click)
-    }
+    //background ?: run {
+    background = ContextCompat.getDrawable(context, R.drawable.bg_click)
+    //}
 }
 
 fun View.showSnackBar(
@@ -65,6 +65,76 @@ fun View.toggleSlideUpDown(
     onFinish: () -> Unit = {}
 ) {
     val transition: Transition = Slide(Gravity.BOTTOM).apply {
+        this.duration = duration
+        addTarget(id)
+        addListener(object : TransitionListener {
+            override fun onTransitionStart(transition: Transition) {
+                onStart.invoke()
+            }
+
+            override fun onTransitionEnd(transition: Transition) {
+                onFinish.invoke()
+            }
+
+            override fun onTransitionCancel(transition: Transition) {
+                onFinish.invoke()
+            }
+
+            override fun onTransitionPause(transition: Transition) {
+            }
+
+            override fun onTransitionResume(transition: Transition) {
+            }
+        })
+    }
+    TransitionManager.beginDelayedTransition(
+        parent as ViewGroup, transition
+    )
+    setVisibility(visibility)
+}
+
+fun View.toggleSlideEndStart(
+    visibility: Int,
+    duration: Long = 300L,
+    onStart: () -> Unit = {},
+    onFinish: () -> Unit = {}
+) {
+    val transition: Transition = Slide(Gravity.END).apply {
+        this.duration = duration
+        addTarget(id)
+        addListener(object : TransitionListener {
+            override fun onTransitionStart(transition: Transition) {
+                onStart.invoke()
+            }
+
+            override fun onTransitionEnd(transition: Transition) {
+                onFinish.invoke()
+            }
+
+            override fun onTransitionCancel(transition: Transition) {
+                onFinish.invoke()
+            }
+
+            override fun onTransitionPause(transition: Transition) {
+            }
+
+            override fun onTransitionResume(transition: Transition) {
+            }
+        })
+    }
+    TransitionManager.beginDelayedTransition(
+        parent as ViewGroup, transition
+    )
+    setVisibility(visibility)
+}
+
+fun View.toggleSlideStartEnd(
+    visibility: Int,
+    duration: Long = 300L,
+    onStart: () -> Unit = {},
+    onFinish: () -> Unit = {}
+) {
+    val transition: Transition = Slide(Gravity.START).apply {
         this.duration = duration
         addTarget(id)
         addListener(object : TransitionListener {

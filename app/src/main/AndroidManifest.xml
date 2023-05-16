@@ -23,7 +23,8 @@
         <activity
             android:name="com.chuthi.borrowoke.ui.main.MainActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden">   <!--"adjustResize|stateHidden" to put keyboard behind the screen-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
