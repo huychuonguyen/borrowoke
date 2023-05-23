@@ -58,3 +58,9 @@ fun AppCompatActivity.openBrowser(url: String, onError: (String) -> Unit = {}) {
         onError.invoke(error.message.toString())
     }
 }
+
+fun AppCompatActivity.backToSystemHome() = Intent(Intent.ACTION_MAIN).let { startMain ->
+    startMain.addCategory(Intent.CATEGORY_HOME)
+    startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    startActivity(startMain)
+}

@@ -6,6 +6,7 @@ import android.util.Log
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.data.model.AuthModel
 import com.chuthi.borrowoke.databinding.ActivityMainBinding
+import com.chuthi.borrowoke.ext.backToSystemHome
 import com.chuthi.borrowoke.ext.getData
 import com.chuthi.borrowoke.ext.putData
 import com.chuthi.borrowoke.ext.showToast
@@ -13,6 +14,7 @@ import com.chuthi.borrowoke.ui.auth.AuthenticationActivity
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
@@ -80,6 +82,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
          }*/
     }
 
+    override fun handleOnBackPressed() = backToSystemHome()
+
     private fun getFcmToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) task.result?.let {
@@ -88,4 +92,5 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             }
         }
     }
+
 }

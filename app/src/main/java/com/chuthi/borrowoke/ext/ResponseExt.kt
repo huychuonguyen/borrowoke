@@ -1,6 +1,7 @@
 package com.chuthi.borrowoke.ext
 
-import com.chuthi.borrowoke.util.ApiResponse
+import com.chuthi.borrowoke.other.NETWORK_ERROR_CODE
+import com.chuthi.borrowoke.other.enums.ApiResponse
 import retrofit2.Response
 
 /**
@@ -38,10 +39,13 @@ suspend fun <T> Response<T>.apiCall(
         val errorCode = code()
         val errorMess = errorBody()?.toString()
         onError.invoke(
-            ApiResponse.Error(
-                message = errorMess ?: "Response exception",
-                errorCode = errorCode
-            )
+            when (errorCode) {
+                NETWORK_ERROR_CODE -> ApiResponse.NetworkError()
+                else -> ApiResponse.Error(
+                    message = errorMess ?: "Response exception",
+                    errorCode = errorCode
+                )
+            }
         )
         // raise finish
         onFinished.invoke()

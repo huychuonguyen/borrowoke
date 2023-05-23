@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_10dp"
+    android:background="@color/transparent"
+    android:backgroundTint="@color/almost_transparent"
+    android:padding="@dimen/_2dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/tvMessageDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_12sp"
+            android:visibility="gone"
+            tools:text="Assistant - 2023/05/16" />
+
+
+        <TextView
+            android:id="@+id/tvContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/_2dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sp"
+            tools:text="Hello! How are you today?" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvContent"
+            android:layout_width="@dimen/_160dp"
+            android:layout_height="@dimen/_160dp"
+            android:background="@color/transparent"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/transparent"
+            app:cardCornerRadius="@dimen/_10dp"
+            app:cardElevation="@dimen/_0dp"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/ivContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_pig"
+                tools:ignore="ContentDescription" />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

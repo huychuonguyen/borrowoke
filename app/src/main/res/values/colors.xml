@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="background">#F1EFF2</color>
 
-    <color name="color_button_effect"><!--#1A85BEF8 -->#FFBB86FC</color>
+    <color name="color_button_effect">#1A85BEF8</color>
 
 
     <color name="purple200">#FFBB86FC</color>
@@ -120,6 +120,7 @@
     <color name="grey93">#9EA3AE</color>
     <color name="blue">#3897F0</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="almost_transparent">#03000000</color>
     <color name="grey650">#9F9F9F</color>
     <color name="black700_50">#8022172A</color>
     <color name="grey260">#FAFAFA</color>
@@ -187,7 +188,10 @@
     <color name="icPressed">#AAFFFFFF</color>
 
     <color name="hashtagBackground">#D2D0D0</color>
-    <color name="color_loading">#000000</color>
+    <color name="color_loading">@color/color_chat</color>
 
     <color name="color_chat">@color/grey150</color>
+    <color name="chat_input_color">#E9E0E0</color>
+    <color name="user_message_color">@color/grey80</color>
+    <color name="assistant_message_color">@color/grey210</color>
 </resources>

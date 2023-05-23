@@ -1,7 +1,10 @@
 package com.chuthi.borrowoke.data.api
 
 import com.chuthi.borrowoke.data.model.request.ChatGptRequest
+import com.chuthi.borrowoke.data.model.request.GptCompletionRequest
+import com.chuthi.borrowoke.data.model.response.ChatGptResponse
 import com.chuthi.borrowoke.data.model.response.DogResponse
+import com.chuthi.borrowoke.data.model.response.GptCompletionResponse
 import com.chuthi.borrowoke.data.model.response.NewsResponse
 import com.chuthi.borrowoke.other.API_KEY
 import retrofit2.Response
@@ -35,8 +38,12 @@ interface ApiService {
     // chatGPT
     //@Headers("Content-Type: application/json")
     @POST("v1/chat/completions")
-    suspend fun chatGPTCompletions(
+    suspend fun gptChatCompletions(
         @Body request: ChatGptRequest
-    ): Response<Any>
+    ): Response<ChatGptResponse>
 
+    @POST("v1/completions")
+    suspend fun gptCompletions(
+        @Body request: GptCompletionRequest
+    ): Response<GptCompletionResponse>
 }

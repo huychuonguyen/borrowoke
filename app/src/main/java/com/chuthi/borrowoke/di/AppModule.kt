@@ -4,10 +4,12 @@ import androidx.room.Room
 import com.chuthi.borrowoke.BaseApp
 import com.chuthi.borrowoke.BuildConfig
 import com.chuthi.borrowoke.data.api.ApiService
+import com.chuthi.borrowoke.data.api.ConnectivityInterceptor
 import com.chuthi.borrowoke.data.api.HeaderInterceptor
 import com.chuthi.borrowoke.data.database.AppDatabase
 import com.chuthi.borrowoke.other.APP_DATABASE_NAME
 import com.chuthi.borrowoke.other.BASE_URL
+import com.chuthi.borrowoke.other.TIME_OUT
 import com.chuthi.borrowoke.util.provideService
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
@@ -16,6 +18,7 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 
 val appModule = module {
     // database
@@ -31,14 +34,20 @@ val appModule = module {
 }
 
 fun provideOkHttpClient(): OkHttpClient {
-    val logging = HttpLoggingInterceptor()
-    logging.level = if (BuildConfig.DEBUG)
-        HttpLoggingInterceptor.Level.BODY
-    else
-        HttpLoggingInterceptor.Level.NONE
+    val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = if (BuildConfig.DEBUG)
+            HttpLoggingInterceptor.Level.BODY
+        else
+            HttpLoggingInterceptor.Level.NONE
+    }
     return OkHttpClient.Builder()
-        .addInterceptor(logging)
+        .addInterceptor(loggingInterceptor)
         .addInterceptor(HeaderInterceptor())
+        //.addInterceptor(ConnectivityInterceptor())
+        .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
+        .readTimeout(TIME_OUT, TimeUnit.SECONDS)
+        .writeTimeout(TIME_OUT, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
         .build()
 }
 

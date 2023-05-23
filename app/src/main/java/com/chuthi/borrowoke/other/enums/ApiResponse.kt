@@ -1,11 +1,9 @@
-package com.chuthi.borrowoke.util
-
-import com.chuthi.borrowoke.base.BaseModel
+package com.chuthi.borrowoke.other.enums
 
 sealed class ApiResponse<T>(
     val data: T? = null,
-    val message: String? = null
-) : BaseModel() {
+    message: String? = null
+) : CommonError(UiText.DynamicString(message ?: "")) {
 
     class Success<T>(data: T) : ApiResponse<T>(data)
 

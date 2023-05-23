@@ -1,6 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.Borrowoke" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorControlHighlight">@color/color_button_effect</item>
         <!-- Primary brand color. -->
 
         <!-- Customize your theme here. -->

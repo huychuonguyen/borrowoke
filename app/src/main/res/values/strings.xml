@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sam Coffee</string>
+    <string name="app_name">Chat GumiT</string>
     <string name="surprise_old_woman">Bất ngờ chưa bà dà… !!!</string>
     <string name="default_notification_channel_id">1234566789</string>
     <string name="sam_coffee_uncle">Sam Coffee uncle</string>
@@ -27,5 +27,16 @@
     <string name="tap_sam_to_see_dogs">Click Sam to see dogs</string>
     <string name="tap_sam_to_hide_dogs">Click Sam to hide dogs</string>
     <string name="gumi_demo_chatgpt">Gumi-Demo-ChatGPT</string>
-    <string name="your_question">Your question…</string>
+    <string name="your_question">Ask me anything… 😊</string>
+    <string name="format_2_param">%1s - %2s</string>
+    <string name="loading">Loading…</string>
+    <string name="wait_for_assistant">Wait for assistant…</string>
+    <string name="assistant_can_not_response">Something wrong! Please try again… ☹️</string>
+    <string name="hope_the_answer_is_useful_to_you">Hope the answer is useful to you.</string>
+    <string name="punch_right">🤜</string>
+    <string name="punch_left">🤛</string>
+    <string name="reset_chat">Resetting chat…</string>
+    <string name="new_token">New tokens: %1d</string>
+    <string name="total_token">Total tokens: %1d</string>
+    <string name="cost_per_tokens">$%.3f</string>
 </resources>

@@ -1,7 +1,10 @@
 package com.chuthi.borrowoke.base
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -93,6 +96,17 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         // observe data
         observeData()
     }
+
+    open fun hideKeyboard() {
+        val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+
+        return super.dispatchTouchEvent(ev)
+    }
+
 
     fun addFragmentBackPressed(lifecycleOwner: LifecycleOwner, callback: OnBackPressedCallback) {
         onBackPressedDispatcher.addCallback(

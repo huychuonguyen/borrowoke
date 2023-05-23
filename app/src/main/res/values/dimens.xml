@@ -152,6 +152,7 @@
     <dimen name="_14_8dp">14.8dp</dimen>
     <dimen name="_20_5dp">20.5dp</dimen>
     <dimen name="_250dp">250.00dp</dimen>
+    <dimen name="_488dp">488.00dp</dimen>
     <!--    endregion dp -->
 
 
@@ -206,5 +207,6 @@
     <dimen name="viewpager_next_item_visible">30dp</dimen> <!-- default is 30 -->
     <dimen name="viewpager_current_item_horizontal_margin">42dp</dimen>
     <!-- endregion -->
+
 
 </resources>

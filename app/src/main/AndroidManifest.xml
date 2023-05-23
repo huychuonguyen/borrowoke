@@ -9,7 +9,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Borrowoke"
         tools:targetApi="tiramisu">
@@ -24,7 +24,7 @@
             android:name="com.chuthi.borrowoke.ui.main.MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize|stateHidden">   <!--"adjustResize|stateHidden" to put keyboard behind the screen-->
+            android:windowSoftInputMode="stateHidden|adjustResize">   <!--"adjustResize|stateHidden" to put keyboard behind the screen-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

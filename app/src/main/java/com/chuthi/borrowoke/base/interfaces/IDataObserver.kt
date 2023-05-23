@@ -112,13 +112,11 @@ interface IDataObserver {
         (context as? AppCompatActivity)?.run {
             val errorMess = error.message.asString(this)
             when (error) {
-                HttpError.Unauthorized401 -> {
+                is HttpError.Unauthorized401 -> {
 
                 }
 
-                else -> {
-                    showToast(errorMess)
-                }
+                else -> showToast(errorMess)
             }
         }
     }

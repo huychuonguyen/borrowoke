@@ -19,5 +19,5 @@ val viewModelModule = module {
     viewModel { NewsViewModel(get()) }
     viewModel { AnimationViewModel(get()) }
     viewModel { DogViewModel(get()) }
-    viewModel {ChatViewModel(get())}
+    viewModel { ChatViewModel(get(), get()) }
 }

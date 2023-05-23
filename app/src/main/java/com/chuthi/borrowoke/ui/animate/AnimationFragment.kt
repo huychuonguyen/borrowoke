@@ -13,7 +13,7 @@ import com.chuthi.borrowoke.ext.onChildFragmentResult
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.ext.replaceFragment
 import com.chuthi.borrowoke.ext.setPercent
-import com.chuthi.borrowoke.ext.toggleSlideUpDown
+import com.chuthi.borrowoke.ext.toggleSlide
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.other.enums.asString
 import com.chuthi.borrowoke.ui.dog.DogFragment
@@ -75,14 +75,14 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
                 when (visibility) {
                     false -> {
                         glBetween.setPercent(1f)
-                        frContents.toggleSlideUpDown(View.GONE, onStart = {
+                        frContents.toggleSlide(View.GONE, onStart = {
                             childFragmentManager.popBackStack()
                         })
                     }
 
                     else -> {
                         glBetween.setPercent(0.33f)
-                        frContents.toggleSlideUpDown(View.VISIBLE, onStart = {
+                        frContents.toggleSlide(View.VISIBLE, onStart = {
                             addDogContents()
                         })
                     }
