@@ -20,12 +20,11 @@ import com.chuthi.borrowoke.ext.toggleSlide
  * MessageAdapter.
  */
 class MessageAdapter(
-    private val onItemClicked: (MessageModel) -> Unit
+    private val onItemClicked: (MessageModel) -> Unit,
+    private val onItemLongClicked: ((MessageModel) -> Unit)? = null
 ) : BaseAdapter<MessageModel, ViewBinding>(
     UserMessageItemBinding::inflate
 ) {
-    override fun onItemClicked(binding: ViewBinding, item: MessageModel, position: Int) {
-    }
 
     override fun onBindData(binding: ViewBinding, item: MessageModel, position: Int) {
         val name = when (item.role) {
@@ -33,6 +32,7 @@ class MessageAdapter(
             is GptUserRole.Assistant -> "Assistant"
             is GptUserRole.System -> "System"
         }
+
         when (binding) {
             is UserMessageItemBinding -> binding.run {
                 messageItem.run {
@@ -54,8 +54,17 @@ class MessageAdapter(
                         ivContent.loadImage(item.url)
                     }
 
-                    cvUser.onSafeClick {
-                        onItemClicked.invoke(item)
+                    cvUser.let { cv ->
+                        cv.onSafeClick(drawableId = R.drawable.bg_user_message) {
+                            onItemClicked.invoke(item)
+                        }
+                        // set on long click
+                        onItemLongClicked?.let { event ->
+                            cv.setOnLongClickListener {
+                                event.invoke(item)
+                                false
+                            }
+                        }
                     }
                 }
             }
@@ -80,8 +89,17 @@ class MessageAdapter(
                         ivContent.loadImage(item.url)
                     }
 
-                    cvAssistant.onSafeClick {
-                        onItemClicked.invoke(item)
+                    cvAssistant.let { cv ->
+                        cv.onSafeClick(drawableId = R.drawable.bg_assistant_message) {
+                            onItemClicked.invoke(item)
+                        }
+                        // set on long click
+                        onItemLongClicked?.let { event ->
+                            cv.setOnLongClickListener {
+                                event.invoke(item)
+                                false
+                            }
+                        }
                     }
                 }
             }

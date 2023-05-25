@@ -1,5 +1,5 @@
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/color_button_effect">
 
-    <item android:drawable="@drawable/default_shape"/>
+    <item android:drawable="@drawable/assistant_shape" />
 </ripple>

@@ -1,5 +1,6 @@
 package com.chuthi.borrowoke.ui.chat
 
+import androidx.lifecycle.asLiveData
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.data.model.GptUserRole
@@ -9,23 +10,25 @@ import com.chuthi.borrowoke.data.model.request.GptCompletionRequest
 import com.chuthi.borrowoke.data.model.response.toMessageModel
 import com.chuthi.borrowoke.data.model.toChatGPTMessage
 import com.chuthi.borrowoke.data.repo.ChatRepo
-import com.chuthi.borrowoke.data.repo.DogRepo
 import com.chuthi.borrowoke.ext.apiCall
 import com.chuthi.borrowoke.ext.launchViewModelScope
+import com.chuthi.borrowoke.other.enums.ApiResponse
 import com.chuthi.borrowoke.other.enums.ChatUiState
 import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.MessageType
 import com.chuthi.borrowoke.other.enums.UiText
 import com.chuthi.borrowoke.util.getCurrentDate
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlin.random.Random
 
 class ChatViewModel(
-    private val chatRepo: ChatRepo,
-    private val dogRepo: DogRepo
+    private val chatRepo: ChatRepo
 ) : BaseViewModel() {
 
     private val _validInput = MutableStateFlow(false)
@@ -34,8 +37,13 @@ class ChatViewModel(
     private val _messages = MutableStateFlow<List<MessageModel>>(listOf())
     val messages = _messages.asStateFlow()
 
-    private val _chatUiState = MutableStateFlow<ChatUiState>(ChatUiState.None)
-    val chatUiState = _chatUiState.asStateFlow()
+    private val _chatUiState = MutableSharedFlow<ChatUiState>()
+    val chatUiState = flow {
+        _chatUiState.collect {
+            emit(it)
+        }
+    }.asLiveData()
+
 
     private val _recentTokens = MutableStateFlow(0)
     val recentTokens = _recentTokens.asStateFlow()
@@ -50,13 +58,6 @@ class ChatViewModel(
         it * (0.002 / 1000)
     }
 
-
-    private var responseCount = 0
-
-    init {
-        //getMessages(getFirstMessage())
-    }
-
     fun sendQuestion(question: String) =
         sendChatQuestion(question) // sendCompletionQuestion(question)
 
@@ -65,18 +66,9 @@ class ChatViewModel(
      */
     private fun sendChatQuestion(question: String) = launchViewModelScope {
         // first add question mess
-        val messageModel = MessageModel(
-            id = Random.nextInt().toString(),
-            role = GptUserRole.User,
-            content = question.trim(),
-            date = getCurrentDate()
-        )
-        //addQuestionMessage(question)
-        _messages.emit(messages.value.plus(messageModel))
+        val questionMessage = addQuestionMessage(question)
         // show loading
         _chatUiState.emit(ChatUiState.Loading(true))
-        delay(100)
-        _chatUiState.emit(ChatUiState.NewMessage(MessageType.Question))
 
         // create request model
         val chatGptRequest = ChatGptRequest(
@@ -100,15 +92,19 @@ class ChatViewModel(
 
                 responseMessages.forEach { message ->
                     // show response
-                    addNewMessage(message, MessageType.Response)
-                    delay(100)
+                    addAssistantMessage(
+                        message.content
+                    )
                 }
-
-            },
-            onError = {
-                commonError.emit(it)
-            }, onFinished = {
+                _chatUiState.emit(ChatUiState.NewMessage(MessageType.Response))
                 _chatUiState.emit(ChatUiState.Loading(false))
+            }, onError = {
+                delay(500)
+                // remove message already added
+                removeMessage(message = questionMessage)
+                // handle error
+                handleError(it)
+            }, onFinished = {
             }
         )
     }
@@ -153,7 +149,7 @@ class ChatViewModel(
 
                 firstResponseMessage.forEach { message ->
                     // show response
-                    addNewMessage(message, MessageType.Response)
+                    addAssistantMessage(message.content)
                     delay(100)
                 }
 
@@ -172,68 +168,43 @@ class ChatViewModel(
         )
     }
 
-    fun sendQuestion2(question: String) = launchViewModelScope {
-        _chatUiState.emit(ChatUiState.Loading(true))
-        addQuestionMessage(question)
+    /**
+     * Add new question message.
+     * @return [MessageModel]
+     */
+    private suspend fun addQuestionMessage(question: String) = MessageModel(
+        id = Random.nextInt().toString(),
+        role = GptUserRole.User,
+        content = question.trim(),
+        date = getCurrentDate()
+    ).apply {
+        addMessage(this, type = MessageType.Question)
+    }
 
-        responseCount++
-        if (responseCount % 3 != 0) {
-            addAssistantMessage(SAMPLE_RESPONSE)
-        } else {
-            delay(1000)
-            val errorMess = UiText.StringResource(R.string.assistant_can_not_response)
-            _chatUiState.emit(ChatUiState.LoadError(message = errorMess))
+    private suspend fun addAssistantMessage(responseContent: String) = MessageModel(
+        id = Random.nextInt().toString(),
+        role = GptUserRole.Assistant,
+        content = responseContent.trim(),
+        date = getCurrentDate()
+    ).apply {
+        addMessage(this, type = MessageType.Response)
+    }
+
+    private suspend fun addMessage(newMessage: MessageModel, type: MessageType) {
+        _messages.emit(messages.value.plus(newMessage))
+        // _chatUiState.emit(ChatUiState.NewMessage(type))
+    }
+
+    private fun removeMessage(message: MessageModel) = _messages.update { list ->
+        list.filter {
+            it.id != message.id
         }
     }
-
-    private fun addQuestionMessage(question: String) {
-
-        val messageModel = MessageModel(
-            id = Random.nextInt().toString(),
-            role = GptUserRole.User,
-            content = question.trim(),
-            date = getCurrentDate()
-        )
-
-        addNewMessage(messageModel, type = MessageType.Question)
-    }
-
-    private fun addAssistantMessage(responseContent: String) = launchViewModelScope {
-        dogRepo.getDogs(limit = 1).apiCall(
-            onSuccess = {
-                val dogUrl = it.data?.firstOrNull()?.url
-                val messageModel = MessageModel(
-                    id = Random.nextInt().toString(),
-                    role = GptUserRole.Assistant,
-                    content = responseContent.trim(),
-                    date = getCurrentDate(),
-                    url = dogUrl
-                )
-
-                addNewMessage(messageModel, type = MessageType.Response)
-            },
-            onError = {
-                val errorMess = UiText.StringResource(R.string.assistant_can_not_response)
-                _chatUiState.emit(ChatUiState.LoadError(message = errorMess))
-            },
-            onFinished = {
-                _chatUiState.emit(ChatUiState.Loading(false))
-            }
-        )
-
-    }
-
-    private fun addNewMessage(newMessage: MessageModel, type: MessageType) = launchViewModelScope {
-        _messages.emit(messages.value.plus(newMessage))
-        _chatUiState.emit(ChatUiState.NewMessage(type))
-    }
-
 
     fun validateInput(question: String?) = launchViewModelScope {
         if (question.isNullOrEmpty() || question.isBlank()) _validInput.emit(false)
         else _validInput.emit(true)
     }
-
 
     fun setItemVisibleDate(
         item: MessageModel,
@@ -250,23 +221,18 @@ class ChatViewModel(
         _recentTokens.emit(0)
         _totalTokens.emit(0)
         _chatUiState.emit(ChatUiState.Resetting(message = UiText.StringResource(R.string.reset_chat)))
-        delay(100)
         _chatUiState.emit(ChatUiState.NewMessage(MessageType.Question))
         delay(1500)
-        getMessages(listOf())
+        _messages.update { listOf() }
         _chatUiState.emit(ChatUiState.Loading(false))
     }
 
     //========================================================
 
-    private fun getMessages(messages: List<MessageModel>) = launchViewModelScope {
-        _messages.emit(messages)
-    }
-
     /**
      * Get dummy message list.
      */
-    private fun getFirstMessage() = mutableListOf<MessageModel>().apply {
+    private fun getDummyMessages() = mutableListOf<MessageModel>().apply {
         for (i in 0 until 20) {
             add(
                 MessageModel(
@@ -279,8 +245,20 @@ class ChatViewModel(
         }
     }
 
+    private fun handleError(error: CommonError) = launchViewModelScope {
+        val (icSrc, message) = when (error) {
+            is ApiResponse.NetworkError<*> -> Pair(
+                R.drawable.ic_lost_connection,
+                UiText.StringResource(R.string.no_internet_connection)
+            )
 
-    companion object {
-        private const val SAMPLE_RESPONSE = "Tao không biết \uD83E\uDD23,\nxem hình chó đỡ đi 👽"
+            else -> Pair(R.drawable.ic_error, error.message)
+        }
+        _chatUiState.emit(
+            ChatUiState.LoadError(
+                src = icSrc,
+                message = message
+            )
+        )
     }
 }

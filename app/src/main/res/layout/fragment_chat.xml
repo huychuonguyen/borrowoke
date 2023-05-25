@@ -15,11 +15,14 @@
         android:paddingHorizontal="@dimen/_5dp"
         android:text="@string/gumi_demo_chatgpt"
         android:textAlignment="center"
+        android:textColor="@color/black"
         android:textSize="@dimen/_14sp"
+        android:textStyle="italic"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frTitle"
@@ -27,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_10dp"
         android:layout_marginTop="@dimen/_5dp"
-        android:backgroundTint="@color/almost_transparent"
+
         android:padding="@dimen/_5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +42,6 @@
             android:layout_height="@dimen/_40dp"
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/_5dp"
-            android:backgroundTint="@color/almost_transparent"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -145,10 +147,10 @@
             android:id="@+id/cvSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/almost_transparent"
+            app:cardBackgroundColor="@color/transparent"
             app:cardCornerRadius="@dimen/_12dp"
             app:cardElevation="@dimen/_0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/cvInput"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -164,6 +166,19 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvReset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_20dp"
+        android:gravity="center|top"
+        android:padding="@dimen/_20dp"
+        android:text="@string/reset"
+        android:textColor="@color/black"
+        app:drawableTopCompat="@drawable/ic_reset_chat"
+        app:layout_constraintBottom_toTopOf="@+id/ctInput"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,7 +10,7 @@ class UserAdapter(
     private val onItemLongClick: (item: UserModel, position: Int) -> Unit
 ) : BaseAdapter<UserModel, UserItemBinding>(UserItemBinding::inflate) {
 
-    override fun onItemClicked(binding: UserItemBinding, item: UserModel, position: Int) {
+    override fun onItemClicked() = { _: UserItemBinding, item: UserModel, position: Int ->
         onItemClick.invoke(item, position)
     }
 

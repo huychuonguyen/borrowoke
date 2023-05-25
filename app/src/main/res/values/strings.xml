@@ -26,8 +26,8 @@
     <string name="wait_a_sec">Mấy con chó are coming…</string>
     <string name="tap_sam_to_see_dogs">Click Sam to see dogs</string>
     <string name="tap_sam_to_hide_dogs">Click Sam to hide dogs</string>
-    <string name="gumi_demo_chatgpt">Gumi-Demo-ChatGPT</string>
-    <string name="your_question">Ask me anything… 😊</string>
+    <string name="gumi_demo_chatgpt">Gumi ChatGPT Demonstration</string>
+    <string name="your_question">Ask me anything…</string>
     <string name="format_2_param">%1s - %2s</string>
     <string name="loading">Loading…</string>
     <string name="wait_for_assistant">Wait for assistant…</string>
@@ -39,4 +39,6 @@
     <string name="new_token">New tokens: %1d</string>
     <string name="total_token">Total tokens: %1d</string>
     <string name="cost_per_tokens">$%.3f</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="reset">Reset</string>
 </resources>

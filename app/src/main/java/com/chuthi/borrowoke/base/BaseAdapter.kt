@@ -41,7 +41,7 @@ abstract class BaseAdapter<T : BaseModel, VB : ViewBinding>(
      * Note: if you wanna more child view callbacks,
      * implement your logic on [onBindData].
      */
-    protected abstract fun onItemClicked(binding: VB, item: T, position: Int)
+    protected open fun onItemClicked(): ((binding: VB, item: T, position: Int) -> Unit)? = null
 
     /**
      * Callback return itemView: [RecyclerView.ViewHolder] and data [T]
@@ -76,9 +76,13 @@ abstract class BaseAdapter<T : BaseModel, VB : ViewBinding>(
          */
         fun bindData(item: T, position: Int) {
             // register item clicked
-            binding.root.onSafeClick(clickDelay) {
-                onItemClicked(binding = binding, item = item, position = position)
+
+            onItemClicked()?.let { event ->
+                binding.root.onSafeClick(clickDelay) {
+                    event.invoke(binding, item, position)
+                }
             }
+
             // raise callback bind data
             onBindData(binding = binding, item = item, position = position)
         }

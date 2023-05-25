@@ -12,23 +12,30 @@ class LoadingAdapter(private val onItemClicked: () -> Unit) :
         MessageLoadingItemBinding::inflate
     ) {
     override fun onItemClicked(
-        binding: MessageLoadingItemBinding,
-        item: LoadingModel,
-        position: Int
-    ) {
+
+    ) = { _: MessageLoadingItemBinding,
+          _: LoadingModel,
+          _: Int ->
         onItemClicked.invoke()
     }
 
     override fun onBindData(binding: MessageLoadingItemBinding, item: LoadingModel, position: Int) {
         binding.loadingItem.run {
             when (item.loadingState) {
-                is LoadingModel.LoadingState.Loading -> binding.run {
+                is LoadingModel.LoadingState.Loading -> {
                     root.show()
-                    loadingItem.progressBar.show()
+                    ivIcon.gone()
+                    progressBar.show()
                 }
 
-                is LoadingModel.LoadingState.None -> binding.root.gone()
-                is LoadingModel.LoadingState.Error -> binding.loadingItem.progressBar.gone()
+                is LoadingModel.LoadingState.None -> root.gone()
+                is LoadingModel.LoadingState.Error -> {
+                    root.show()
+                    ivIcon.show()
+                    progressBar.gone()
+                    item.icSrc ?: return@run
+                    ivIcon.setImageResource(item.icSrc)
+                }
             }
             tvContent.text = item.content.asString(root.context)
         }

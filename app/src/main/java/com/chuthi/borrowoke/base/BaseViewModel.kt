@@ -1,12 +1,15 @@
 package com.chuthi.borrowoke.base
 
 import androidx.lifecycle.ViewModel
+import com.chuthi.borrowoke.BaseApp
 import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.enums.CommonError
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
 
 /**************************************
 - Created by Chuong Nguyen
@@ -34,4 +37,18 @@ open class BaseViewModel : ViewModel() {
     protected fun hideLoading() = launchViewModelScope {
         _isLoading.emit(false)
     }
+
+    /**
+     * Await suspend fun to success
+     */
+    protected suspend fun <T> awaitSuspend(block: suspend () -> T) =
+        withContext(Dispatchers.Default) {
+            block()
+        }
+
+    /**
+     * Check network connection
+     */
+    protected fun isNetworkAvailable() = BaseApp.instance.isNetworkAvailable()
+
 }

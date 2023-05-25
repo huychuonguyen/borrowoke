@@ -9,11 +9,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentChatBinding
+import com.chuthi.borrowoke.ext.copyText
 import com.chuthi.borrowoke.ext.getFlowData
 import com.chuthi.borrowoke.ext.getFlowDataLasted
+import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.gone
 import com.chuthi.borrowoke.ext.loadImage
 import com.chuthi.borrowoke.ext.onSafeClick
@@ -56,14 +59,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
 
             chatTitle.onSafeClick { }
 
-            ivChatTitle.run {
-                loadImage(drawableRes = R.drawable.logo_gumi)
-                onSafeClick {
-                    it.showSnackBar("Reset chat?", actionText = "Reset", action = {
-                        viewModel.resetChat()
-                    })
-                }
-            }
+            ivChatTitle.loadImage(drawableRes = R.drawable.logo_gumi)
 
             frTitle.onSafeClick(defaultInterval = 0L) {
                 val visible =
@@ -83,26 +79,19 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
                 sendQuestion(question)
             }
 
+            tvReset.onSafeClick {
+                it.showSnackBar("Reset chat?", actionText = "Reset", action = {
+                    viewModel.resetChat()
+                })
+            }
+
+            // reset chat
             edtChat.doOnTextChanged { text, _, _, _ ->
                 viewModel.validateInput(text?.toString())
             }
         }
 
         setupRecyclerView()
-
-        //
-        binding.run {
-            /*   (edtChat.parent as? View)?.setOnClickListener {
-                   hideKeyboard()
-               }
-
-               edtChat.setOnFocusChangeListener { _, hasFocus ->
-                   if (hasFocus) this.root.setOnClickListener {
-                       hideKeyboard()
-                   }
-                   else (edtChat.parent as? View)?.setOnClickListener(null)
-               }*/
-        }
     }
 
     private fun hideKeyboard() {
@@ -129,6 +118,9 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
                 viewModel.setItemVisibleDate(
                     item = it, isVisible = !it.isVisibleDate
                 )
+            }, onItemLongClicked = {
+                // copy content to clipboard
+                context?.copyText(it.content)
             }, onLoadingClicked = {})
             // config recycler view
             rcvMessage.setupLinearLayout(chatAdapter.instance).supportChangeAnimation(false)
@@ -162,25 +154,39 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
             getFlowData(cost) {
                 binding.tvCost.text = getString(R.string.cost_per_tokens, it)
             }
+        }
+    }
 
-            getFlowData(chatUiState) {
-                when (it) {
-                    is ChatUiState.NewMessage -> {
-                        val smoothScroll = when (it.type) {
-                            is MessageType.Response -> true
-                            else -> {
-                                toggleTitle(View.GONE)
-                                false
-                            }
-                        }
-                        binding.rcvMessage.scrollToEnd(isSmoothScroll = smoothScroll)
+    override fun observeLiveData(): (LifecycleOwner.() -> Unit) = {
+        getLiveData(viewModel.chatUiState) {
+            when (it) {
+                is ChatUiState.NewMessage -> {
+                    val smoothScroll = when (it.type) {
+                        is MessageType.Response -> true
+                        else -> false
                     }
-
-                    is ChatUiState.Loading -> chatAdapter.setLoading(it.isLoading)
-                    is ChatUiState.LoadError -> chatAdapter.setError(it.message.asString(context))
-                    is ChatUiState.Resetting -> chatAdapter.setResetting(it.message.asString(context))
-                    else -> Unit
+                    binding.rcvMessage.scrollToEnd(isSmoothScroll = smoothScroll)
                 }
+
+                is ChatUiState.Loading -> {
+                    chatAdapter.setLoading(it.isLoading)
+                    if (it.isLoading) {
+                        toggleTitle(View.GONE)
+                        binding.rcvMessage.scrollToEnd(isSmoothScroll = false)
+                    }
+                }
+
+                is ChatUiState.LoadError -> chatAdapter.setError(
+                    it.message.asString(context),
+                    it.src
+                )
+
+                is ChatUiState.Resetting -> {
+                    toggleTitle(View.GONE)
+                    chatAdapter.setResetting(it.message.asString(context))
+                }
+
+                is ChatUiState.None -> chatAdapter.setLoading(false)
             }
         }
     }

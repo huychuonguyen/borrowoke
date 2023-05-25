@@ -10,7 +10,7 @@ class DogAdapter(
 ) : BaseAdapter<DogResponse, DogItemBinding>(
     DogItemBinding::inflate
 ) {
-    override fun onItemClicked(binding: DogItemBinding, item: DogResponse, position: Int) {
+    override fun onItemClicked() = { _: DogItemBinding, item: DogResponse, _: Int ->
         onItemClicked.invoke(item.url)
     }
 

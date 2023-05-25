@@ -17,7 +17,7 @@ class BreakingNewsAdapter(
         }
     }
 
-    override fun onItemClicked(binding: ArticleItemBinding, item: Article, position: Int) {
+    override fun onItemClicked() = { binding: ArticleItemBinding, item: Article, _: Int ->
         onItemClicked.invoke(binding, item)
     }
 }

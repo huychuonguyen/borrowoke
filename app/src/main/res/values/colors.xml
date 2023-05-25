@@ -188,10 +188,12 @@
     <color name="icPressed">#AAFFFFFF</color>
 
     <color name="hashtagBackground">#D2D0D0</color>
-    <color name="color_loading">@color/color_chat</color>
+    <color name="color_loading">#DBD2D2</color>
 
     <color name="color_chat">@color/grey150</color>
     <color name="chat_input_color">#E9E0E0</color>
     <color name="user_message_color">@color/grey80</color>
     <color name="assistant_message_color">@color/grey210</color>
+    <color name="reset_chat_color">#03000000</color>
+
 </resources>
