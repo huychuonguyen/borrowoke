@@ -3,11 +3,10 @@ package com.chuthi.borrowoke.base.interfaces
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
-import com.chuthi.borrowoke.base.BaseActivity
-import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.ext.getFlowData
 import com.chuthi.borrowoke.ext.getFlowDataLasted
+import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.HttpError
@@ -31,35 +30,24 @@ interface IDataObserver {
     fun hideLoading()
 
     /**
-     * - Use [getFlowData] or [getFlowDataLasted] extension
-     * to observe FlowData on here.
+     * - Use [getFlowData], [getFlowDataLasted] or [getLiveData] extension
+     * to observe data on here.
      */
     fun onObserveData(): (LifecycleOwner.() -> Unit)? = null
 
     /**
-     * Observe viewModel data on lifecycle of [view].
-     * @param view the view contains [Context] and [LifecycleOwner].
+     * Observe viewModel data on [lifecycleOwner].
      * @param viewModels list of [BaseViewModel] contains data (Flow data, Live data) to be observed.
      */
-    fun <T, VM : BaseViewModel> observeData(view: T, viewModels: List<VM?>) {
-        // get context and lifecycle owner
-        val (context, lifeCycleOwner) = when (view) {
-            is BaseActivity<*, *> -> {
-                Pair(view, view)
-            }
-
-            is BaseFragment<*, *> -> {
-                Pair(view.context, view.viewLifecycleOwner)
-            }
-            // return null if not Activity or Fragment
-            else -> Pair(null, null)
-        }
+    fun <VM : BaseViewModel> observeData(
+        context: Context?,
+        lifecycleOwner: LifecycleOwner?,
+        viewModels: List<VM?>
+    ) {
         // return when null
         context ?: return
-        lifeCycleOwner ?: return
-
         // observe events
-        lifeCycleOwner.run {
+        lifecycleOwner?.run {
             // handle FlowData
             handleEvents(context, viewModels, this)
             // raise observe FlowData/LiveData on [LifecycleOwner]

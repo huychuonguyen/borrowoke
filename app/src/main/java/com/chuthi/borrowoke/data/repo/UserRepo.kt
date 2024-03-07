@@ -13,6 +13,10 @@ class UserRepo(
     private val userDao: UserDao
 ) : BaseRepo() {
 
+    val userPagingSource = {
+        userDao.getUserPaging()
+    }
+
     fun getUsersOrderByName() = userDao.getUsersOrderByName()
 
     suspend fun insertUser(user: UserEntity) = userDao.insert(user)

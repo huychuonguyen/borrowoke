@@ -21,12 +21,12 @@ inline fun <T> LifecycleOwner.getLiveData(
     liveData: LiveData<T>,
     crossinline data: (T) -> Unit
 ) {
-    // return if this is fragment,
+    // If this is fragment,
     // it means this extension use lifecycleOwner of the fragment
     // instead of viewLifecycleOwner.
-    if (this is Fragment) return
+    val lifecycleOwner = if (this is Fragment) viewLifecycleOwner else this
 
-    liveData.observe(this) {
+    liveData.observe(lifecycleOwner) {
         it ?: return@observe
         data.invoke(it)
     }

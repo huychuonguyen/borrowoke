@@ -164,7 +164,11 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         val viewModels =
             getViewModels().plus(viewModel).distinct()
         //  observe loading, error on each viewModel
-        observeData(this, viewModels)
+        observeData(
+            context = this,
+            lifecycleOwner = this,
+            viewModels = viewModels
+        )
     }
 
     /**

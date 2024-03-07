@@ -143,6 +143,10 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObs
     private fun observeData() {
         val viewModels = getViewModels().plus(viewModel).distinct()
         //  observe loading, error on each viewModel
-        observeData(this, viewModels)
+        observeData(
+            context = context,
+            lifecycleOwner = viewLifecycleOwner,
+            viewModels = viewModels
+        )
     }
 }
