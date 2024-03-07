@@ -47,3 +47,4 @@ interface ApiService {
         @Body request: GptCompletionRequest
     ): Response<GptCompletionResponse>
 }
+

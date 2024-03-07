@@ -161,9 +161,10 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
      * Observe flow data from lifeCycle's [CoroutineScope] of activity
      */
     private fun observeData() {
-        val viewModels = getViewModels().plus(viewModel).distinct()
+        val viewModels =
+            getViewModels().plus(viewModel).distinct()
         //  observe loading, error on each viewModel
-        observeData(this@BaseActivity, viewModels)
+        observeData(this, viewModels)
     }
 
     /**

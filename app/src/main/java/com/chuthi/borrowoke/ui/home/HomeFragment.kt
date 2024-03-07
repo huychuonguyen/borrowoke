@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentHomeBinding
 import com.chuthi.borrowoke.ext.getFlowDataLasted
+import com.chuthi.borrowoke.ext.getLiveData
 import com.chuthi.borrowoke.ext.navigateTo
 import com.chuthi.borrowoke.ext.onParentFragmentResult
 import com.chuthi.borrowoke.ext.onSafeClick
@@ -20,7 +21,6 @@ import com.chuthi.borrowoke.other.adapters.normal.UserAdapter
 import com.chuthi.borrowoke.other.adapters.paging.UserPagingAdapter
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.ui.main.MainViewModel
-import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -92,12 +92,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    override fun observeFlowData(): CoroutineScope.() -> Unit = {
+    override fun onObserveData(): LifecycleOwner.() -> Unit = {
         viewModel.run {
 
-            getFlowDataLasted(mainViewModel.sharedData) {
-                //showToast("shared: $it")
-            }
             binding.run {
                 getFlowDataLasted(counter) {
                     tvCounter.text = it.toString()
@@ -126,19 +123,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }*/
             }
-        }
-    }
 
-    override fun observeLiveData(): (LifecycleOwner.() -> Unit) = {
-        // observe back stack
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("key")
-            ?.observe(
-                viewLifecycleOwner
+            getFlowDataLasted(mainViewModel.sharedData) {
+                //showToast("shared: $it")
+            }
+
+            getLiveData(
+                findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(
+                    "key"
+                ) ?: return@run
             ) {
                 // show result from back stack
                 // (it means from press system Back button)
                 showToast("backStack: ${it ?: ""}")
             }
+        }
     }
 
     override fun handleFragmentBackPressed(): (() -> Unit) = {

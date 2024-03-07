@@ -6,7 +6,7 @@ import com.chuthi.borrowoke.databinding.DogItemBinding
 import com.chuthi.borrowoke.ext.loadImage
 
 class DogAdapter(
-    private val onItemClicked: (String) -> Unit
+    private val onItemClicked: (String) -> Unit,
 ) : BaseAdapter<DogResponse, DogItemBinding>(
     DogItemBinding::inflate
 ) {

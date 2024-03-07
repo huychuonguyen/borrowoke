@@ -41,7 +41,7 @@ class AnimationFragment : BaseFragment<FragmentAnimationBinding, BaseViewModel>(
         handleCallbacks()
     }
 
-    override fun observeLiveData(): (LifecycleOwner.() -> Unit) = {
+    override fun onObserveData(): LifecycleOwner.() -> Unit = {
         viewModel.run {
             getLiveData(contentVisibility) { visible ->
                 toggleNews(visible)

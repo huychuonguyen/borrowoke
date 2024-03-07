@@ -2,14 +2,17 @@ package com.chuthi.borrowoke.base
 
 import androidx.lifecycle.ViewModel
 import com.chuthi.borrowoke.BaseApp
-import com.chuthi.borrowoke.ext.launchViewModelScope
+import com.chuthi.borrowoke.ext.launchWithCoroutineContext
 import com.chuthi.borrowoke.other.enums.CommonError
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**************************************
 - Created by Chuong Nguyen
@@ -36,6 +39,17 @@ open class BaseViewModel : ViewModel() {
 
     protected fun hideLoading() = launchViewModelScope {
         _isLoading.emit(false)
+    }
+
+
+    protected fun launchViewModelScope(
+        coroutineContext: CoroutineContext = EmptyCoroutineContext,
+        action: suspend CoroutineScope.() -> Unit
+    ) = launchWithCoroutineContext(coroutineContext, action)
+
+
+    protected fun sendError(error: CommonError) = launchWithCoroutineContext {
+        commonError.emit(error)
     }
 
     /**

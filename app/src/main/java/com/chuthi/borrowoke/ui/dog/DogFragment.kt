@@ -15,7 +15,6 @@ import com.chuthi.borrowoke.ext.show
 import com.chuthi.borrowoke.ext.showSnackBar
 import com.chuthi.borrowoke.other.adapters.normal.DogAdapter
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
-import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DogFragment : SwipeRefreshFragment<FragmentDogBinding, DogViewModel>() {
@@ -38,10 +37,7 @@ class DogFragment : SwipeRefreshFragment<FragmentDogBinding, DogViewModel>() {
     override fun onArgumentsSaved(arguments: Bundle?) {
     }
 
-    override fun observeLiveData(): (LifecycleOwner.() -> Unit) = {
-    }
-
-    override fun observeFlowData(): (CoroutineScope.() -> Unit) = {
+    override fun onObserveData(): (LifecycleOwner.() -> Unit) = {
         getFlowDataLasted(viewModel.dog) {
             dogAdapter.submitList(it)
         }

@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**************************************
@@ -17,16 +19,36 @@ import kotlinx.coroutines.launch
  **************************************/
 inline fun <T> LifecycleOwner.getLiveData(
     liveData: LiveData<T>,
-    crossinline result: (T) -> Unit
+    crossinline data: (T) -> Unit
 ) {
     // return if this is fragment,
     // it means this extension use lifecycleOwner of the fragment
     // instead of viewLifecycleOwner.
     if (this is Fragment) return
 
-    liveData.observe(this) { data ->
-        data ?: return@observe
-        result.invoke(data)
+    liveData.observe(this) {
+        it ?: return@observe
+        data.invoke(it)
+    }
+}
+
+inline fun <T> LifecycleOwner.getFlowData(
+    flowData: (Flow<T>)?,
+    state: Lifecycle.State = Lifecycle.State.STARTED,
+    crossinline data: (T) -> Unit
+) = repeatOnLifeCycle(state) {
+    flowData?.collect {
+        data.invoke(it)
+    }
+}
+
+inline fun <T> LifecycleOwner.getFlowDataLasted(
+    flowData: (Flow<T>)?,
+    state: Lifecycle.State = Lifecycle.State.STARTED,
+    crossinline data: (T) -> Unit
+) = repeatOnLifeCycle(state) {
+    flowData?.collectLatest {
+        data.invoke(it)
     }
 }
 
@@ -35,9 +57,10 @@ inline fun <T> LifecycleOwner.getLiveData(
  *
  */
 inline fun LifecycleOwner.repeatOnLifeCycle(
-    crossinline action: CoroutineScope.() -> Unit
+    state: Lifecycle.State,
+    crossinline action: suspend CoroutineScope.() -> Unit
 ) = lifecycleScope.launch {
-    repeatOnLifecycle(Lifecycle.State.STARTED) {
+    repeatOnLifecycle(state) {
         action.invoke(this)
     }
 }

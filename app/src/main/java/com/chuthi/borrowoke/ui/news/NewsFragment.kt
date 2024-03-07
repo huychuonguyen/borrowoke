@@ -19,7 +19,6 @@ import com.chuthi.borrowoke.ext.showSnackBar
 import com.chuthi.borrowoke.other.adapters.normal.BreakingNewsAdapter
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.ui.main.MainViewModel
-import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -36,6 +35,8 @@ open class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewMode
     override val viewModel by viewModel<NewsViewModel>()
 
     private val mainViewModel: MainViewModel by activityViewModels()
+
+    override fun getViewModels() = listOf(mainViewModel, viewModel)
 
     override fun swipeRefreshLayout() = binding.swipeRefresh
 
@@ -61,17 +62,13 @@ open class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewMode
         setupRecyclerView()
     }
 
-    override fun observeLiveData(): (LifecycleOwner.() -> Unit) = {
-        viewModel.run {
-            getLiveData(breakingNews) {
-                breakingNewsAdapter.submitList(it)
-            }
-        }
-    }
-
-    override fun observeFlowData(): CoroutineScope.() -> Unit = {
+    override fun onObserveData(): LifecycleOwner.() -> Unit = {
         getFlowDataLasted(mainViewModel.sharedData) {
             Log.i("Shared data:", it)
+        }
+
+        getLiveData(viewModel.breakingNews) {
+            breakingNewsAdapter.submitList(it)
         }
     }
 

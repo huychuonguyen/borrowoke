@@ -8,13 +8,10 @@ import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.ext.getFlowData
 import com.chuthi.borrowoke.ext.getFlowDataLasted
-import com.chuthi.borrowoke.ext.getLiveData
-import com.chuthi.borrowoke.ext.repeatOnLifeCycle
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.HttpError
 import com.chuthi.borrowoke.other.enums.asString
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * - The interface with common data handling and ui event.
@@ -37,13 +34,7 @@ interface IDataObserver {
      * - Use [getFlowData] or [getFlowDataLasted] extension
      * to observe FlowData on here.
      */
-    fun observeFlowData(): (CoroutineScope.() -> Unit)? = null
-
-    /**
-     * Use [getLiveData] extension
-     * to observe LiveData on here.
-     */
-    fun observeLiveData(): (LifecycleOwner.() -> Unit)? = null
+    fun onObserveData(): (LifecycleOwner.() -> Unit)? = null
 
     /**
      * Observe viewModel data on lifecycle of [view].
@@ -70,13 +61,9 @@ interface IDataObserver {
         // observe events
         lifeCycleOwner.run {
             // handle FlowData
-            repeatOnLifeCycle {
-                handleEvents(context, viewModels, this)
-                // raise observe FlowData on coroutine
-                observeFlowData()?.invoke(this)
-            }
-            // raise observe LiveData
-            observeLiveData()?.invoke(this)
+            handleEvents(context, viewModels, this)
+            // raise observe FlowData/LiveData on [LifecycleOwner]
+            onObserveData()?.invoke(this)
         }
     }
 
@@ -86,9 +73,9 @@ interface IDataObserver {
     private fun handleEvents(
         context: Context,
         viewModels: List<BaseViewModel?>,
-        coroutineScope: CoroutineScope
+        lifecycleOwner: LifecycleOwner
     ) {
-        coroutineScope.run {
+        lifecycleOwner.run {
             viewModels.forEach { viewModel ->
                 viewModel?.run {
                     // observe loading

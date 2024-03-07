@@ -3,8 +3,11 @@ package com.chuthi.borrowoke.ui.main
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.data.model.AuthModel
+import com.chuthi.borrowoke.data.model.response.ExternalClass
+import com.chuthi.borrowoke.data.model.response.ExternalClassParceler
 import com.chuthi.borrowoke.databinding.ActivityMainBinding
 import com.chuthi.borrowoke.ext.backToSystemHome
 import com.chuthi.borrowoke.ext.getData
@@ -55,7 +58,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
-    override fun observeFlowData(): CoroutineScope.() -> Unit = {
+    override fun onObserveData(): LifecycleOwner.() -> Unit = {
         /*  launch {
               viewModel.dummyData.collect { data ->
                   Log.i("dummyData", data.toString())

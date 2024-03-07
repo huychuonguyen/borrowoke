@@ -11,7 +11,6 @@ import com.chuthi.borrowoke.data.model.response.toMessageModel
 import com.chuthi.borrowoke.data.model.toChatGPTMessage
 import com.chuthi.borrowoke.data.repo.ChatRepo
 import com.chuthi.borrowoke.ext.apiCall
-import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.enums.ApiResponse
 import com.chuthi.borrowoke.other.enums.ChatUiState
 import com.chuthi.borrowoke.other.enums.CommonError
@@ -30,6 +29,18 @@ import kotlin.random.Random
 class ChatViewModel(
     private val chatRepo: ChatRepo
 ) : BaseViewModel() {
+
+    init {
+        launchViewModelScope {
+            repeat(5) {
+                delay(1000)
+                testValue.emit(testValue.value + 1)
+            }
+        }
+    }
+
+    var testValue = MutableStateFlow(0)
+        private set
 
     private val _validInput = MutableStateFlow(false)
     val validInput = _validInput.asStateFlow()
@@ -71,42 +82,37 @@ class ChatViewModel(
         _chatUiState.emit(ChatUiState.Loading(true))
 
         // create request model
-        val chatGptRequest = ChatGptRequest(
-            messages = messages.value.map {
-                it.toChatGPTMessage()
-            }
-        )
+        val chatGptRequest = ChatGptRequest(messages = messages.value.map {
+            it.toChatGPTMessage()
+        })
         // then api call
-        chatRepo.gptChatCompletions(chatGptRequest).apiCall(
-            onSuccess = {
-                val response = it.data
-                // emit tokens
-                val tokens = response?.usage?.total_tokens ?: 0
-                _recentTokens.emit(tokens)
-                _totalTokens.emit(_totalTokens.value + tokens)
+        chatRepo.gptChatCompletions(chatGptRequest).apiCall(onSuccess = {
+            val response = it.data
+            // emit tokens
+            val tokens = response?.usage?.total_tokens ?: 0
+            _recentTokens.emit(tokens)
+            _totalTokens.emit(_totalTokens.value + tokens)
 
-                val responseMessages = response?.choices?.map { choice ->
-                    choice.message.toMessageModel()
-                }
-                responseMessages ?: return@apiCall
-
-                responseMessages.forEach { message ->
-                    // show response
-                    addAssistantMessage(
-                        message.content
-                    )
-                }
-                _chatUiState.emit(ChatUiState.NewMessage(MessageType.Response))
-                _chatUiState.emit(ChatUiState.Loading(false))
-            }, onError = {
-                delay(500)
-                // remove message already added
-                removeMessage(message = questionMessage)
-                // handle error
-                handleError(it)
-            }, onFinished = {
+            val responseMessages = response?.choices?.map { choice ->
+                choice.message.toMessageModel()
             }
-        )
+            responseMessages ?: return@apiCall
+
+            responseMessages.forEach { message ->
+                // show response
+                addAssistantMessage(
+                    message.content
+                )
+            }
+            _chatUiState.emit(ChatUiState.NewMessage(MessageType.Response))
+            _chatUiState.emit(ChatUiState.Loading(false))
+        }, onError = {
+            delay(500)
+            // remove message already added
+            removeMessage(message = questionMessage)
+            // handle error
+            handleError(it)
+        }, onFinished = {})
     }
 
     /**
@@ -133,39 +139,36 @@ class ChatViewModel(
             prompt = question.trim()
         )
         // then api call
-        chatRepo.gptCompletions(chatGptRequest).apiCall(
-            onSuccess = {
-                val response = it.data
-                val firstResponseMessage = response?.choices?.map { choice ->
-                    choice.toMessageModel()
-                }
-
-                // emit tokens
-                val tokens = response?.usage?.total_tokens ?: 0
-                _recentTokens.emit(tokens)
-                _totalTokens.emit(_totalTokens.value + tokens)
-
-                firstResponseMessage ?: return@apiCall
-
-                firstResponseMessage.forEach { message ->
-                    // show response
-                    addAssistantMessage(message.content)
-                    delay(100)
-                }
-
-            },
-            onError = {
-                val errorMess = it.message
-                val errorCode = it.errorCode
-                commonError.emit(
-                    CommonError.NormalError(
-                        message = errorMess, code = errorCode
-                    )
-                )
-            }, onFinished = {
-                _chatUiState.emit(ChatUiState.Loading(false))
+        chatRepo.gptCompletions(chatGptRequest).apiCall(onSuccess = {
+            val response = it.data
+            val firstResponseMessage = response?.choices?.map { choice ->
+                choice.toMessageModel()
             }
-        )
+
+            // emit tokens
+            val tokens = response?.usage?.total_tokens ?: 0
+            _recentTokens.emit(tokens)
+            _totalTokens.emit(_totalTokens.value + tokens)
+
+            firstResponseMessage ?: return@apiCall
+
+            firstResponseMessage.forEach { message ->
+                // show response
+                addAssistantMessage(message.content)
+                delay(100)
+            }
+
+        }, onError = {
+            val errorMess = it.message
+            val errorCode = it.errorCode
+            sendError(
+                CommonError.NormalError(
+                    message = errorMess, code = errorCode
+                )
+            )
+        }, onFinished = {
+            _chatUiState.emit(ChatUiState.Loading(false))
+        })
     }
 
     /**
@@ -207,8 +210,7 @@ class ChatViewModel(
     }
 
     fun setItemVisibleDate(
-        item: MessageModel,
-        isVisible: Boolean
+        item: MessageModel, isVisible: Boolean
     ) = launchViewModelScope {
         val updatedMessages = messages.value.map {
             if (it.id != item.id) it
@@ -256,8 +258,7 @@ class ChatViewModel(
         }
         _chatUiState.emit(
             ChatUiState.LoadError(
-                src = icSrc,
-                message = message
+                src = icSrc, message = message
             )
         )
     }

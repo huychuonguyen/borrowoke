@@ -9,7 +9,6 @@ import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.databinding.FragmentProfileBinding
 import com.chuthi.borrowoke.ext.navigateTo
 import com.chuthi.borrowoke.ext.onSafeClick
-import kotlinx.coroutines.CoroutineScope
 
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding, BaseViewModel>() {
@@ -34,7 +33,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, BaseViewModel>() {
         }
     }
 
-    override fun observeFlowData(): (CoroutineScope.() -> Unit)? = null
 
     override fun onArgumentsSaved(arguments: Bundle?) {
     }

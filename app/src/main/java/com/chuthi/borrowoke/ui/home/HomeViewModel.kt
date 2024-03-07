@@ -11,14 +11,16 @@ import com.chuthi.borrowoke.data.database.entity.toUserModel
 import com.chuthi.borrowoke.data.model.UserModel
 import com.chuthi.borrowoke.data.model.toUserEntity
 import com.chuthi.borrowoke.data.repo.UserRepo
-import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.INPUT_BLUR_WORKER
 import com.chuthi.borrowoke.woker.MyWorker
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -41,7 +43,11 @@ class HomeViewModel(
     private val secondCounter = _secondCounter.asStateFlow()
 
     private val _userState = MutableStateFlow<List<UserModel>>(mutableListOf())
-    val userState = _userState.asStateFlow()
+
+    @OptIn(FlowPreview::class)
+    val userState = _userState.asStateFlow().flatMapConcat {
+        flowOf(it + listOf())
+    }
 
     private val _allUserEntity = userRepo.getUsersOrderByName()
 
@@ -94,6 +100,8 @@ class HomeViewModel(
             Log.i("home_result", "result2: $data2")
             Log.i("home_result", "result1: $data1")
         }*/
+
+
     }
 
     fun insertUser(user: UserModel) = launchViewModelScope {

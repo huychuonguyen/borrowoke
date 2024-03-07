@@ -4,7 +4,6 @@ import com.chuthi.borrowoke.base.BaseViewModel
 import com.chuthi.borrowoke.data.model.response.DogResponse
 import com.chuthi.borrowoke.data.repo.DogRepo
 import com.chuthi.borrowoke.ext.apiCall
-import com.chuthi.borrowoke.ext.launchViewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

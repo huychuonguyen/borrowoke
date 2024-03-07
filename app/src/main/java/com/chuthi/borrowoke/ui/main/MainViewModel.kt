@@ -1,11 +1,8 @@
 package com.chuthi.borrowoke.ui.main
 
 import com.chuthi.borrowoke.base.BaseViewModel
-import com.chuthi.borrowoke.ext.launchViewModelScope
 import com.chuthi.borrowoke.other.enums.CommonError
-import com.chuthi.borrowoke.other.enums.UiText
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
