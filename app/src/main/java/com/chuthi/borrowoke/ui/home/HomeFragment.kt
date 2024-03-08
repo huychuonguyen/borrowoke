@@ -1,13 +1,16 @@
 package com.chuthi.borrowoke.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentHomeBinding
 import com.chuthi.borrowoke.ext.getFlowDataLasted
@@ -104,7 +107,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     tvHomeTitle.text = it
                 }
 
-                getFlowDataLasted(allUserModel) {
+                getFlowDataLasted(allUserModel, state = Lifecycle.State.CREATED) {
                     userAdapter.submitList(it)
                 }
                 // worker
@@ -122,6 +125,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         showToast(blurOutput)
                     }
                 }*/
+            }
+
+            getFlowDataLasted(userPaging, state = Lifecycle.State.CREATED) {
+                Log.d("PagingElon","---collect")
+                userPagingAdapter.submitData(viewLifecycleOwner.lifecycle, it )
             }
 
             getFlowDataLasted(mainViewModel.sharedData) {
@@ -170,9 +178,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     viewModel.removeUserPaging(user)
                 })
 
+
             rcvUser.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = userAdapter
+                //supportChangeAnimation(false)
+                layoutManager = LinearLayoutManager(context).apply {
+                    orientation = RecyclerView.VERTICAL
+                }
+
+                adapter = userPagingAdapter
+
+                setHasFixedSize(true)
             }
         }
     }

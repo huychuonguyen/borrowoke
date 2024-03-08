@@ -5,8 +5,8 @@ import androidx.annotation.CallSuper
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.chuthi.borrowoke.base.BaseDiffAdapter
 import com.chuthi.borrowoke.base.BaseModel
+import com.chuthi.borrowoke.base.BasePagingDiffAdapter
 import com.chuthi.borrowoke.ext.onSafeClick
 import com.chuthi.borrowoke.other.DEFAULT_CLICK_INTERVAL
 
@@ -28,8 +28,15 @@ import com.chuthi.borrowoke.other.DEFAULT_CLICK_INTERVAL
  * @param T type of BaseModel - object to bind data
  */
 abstract class BasePagingAdapter<T : BaseModel, VB : ViewBinding>(
-    private val clickDelay: Long = DEFAULT_CLICK_INTERVAL
-) : PagingDataAdapter<T, BasePagingAdapter<T, VB>.BaseHolder>(BaseDiffAdapter()) {
+    private val clickDelay: Long = DEFAULT_CLICK_INTERVAL,
+    areItemsTheSame: (oldItem: T, newItem: T) -> Boolean,
+    areContentsTheSame: (oldItem: T, newItem: T) -> Boolean
+) : PagingDataAdapter<T, BasePagingAdapter<T, VB>.BaseHolder>(
+    BasePagingDiffAdapter(
+        areItemsTheSame,
+        areContentsTheSame
+    )
+) {
     /**
      * Override to set binding of layout item
      */

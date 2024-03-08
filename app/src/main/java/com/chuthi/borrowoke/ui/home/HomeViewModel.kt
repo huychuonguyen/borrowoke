@@ -1,9 +1,13 @@
 package com.chuthi.borrowoke.ui.home
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import androidx.work.workDataOf
 import com.chuthi.borrowoke.base.BaseViewModel
@@ -13,14 +17,11 @@ import com.chuthi.borrowoke.data.model.toUserEntity
 import com.chuthi.borrowoke.data.repo.UserRepo
 import com.chuthi.borrowoke.other.INPUT_BLUR_WORKER
 import com.chuthi.borrowoke.woker.MyWorker
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -44,11 +45,6 @@ class HomeViewModel(
 
     private val _userState = MutableStateFlow<List<UserModel>>(mutableListOf())
 
-    @OptIn(FlowPreview::class)
-    val userState = _userState.asStateFlow().flatMapConcat {
-        flowOf(it + listOf())
-    }
-
     private val _allUserEntity = userRepo.getUsersOrderByName()
 
     val allUserModel = _allUserEntity.map {
@@ -65,7 +61,7 @@ class HomeViewModel(
         it.map { entity ->
             entity.toUserModel()
         }
-    }
+    }.cachedIn(viewModelScope).stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), PagingData.empty()  )
     /*allUserEntity.map { userEntities ->
         PagingData.from(userEntities.map { userEntity ->
             userEntity.toUserModel()
@@ -89,7 +85,7 @@ class HomeViewModel(
 
     init {
         // apply blur worker
-        blurImage(Uri.EMPTY)
+        //blurImage(Uri.EMPTY)
         // delete all users
         deleteAllUsers()
         // insert users

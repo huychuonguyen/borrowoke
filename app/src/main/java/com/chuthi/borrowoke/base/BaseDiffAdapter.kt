@@ -19,3 +19,15 @@ class BaseDiffAdapter<T : BaseModel> : DiffUtil.ItemCallback<T>() {
         return oldItem.hashCode() == newItem.hashCode()
     }
 }
+
+class BasePagingDiffAdapter<T : BaseModel>(
+    private val areItemsTheSame: (oldItem: T, newItem: T) -> Boolean,
+    private val areContentsTheSame: (oldItem: T, newItem: T) -> Boolean
+) : DiffUtil.ItemCallback<T>() {
+
+    override fun areItemsTheSame(oldItem: T, newItem: T) =
+        areItemsTheSame.invoke(oldItem, newItem)
+
+    override fun areContentsTheSame(oldItem: T, newItem: T) =
+        areContentsTheSame.invoke(oldItem, newItem)
+}

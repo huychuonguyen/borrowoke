@@ -45,33 +45,38 @@ abstract class BaseRemoteMediator<T : BaseModel> : RemoteMediator<Int, T>() {
      */
     abstract suspend fun onQueryResult(data: List<T>?)
 
+    abstract suspend fun setEndPaging(data: List<T>?, page: Int): Boolean
+
+    private var page = 0
     override suspend fun load(loadType: LoadType, state: PagingState<Int, T>): MediatorResult {
-        val page = when (loadType) {
+        /*page = when (loadType) {
             LoadType.REFRESH -> {
                 // TODO
-                1
+                0
             }
 
             LoadType.PREPEND -> {
                 // TODO
-                1
+                0
             }
 
             LoadType.APPEND -> {
                 // TODO
-                1
+                0
             }
 
-            else -> 1
-        }
+            else -> PAGING_STARTING_PAGE_INDEX
+        }*/
 
         return try {
             val data = queryAction().invoke(page, PAGING_DEFAULT_SIZE)
             // raise callback result
             onQueryResult(data)
 
+            val endOfPaginationReached = setEndPaging(data, page)
+
+            page++
             // return
-            val endOfPaginationReached = data?.isEmpty() ?: true
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
 
         } catch (exception: IOException) {

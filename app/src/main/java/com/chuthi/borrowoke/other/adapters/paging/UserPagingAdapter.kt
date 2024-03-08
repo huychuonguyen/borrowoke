@@ -9,7 +9,14 @@ import com.chuthi.borrowoke.databinding.UserItemBinding
 class UserPagingAdapter(
     private val onItemClick: (item: UserModel, position: Int) -> Unit,
     private val onItemLongClick: (item: UserModel, position: Int) -> Unit
-) : BasePagingAdapter<UserModel, UserItemBinding>() {
+) : BasePagingAdapter<UserModel, UserItemBinding>(
+    areItemsTheSame = { old, new ->
+        old.userId == new.userId
+    },
+    areContentsTheSame = { old, new ->
+        old == new
+    }
+) {
 
     override fun setViewBinding(parent: ViewGroup) = UserItemBinding
         .inflate(LayoutInflater.from(parent.context), parent, false)

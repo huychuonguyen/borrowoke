@@ -1,21 +1,91 @@
 package com.chuthi.borrowoke.data.repo
 
+import android.util.Log
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseRepo
 import com.chuthi.borrowoke.data.database.dao.UserDao
 import com.chuthi.borrowoke.data.database.entity.UserEntity
 import com.chuthi.borrowoke.data.model.UserModel
 import com.chuthi.borrowoke.data.model.toUserEntity
-import com.chuthi.borrowoke.data.paging.UserPagingSource
+import com.chuthi.borrowoke.data.paging.UserRemoteMediator
 import com.chuthi.borrowoke.other.enums.UiText
 
 class UserRepo(
     private val userDao: UserDao
 ) : BaseRepo() {
 
-    val userPagingSource = {
-        userDao.getUserPaging()
-    }
+    var id = 0
+    private val userPagingFlow = pagerConfig(
+        mediator = UserRemoteMediator(
+            queryAction = { page, _ ->
+                (if (page <= 5) {
+                    listOf(
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        ),
+                        UserModel(
+                            userId = id,
+                            name = "huychuong ${id++}",
+                            value = UiText.DynamicString("huychuonguyen $id")
+                        )
+
+                    )
+                } else listOf()).run {
+                    map {
+                        it.toUserEntity()
+                    }
+                }
+
+            },
+            userDao = userDao
+        ),
+        pagingSource = {
+            userDao.getUserPaging()
+        }
+    )
+
 
     fun getUsersOrderByName() = userDao.getUsersOrderByName()
 
@@ -29,13 +99,14 @@ class UserRepo(
 
     suspend fun deleteUser(userId: Int) = userDao.deleteUser(userId)
 
-    fun getUsersPaging() = pagerConfig {
-        UserPagingSource(userDao) { _, _, _ ->
-            getDummyUsers().map {
-                it.toUserEntity()
-            }
+    fun getUsersPaging() = userPagingFlow
+    /*pagerConfig {
+    UserPagingSource(userDao) { _, _, _ ->
+        getDummyUsers().map {
+            it.toUserEntity()
         }
     }
+}*/
 
     fun getDummyUsers() = listOf(
         UserModel(
@@ -85,11 +156,44 @@ class UserRepo(
         ),
         UserModel(
             userId = 9,
-            name = "huychuong9",
+            name = "huychuong99999",
             value = UiText.StringResource(
                 resId = R.string.sample_string,
                 "Huy Chương"
             )
+        ),
+    )
+
+    fun getDummyUsers2() = listOf(
+        UserModel(
+            userId = 10,
+            name = "Medal",
+            value = UiText.DynamicString("huychuonguyen 1")
+        ),
+        UserModel(
+            userId = 11,
+            name = "huychuong11",
+            value = UiText.DynamicString("huychuonguyen 2")
+        ),
+        UserModel(
+            userId = 12,
+            name = "huychuong12",
+            value = UiText.DynamicString("huychuonguyen 3")
+        ),
+        UserModel(
+            userId = 13,
+            name = "huychuong13",
+            value = UiText.DynamicString("huychuonguyen 4")
+        ),
+        UserModel(
+            userId = 14,
+            name = "huychuong14",
+            value = UiText.DynamicString("huychuonguyen 5")
+        ),
+        UserModel(
+            userId = 15,
+            name = "huychuong15",
+            value = UiText.DynamicString("huychuonguyen 6")
         ),
     )
 }
