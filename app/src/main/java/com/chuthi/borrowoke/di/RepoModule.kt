@@ -7,7 +7,7 @@ import com.chuthi.borrowoke.data.repo.UserRepo
 import org.koin.dsl.module
 
 val repoModule = module {
-    single { UserRepo(get()) }
+    single { UserRepo(get(), get()) }
     single { NewsRepo(get()) }
     single { DogRepo(get()) }
     single { ChatRepo(get()) }

@@ -53,14 +53,6 @@ open class BaseViewModel : ViewModel() {
     }
 
     /**
-     * Await suspend fun to success
-     */
-    protected suspend fun <T> awaitSuspend(block: suspend () -> T) =
-        withContext(Dispatchers.Default) {
-            block()
-        }
-
-    /**
      * Check network connection
      */
     protected fun isNetworkAvailable() = BaseApp.instance.isNetworkAvailable()

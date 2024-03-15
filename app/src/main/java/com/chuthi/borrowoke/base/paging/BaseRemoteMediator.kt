@@ -43,7 +43,11 @@ abstract class BaseRemoteMediator<T : BaseModel> : RemoteMediator<Int, T>() {
      * [onQueryResult] raise this callback when [queryAction] return data.
      * Used for update database.
      */
-    abstract suspend fun onQueryResult(data: List<T>?)
+    abstract suspend fun onQueryResult(
+        loadType: LoadType,
+        state: PagingState<Int, T>,
+        data: List<T>?
+    ) : MediatorResult
 
     abstract suspend fun setEndPaging(data: List<T>?, page: Int): Boolean
 
@@ -71,13 +75,13 @@ abstract class BaseRemoteMediator<T : BaseModel> : RemoteMediator<Int, T>() {
         return try {
             val data = queryAction().invoke(page, PAGING_DEFAULT_SIZE)
             // raise callback result
-            onQueryResult(data)
+            onQueryResult(loadType, state, data)
 
-            val endOfPaginationReached = setEndPaging(data, page)
+          /*  val endOfPaginationReached = setEndPaging(data, page)
 
             page++
             // return
-            MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+            MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)*/
 
         } catch (exception: IOException) {
             return MediatorResult.Error(exception)

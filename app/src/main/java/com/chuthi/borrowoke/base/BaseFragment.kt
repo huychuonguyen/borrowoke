@@ -98,6 +98,13 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObs
         super.onDestroyView()
     }
 
+    protected fun transparentStatusAndNavigation() {
+        (context as? BaseActivity<*, *>)?.transparentStatusAndNavigation(false)
+    }
+
+    protected fun resetDefaultStatusAndNavigationColor() =
+        (context as? BaseActivity<*, *>)?.resetDefaultStatusAndNavigationColor()
+
     /**
      * Register fragment back pressed.
      */

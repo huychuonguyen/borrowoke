@@ -1,21 +1,21 @@
 package com.chuthi.borrowoke.ui.home
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import androidx.work.workDataOf
 import com.chuthi.borrowoke.base.BaseViewModel
+import com.chuthi.borrowoke.data.database.entity.UserEntity
 import com.chuthi.borrowoke.data.database.entity.toUserModel
 import com.chuthi.borrowoke.data.model.UserModel
 import com.chuthi.borrowoke.data.model.toUserEntity
 import com.chuthi.borrowoke.data.repo.UserRepo
 import com.chuthi.borrowoke.other.INPUT_BLUR_WORKER
+import com.chuthi.borrowoke.other.enums.UiText
 import com.chuthi.borrowoke.woker.MyWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +51,11 @@ class HomeViewModel(
         it.map { userEntity ->
             userEntity.toUserModel()
         }
-    }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        listOf()
+    )
 
 
     /**
@@ -61,7 +65,11 @@ class HomeViewModel(
         it.map { entity ->
             entity.toUserModel()
         }
-    }.cachedIn(viewModelScope).stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), PagingData.empty()  )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+        PagingData.empty()
+    ).cachedIn(viewModelScope)
     /*allUserEntity.map { userEntities ->
         PagingData.from(userEntities.map { userEntity ->
             userEntity.toUserModel()
@@ -90,6 +98,17 @@ class HomeViewModel(
         deleteAllUsers()
         // insert users
         //insertUsers(userRepo.getDummyUsers())
+        val users = mutableListOf<UserModel>()
+        for (id in 0..1000) {
+            users.add(
+                UserModel(
+                    userId = id,
+                    name = "huychuong $id",
+                    value = UiText.DynamicString("huychuong $id")
+                )
+            )
+        }
+        insertUsers(users)
         /*launchViewModelScope {
             val data2 = fetchData2()
             val data1 = fetchData1()

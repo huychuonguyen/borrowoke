@@ -3,6 +3,7 @@ package com.chuthi.borrowoke.data.repo
 import android.util.Log
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseRepo
+import com.chuthi.borrowoke.data.database.dao.RemoteKeysDao
 import com.chuthi.borrowoke.data.database.dao.UserDao
 import com.chuthi.borrowoke.data.database.entity.UserEntity
 import com.chuthi.borrowoke.data.model.UserModel
@@ -11,14 +12,14 @@ import com.chuthi.borrowoke.data.paging.UserRemoteMediator
 import com.chuthi.borrowoke.other.enums.UiText
 
 class UserRepo(
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    remoteKeysDao: RemoteKeysDao
 ) : BaseRepo() {
 
     var id = 0
     private val userPagingFlow = pagerConfig(
         mediator = UserRemoteMediator(
             queryAction = { page, _ ->
-                (if (page <= 5) {
                     listOf(
                         UserModel(
                             userId = id,
@@ -59,27 +60,17 @@ class UserRepo(
                             userId = id,
                             name = "huychuong ${id++}",
                             value = UiText.DynamicString("huychuonguyen $id")
-                        ),
-                        UserModel(
-                            userId = id,
-                            name = "huychuong ${id++}",
-                            value = UiText.DynamicString("huychuonguyen $id")
-                        ),
-                        UserModel(
-                            userId = id,
-                            name = "huychuong ${id++}",
-                            value = UiText.DynamicString("huychuonguyen $id")
                         )
-
                     )
-                } else listOf()).run {
+                .run {
                     map {
                         it.toUserEntity()
                     }
                 }
 
             },
-            userDao = userDao
+            userDao = userDao,
+            remoteKeysDao = remoteKeysDao
         ),
         pagingSource = {
             userDao.getUserPaging()

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chuthi.borrowoke.R
@@ -60,6 +61,8 @@ open class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewMode
             }
         }
         setupRecyclerView()
+        // transparent status/ navigation bar
+        transparentStatusAndNavigation()
     }
 
     override fun onObserveData(): LifecycleOwner.() -> Unit = {
@@ -73,6 +76,11 @@ open class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewMode
     }
 
     override fun onArgumentsSaved(arguments: Bundle?) {
+    }
+
+    override fun handleFragmentBackPressed(): (() -> Unit) = {
+        findNavController().popBackStack()
+        resetDefaultStatusAndNavigationColor()
     }
 
     private fun setupRecyclerView() {

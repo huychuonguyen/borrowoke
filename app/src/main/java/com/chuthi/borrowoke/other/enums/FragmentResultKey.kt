@@ -30,6 +30,23 @@ private fun <T> FragmentResultKey.setResultData(
 
 sealed class FragmentResultKey(val requestKey: String) {
 
+    class StatusAndNavigationBarKey : FragmentResultKey(REQUEST_KEY) {
+
+        fun onResetDefaultColor(bundle: Bundle, callback: (Boolean) -> Unit) {
+            val isResetDefault = bundle.getData<Boolean>(RESET_DEFAULT_COLOR_KEY)
+            isResetDefault ?: return
+            callback.invoke(isResetDefault)
+        }
+
+        fun setResetDefaultColor(fragment: Fragment, isReset: Boolean) =
+            setResultData(fragment, RESET_DEFAULT_COLOR_KEY, isReset)
+
+        companion object {
+            private const val REQUEST_KEY = "STATUS_AND_NAVIGATION_BAR_KEY"
+            private const val RESET_DEFAULT_COLOR_KEY = "RESET_DEFAULT_COLOR_KEY"
+        }
+    }
+
     class AnimationFragmentKey : FragmentResultKey(REQUEST_KEY) {
 
         fun onNewsVisible(bundle: Bundle, callback: (Boolean) -> Unit) {

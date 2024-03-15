@@ -2,18 +2,29 @@ package com.chuthi.borrowoke.base
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsCompat.Type
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import com.chuthi.borrowoke.base.interfaces.LifecycleObserverActivity
+import com.chuthi.borrowoke.ext.getSystemNavigationBarHeight
+import com.chuthi.borrowoke.ext.setDecorFitsSystemWindows
+import com.chuthi.borrowoke.ext.setNavigationBarColor
+import com.chuthi.borrowoke.ext.setStatusBarColor
+import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ui.dialog.LoadingDialog
 import kotlinx.coroutines.CoroutineScope
+import kotlin.properties.Delegates
+
 
 /**************************************
 - Created by Chuong Nguyen
@@ -23,6 +34,13 @@ import kotlinx.coroutines.CoroutineScope
  **************************************/
 abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     LifecycleObserverActivity() {
+
+    @delegate:ColorInt
+    private var defaultStatusBarColor by Delegates.notNull<Int>()
+
+
+    @delegate:ColorInt
+    private var defaultNavigationBarColor by Delegates.notNull<Int>()
 
     protected val binding by lazy {
         getViewBinding()
@@ -95,6 +113,21 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         registerBackPressed(backPressedCallback)
         // observe data
         observeData()
+        // get default status and navigation bar color
+        initDefaultStatusAndNavigationBar()
+
+        //
+
+        binding.root.setOnApplyWindowInsetsListener { _, windowInsets ->
+            val statusBarSize = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                windowInsets.getInsets(Type.systemBars()).bottom
+            } else {
+                windowInsets.systemWindowInsetBottom
+            }
+
+            showToast("navigationHeight New: $statusBarSize")
+            windowInsets
+        }
     }
 
     open fun hideKeyboard() {
@@ -123,6 +156,11 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
 
     private fun initDialogs() {
         _loadingDialog = LoadingDialog()
+    }
+
+    private fun initDefaultStatusAndNavigationBar() {
+        defaultStatusBarColor = window?.statusBarColor ?: Color.TRANSPARENT
+        defaultNavigationBarColor = window?.navigationBarColor ?: Color.TRANSPARENT
     }
 
     override fun showLoading() {
@@ -185,4 +223,22 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         }
         resultLauncher.launch(targetIntent)
     }
+
+
+    fun transparentStatusAndNavigation(on: Boolean) {
+        // make full transparent statusBar
+        setStatusBarColor(Color.TRANSPARENT)
+        setNavigationBarColor(Color.TRANSPARENT)
+        setDecorFitsSystemWindows(on)
+    }
+
+    /**
+     * Reset status/navigation bar color to default.
+     */
+    fun resetDefaultStatusAndNavigationColor() {
+        setStatusBarColor(defaultStatusBarColor)
+        setNavigationBarColor(defaultNavigationBarColor)
+        setDecorFitsSystemWindows(true)
+    }
+
 }

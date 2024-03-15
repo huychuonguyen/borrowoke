@@ -4,7 +4,6 @@ import androidx.room.Room
 import com.chuthi.borrowoke.BaseApp
 import com.chuthi.borrowoke.BuildConfig
 import com.chuthi.borrowoke.data.api.ApiService
-import com.chuthi.borrowoke.data.api.ConnectivityInterceptor
 import com.chuthi.borrowoke.data.api.HeaderInterceptor
 import com.chuthi.borrowoke.data.database.AppDatabase
 import com.chuthi.borrowoke.other.APP_DATABASE_NAME
@@ -31,6 +30,7 @@ val appModule = module {
     single { provideApiService(get()) }
     // dao
     single { provideUserDao(get()) }
+    single { provideRemoteKeysDao(get()) }
 }
 
 fun provideOkHttpClient(): OkHttpClient {
@@ -73,6 +73,8 @@ fun provideAppDatabase(app: BaseApp): AppDatabase = Room.databaseBuilder(
     app,
     AppDatabase::class.java,
     APP_DATABASE_NAME
-).build()
+).fallbackToDestructiveMigration().build()
 
 fun provideUserDao(appDatabase: AppDatabase) = appDatabase.userDao()
+
+fun provideRemoteKeysDao(appDatabase: AppDatabase) = appDatabase.remoteKeysDao()

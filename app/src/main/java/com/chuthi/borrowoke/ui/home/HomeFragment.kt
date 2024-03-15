@@ -1,12 +1,10 @@
 package com.chuthi.borrowoke.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -107,7 +105,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     tvHomeTitle.text = it
                 }
 
-                getFlowDataLasted(allUserModel, state = Lifecycle.State.CREATED) {
+                getFlowDataLasted(allUserModel) {
                     userAdapter.submitList(it)
                 }
                 // worker
@@ -127,10 +125,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }*/
             }
 
-            getFlowDataLasted(userPaging, state = Lifecycle.State.CREATED) {
-                Log.d("PagingElon","---collect")
-                userPagingAdapter.submitData(viewLifecycleOwner.lifecycle, it )
-            }
+            /*getFlowDataLasted(userPaging, state = Lifecycle.State.CREATED) {
+                Log.d("PagingElon", "---collect")
+                //userPagingAdapter.submitData(viewLifecycleOwner.lifecycle, it )
+            }*/
 
             getFlowDataLasted(mainViewModel.sharedData) {
                 //showToast("shared: $it")
@@ -185,7 +183,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     orientation = RecyclerView.VERTICAL
                 }
 
-                adapter = userPagingAdapter
+                adapter = userAdapter
 
                 setHasFixedSize(true)
             }
