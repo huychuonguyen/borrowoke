@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_homeFragment_to_animationFragment"
             app:destination="@id/animationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
 
     <fragment

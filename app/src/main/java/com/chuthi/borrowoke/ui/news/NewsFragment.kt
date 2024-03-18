@@ -1,8 +1,10 @@
 package com.chuthi.borrowoke.ui.news
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -62,7 +64,18 @@ open class NewsFragment : SwipeRefreshFragment<FragmentNewsBinding, NewsViewMode
         }
         setupRecyclerView()
         // transparent status/ navigation bar
-        transparentStatusAndNavigation()
+        setStatusAndNavigationColor(Color.RED)
+    }
+
+    override fun onWindowInsets(rootView: View, top: Int, bottom: Int) {
+        rootView.apply {
+            setPadding(
+                paddingLeft,
+                paddingTop + top,
+                paddingRight,
+                paddingBottom + bottom
+            )
+        }
     }
 
     override fun onObserveData(): LifecycleOwner.() -> Unit = {

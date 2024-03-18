@@ -75,7 +75,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
 
             tvAnimation.onSafeClick {
-                val action = HomeFragmentDirections.actionHomeFragmentToAnimationFragment()
+                val action = HomeFragmentDirections.actionHomeFragmentToChatFragment()
                 it.navigateTo(action)
             }
         }

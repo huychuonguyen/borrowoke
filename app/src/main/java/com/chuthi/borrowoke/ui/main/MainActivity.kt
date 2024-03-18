@@ -6,8 +6,6 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.chuthi.borrowoke.base.BaseActivity
 import com.chuthi.borrowoke.data.model.AuthModel
-import com.chuthi.borrowoke.data.model.response.ExternalClass
-import com.chuthi.borrowoke.data.model.response.ExternalClassParceler
 import com.chuthi.borrowoke.databinding.ActivityMainBinding
 import com.chuthi.borrowoke.ext.backToSystemHome
 import com.chuthi.borrowoke.ext.getData
@@ -15,7 +13,6 @@ import com.chuthi.borrowoke.ext.putData
 import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ui.auth.AuthenticationActivity
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

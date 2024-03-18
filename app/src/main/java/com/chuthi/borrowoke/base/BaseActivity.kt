@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
@@ -16,7 +17,6 @@ import androidx.core.view.WindowInsetsCompat.Type
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import com.chuthi.borrowoke.base.interfaces.LifecycleObserverActivity
-import com.chuthi.borrowoke.ext.getSystemNavigationBarHeight
 import com.chuthi.borrowoke.ext.setDecorFitsSystemWindows
 import com.chuthi.borrowoke.ext.setNavigationBarColor
 import com.chuthi.borrowoke.ext.setStatusBarColor
@@ -38,9 +38,11 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     @delegate:ColorInt
     private var defaultStatusBarColor by Delegates.notNull<Int>()
 
-
     @delegate:ColorInt
     private var defaultNavigationBarColor by Delegates.notNull<Int>()
+
+    private val rootPaddings = arrayListOf(0, 0, 0, 0)
+
 
     protected val binding by lazy {
         getViewBinding()
@@ -115,17 +117,26 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         observeData()
         // get default status and navigation bar color
         initDefaultStatusAndNavigationBar()
+    }
 
-        //
-
-        binding.root.setOnApplyWindowInsetsListener { _, windowInsets ->
-            val statusBarSize = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                windowInsets.getInsets(Type.systemBars()).bottom
+    fun setOnApplyWindowInsetsListener(onInsets: (View, Int, Int) -> Unit) {
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            val (statusBarSize, navigationBarSize) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                Pair(
+                    windowInsets.getInsets(Type.systemBars()).top,
+                    windowInsets.getInsets(Type.systemBars()).bottom
+                )
             } else {
-                windowInsets.systemWindowInsetBottom
+                Pair(
+                    windowInsets.systemWindowInsetTop,
+                    windowInsets.systemWindowInsetBottom
+                )
             }
 
-            showToast("navigationHeight New: $statusBarSize")
+            showToast("navigationHeight New: $navigationBarSize")
+
+            onInsets.invoke(view, statusBarSize, navigationBarSize)
+
             windowInsets
         }
     }
@@ -161,6 +172,18 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     private fun initDefaultStatusAndNavigationBar() {
         defaultStatusBarColor = window?.statusBarColor ?: Color.TRANSPARENT
         defaultNavigationBarColor = window?.navigationBarColor ?: Color.TRANSPARENT
+        // save root padding
+        binding.root.run {
+            rootPaddings.clear()
+            rootPaddings.addAll(
+                listOf(
+                    paddingLeft,
+                    paddingTop,
+                    paddingRight,
+                    paddingBottom
+                )
+            )
+        }
     }
 
     override fun showLoading() {
@@ -227,9 +250,14 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
 
     fun transparentStatusAndNavigation(on: Boolean) {
         // make full transparent statusBar
-        setStatusBarColor(Color.TRANSPARENT)
-        setNavigationBarColor(Color.TRANSPARENT)
+        setStatusAndNavigationColor(Color.TRANSPARENT)
         setDecorFitsSystemWindows(on)
+    }
+
+    fun setStatusAndNavigationColor(@ColorInt color: Int) {
+        setStatusBarColor(color)
+        setNavigationBarColor(color)
+        setDecorFitsSystemWindows(false)
     }
 
     /**
@@ -239,6 +267,21 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         setStatusBarColor(defaultStatusBarColor)
         setNavigationBarColor(defaultNavigationBarColor)
         setDecorFitsSystemWindows(true)
+        resetRootPadding()
+    }
+
+    private fun resetRootPadding() {
+        // reset root padding
+        binding.root.apply {
+            rootPaddings.let { paddings ->
+                setPadding(
+                    paddings[0],
+                    paddings[1],
+                    paddings[2],
+                    paddings[3]
+                )
+            }
+        }
     }
 
 }

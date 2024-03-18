@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.ColorInt
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.chuthi.borrowoke.base.interfaces.LifecycleObserverFragment
@@ -45,6 +46,8 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObs
     abstract fun setupUI()
 
     abstract fun onArgumentsSaved(arguments: Bundle?)
+
+    open fun onWindowInsets(rootView: View, top: Int, bottom: Int) {}
 
     /**
      * Override this method to custom fragment back pressed.
@@ -90,6 +93,8 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObs
         setupUI()
         // raise observe data
         observeData()
+        // listen to windowInsetsListener from [BaseActivity]
+        (context as? BaseActivity<*, *>)?.setOnApplyWindowInsetsListener(::onWindowInsets)
     }
 
     override fun onDestroyView() {
@@ -98,9 +103,11 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObs
         super.onDestroyView()
     }
 
-    protected fun transparentStatusAndNavigation() {
+    protected fun transparentStatusAndNavigation() =
         (context as? BaseActivity<*, *>)?.transparentStatusAndNavigation(false)
-    }
+
+    protected fun setStatusAndNavigationColor(@ColorInt color: Int) =
+        (context as? BaseActivity<*, *>)?.setStatusAndNavigationColor(color)
 
     protected fun resetDefaultStatusAndNavigationColor() =
         (context as? BaseActivity<*, *>)?.resetDefaultStatusAndNavigationColor()

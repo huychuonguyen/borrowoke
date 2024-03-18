@@ -12,8 +12,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseFragment
 import com.chuthi.borrowoke.databinding.FragmentChatBinding
@@ -33,7 +32,6 @@ import com.chuthi.borrowoke.other.adapters.normal.ChatAdapter
 import com.chuthi.borrowoke.other.enums.ChatUiState
 import com.chuthi.borrowoke.other.enums.MessageType
 import com.chuthi.borrowoke.other.enums.asString
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -96,6 +94,17 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
         }
 
         setupRecyclerView()
+
+        transparentStatusAndNavigation()
+    }
+
+    override fun onWindowInsets(rootView: View, top: Int, bottom: Int) {
+        binding.root.fitsSystemWindows = true
+    }
+
+    override fun handleFragmentBackPressed(): (() -> Unit) = {
+        findNavController().popBackStack()
+        resetDefaultStatusAndNavigationColor()
     }
 
     private fun hideKeyboard() {
