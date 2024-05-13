@@ -10,9 +10,7 @@ class UserPagingAdapter(
     private val onItemClick: (item: UserModel, position: Int) -> Unit,
     private val onItemLongClick: (item: UserModel, position: Int) -> Unit
 ) : BasePagingAdapter<UserModel, UserItemBinding>(
-    areItemsTheSame = { old, new ->
-        old.userId == new.userId
-    },
+    areItemsTheSame = areItemsTheSame,
     areContentsTheSame = { old, new ->
         old == new
     }
@@ -36,4 +34,11 @@ class UserPagingAdapter(
             tvUsername.text = item.name
         }
     }
+
+    companion object {
+        val areItemsTheSame = { old: UserModel, new: UserModel ->
+            old.userId == new.userId
+        }
+    }
+
 }

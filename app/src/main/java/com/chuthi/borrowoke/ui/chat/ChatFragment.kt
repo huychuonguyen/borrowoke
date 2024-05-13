@@ -2,7 +2,6 @@ package com.chuthi.borrowoke.ui.chat
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.chuthi.borrowoke.R
@@ -147,11 +145,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
 
     override fun onObserveData(): (LifecycleOwner.() -> Unit) = {
         viewModel.run {
-            // todo: test thôi
-            getFlowData(testValue, state = Lifecycle.State.CREATED) {
-                Log.d("huychuonguyen", "testValue: $it")
-            }
-            //
 
             getFlowDataLasted(validInput) { isValid ->
                 toggleSendButton(isValid)

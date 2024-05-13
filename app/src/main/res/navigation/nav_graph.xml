@@ -19,7 +19,7 @@
         tools:layout="@layout/fragment_home">
         <argument
             android:name="title"
-            android:defaultValue="Welcome Home"
+            android:defaultValue="Custom Color"
             app:argType="string" />
         <action
             android:id="@+id/action_homeFragment_to_newsFragment"

@@ -53,7 +53,7 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
-        android:text="@string/animation_fragment"
+        android:text="Full screen with adjustResize"
         android:textSize="@dimen/_20sp"
         app:layout_constraintTop_toBottomOf="@+id/tvCounter" />
 

@@ -17,6 +17,8 @@ import com.chuthi.borrowoke.ext.toggleSlide
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.other.enums.asString
 import com.chuthi.borrowoke.ui.dog.DogFragment
+import com.chuthi.borrowoke.util.MyLogManager
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**

@@ -11,7 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.chuthi.borrowoke.base.interfaces.LifecycleObserverFragment
 import com.chuthi.borrowoke.ext.showToast
+import com.chuthi.borrowoke.util.MyLogManager
 import kotlinx.coroutines.CoroutineScope
+import org.koin.android.ext.android.inject
 
 /**************************************
 - Created by Chuong Nguyen
@@ -20,6 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 - Project : Base Kotlin
  **************************************/
 abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : LifecycleObserverFragment() {
+
+    override val log: MyLogManager by inject()
 
     private lateinit var _binding: VB
     protected val binding: VB

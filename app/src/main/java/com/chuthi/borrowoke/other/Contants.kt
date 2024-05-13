@@ -7,8 +7,8 @@ const val APP_DATABASE_NAME = "${BuildConfig.APPLICATION_ID}_db"
 const val API_KEY = "6953a7421bb749c589e687746c85eee8"
 const val OPENAI_API_KEY = "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"
     //"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"
-const val BASE_URL = "https://api.openai.com"
-//const val BASE_URL ="https://api.thedogapi.com"
+//const val BASE_URL = "https://api.openai.com"
+const val BASE_URL ="https://api.thedogapi.com"
 
 // region HTTP code
 const val TIME_OUT = 60L

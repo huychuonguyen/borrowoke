@@ -31,10 +31,10 @@ class NewsViewModel(
                 _breakingNews.emit(articles)
             }, {
                 val code = it.errorCode
-                val message = it.message ?: ""
+                val message = it.message
                 sendError(
                     CommonError.NormalError(
-                        message = UiText.DynamicString("$code: $message"),
+                        message = message,
                         code = code
                     )
                 )

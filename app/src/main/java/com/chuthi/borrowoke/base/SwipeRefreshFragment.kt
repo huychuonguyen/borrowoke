@@ -52,7 +52,12 @@ abstract class SwipeRefreshFragment<VB : ViewBinding, VM : BaseViewModel>
     }
 
     protected fun hideRefreshing() {
-        _swipeRefreshLayout.isRefreshing = false
+        _swipeRefreshLayout.run {
+            post {
+                // show refreshing
+                isRefreshing = false
+            }
+        }
         // clear timeout callback
         clearRefreshTimeout()
     }

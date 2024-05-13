@@ -11,6 +11,7 @@ import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.HttpError
 import com.chuthi.borrowoke.other.enums.asString
+import com.chuthi.borrowoke.util.MyLogManager
 
 /**
  * - The interface with common data handling and ui event.
@@ -24,6 +25,8 @@ import com.chuthi.borrowoke.other.enums.asString
  *      - ...
  */
 interface IDataObserver {
+
+    val log: MyLogManager
 
     fun showLoading()
 

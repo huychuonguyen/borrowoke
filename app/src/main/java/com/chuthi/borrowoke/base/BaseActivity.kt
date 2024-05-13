@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -20,10 +21,11 @@ import com.chuthi.borrowoke.base.interfaces.LifecycleObserverActivity
 import com.chuthi.borrowoke.ext.setDecorFitsSystemWindows
 import com.chuthi.borrowoke.ext.setNavigationBarColor
 import com.chuthi.borrowoke.ext.setStatusBarColor
-import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.ui.dialog.LoadingDialog
+import com.chuthi.borrowoke.util.MyLogManager
 import kotlinx.coroutines.CoroutineScope
-import kotlin.properties.Delegates
+import org.koin.android.ext.android.inject
+import kotlin.reflect.KProperty
 
 
 /**************************************
@@ -35,18 +37,18 @@ import kotlin.properties.Delegates
 abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
     LifecycleObserverActivity() {
 
-    @delegate:ColorInt
-    private var defaultStatusBarColor by Delegates.notNull<Int>()
+    override val log: MyLogManager by inject()
 
-    @delegate:ColorInt
-    private var defaultNavigationBarColor by Delegates.notNull<Int>()
+    private var defaultStatusBarColor by DefaultColorDelegate()
+
+    private var defaultNavigationBarColor by DefaultColorDelegate()
 
     private val rootPaddings = arrayListOf(0, 0, 0, 0)
-
 
     protected val binding by lazy {
         getViewBinding()
     }
+
 
     abstract fun getViewBinding(): VB
 
@@ -133,7 +135,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
                 )
             }
 
-            showToast("navigationHeight New: $navigationBarSize")
+            Log.d("navigationHeight New", "$navigationBarSize")
 
             onInsets.invoke(view, statusBarSize, navigationBarSize)
 
@@ -244,6 +246,8 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         val targetIntent = Intent(this, targetActivity).apply {
             data?.let { putExtras(it) }
         }
+
+        result ?: return startActivity(targetIntent)
         resultLauncher.launch(targetIntent)
     }
 
@@ -284,4 +288,17 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> :
         }
     }
 
+}
+
+private class DefaultColorDelegate {
+    @ColorInt
+    private var _value: Int? = null
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
+        return _value ?: Color.TRANSPARENT
+    }
+
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
+        _value = value
+    }
 }

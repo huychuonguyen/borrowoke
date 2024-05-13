@@ -9,6 +9,8 @@ import com.chuthi.borrowoke.data.database.AppDatabase
 import com.chuthi.borrowoke.other.APP_DATABASE_NAME
 import com.chuthi.borrowoke.other.BASE_URL
 import com.chuthi.borrowoke.other.TIME_OUT
+import com.chuthi.borrowoke.util.MyLogManager
+import com.chuthi.borrowoke.util.MyLogManagerIpl
 import com.chuthi.borrowoke.util.provideService
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
@@ -20,6 +22,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 val appModule = module {
+    // Log manager
+    single { provideLogManager() }
     // database
     single { provideAppDatabase(androidApplication() as BaseApp) }
     // okhttp
@@ -32,6 +36,8 @@ val appModule = module {
     single { provideUserDao(get()) }
     single { provideRemoteKeysDao(get()) }
 }
+
+fun provideLogManager(): MyLogManager = MyLogManagerIpl()
 
 fun provideOkHttpClient(): OkHttpClient {
     val loggingInterceptor = HttpLoggingInterceptor().apply {

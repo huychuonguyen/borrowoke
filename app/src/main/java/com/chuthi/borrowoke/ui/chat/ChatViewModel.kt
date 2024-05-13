@@ -30,18 +30,6 @@ class ChatViewModel(
     private val chatRepo: ChatRepo
 ) : BaseViewModel() {
 
-    init {
-        launchViewModelScope {
-            repeat(5) {
-                delay(1000)
-                testValue.emit(testValue.value + 1)
-            }
-        }
-    }
-
-    var testValue = MutableStateFlow(0)
-        private set
-
     private val _validInput = MutableStateFlow(false)
     val validInput = _validInput.asStateFlow()
 
