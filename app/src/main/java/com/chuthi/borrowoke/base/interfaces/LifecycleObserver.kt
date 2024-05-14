@@ -22,14 +22,12 @@ interface LifecycleObserver : LifecycleDelegate, LifecycleEventObserver, IDataOb
         when (event) {
             Lifecycle.Event.ON_RESUME -> {
                 when (this) {
-                    is AppCompatActivity -> log.i(
-                        "activity: ${this::class.java.simpleName}",
-                        "LifecycleObserver_ON_RESUME"
+                    is AppCompatActivity -> log.w(
+                        "activity: ${this::class.java.simpleName} ON_RESUME"
                     )
 
                     is Fragment -> log.i(
-                        "fragment: ${this::class.java.simpleName}",
-                        "LifecycleObserver_ON_RESUME"
+                        "fragment: ${this::class.java.simpleName} ON_RESUME",
                     )
 
                     else -> Unit
@@ -43,13 +41,11 @@ interface LifecycleObserver : LifecycleDelegate, LifecycleEventObserver, IDataOb
             Lifecycle.Event.ON_DESTROY -> {
                 when (this) {
                     is AppCompatActivity -> log.i(
-                        "activity: ${this::class.java.simpleName}",
-                        "LifecycleObserver_ON_DESTROY",
+                        "activity: ${this::class.java.simpleName} ON_DESTROY",
                     )
 
                     is Fragment -> log.i(
-                        "fragment: ${this::class.java.simpleName}",
-                        "LifecycleObserver_ON_DESTROY",
+                        "fragment: ${this::class.java.simpleName} ON_DESTROY",
                     )
 
                     else -> Unit
