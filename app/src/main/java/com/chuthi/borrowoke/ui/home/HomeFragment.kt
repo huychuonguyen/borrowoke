@@ -22,6 +22,7 @@ import com.chuthi.borrowoke.other.adapters.normal.UserAdapter
 import com.chuthi.borrowoke.other.adapters.paging.UserPagingAdapter
 import com.chuthi.borrowoke.other.enums.FragmentResultKey
 import com.chuthi.borrowoke.ui.main.MainViewModel
+import com.chuthi.borrowoke.util.MyLifecycleOwner
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -93,7 +94,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    override fun onObserveData(): LifecycleOwner.() -> Unit = {
+    override fun onObserveData(): (MyLifecycleOwner.() -> Unit) = {
         viewModel.run {
 
             binding.run {

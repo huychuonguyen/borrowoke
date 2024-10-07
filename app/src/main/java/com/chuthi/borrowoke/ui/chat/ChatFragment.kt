@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.chuthi.borrowoke.R
 import com.chuthi.borrowoke.base.BaseFragment
@@ -30,6 +29,7 @@ import com.chuthi.borrowoke.other.adapters.normal.ChatAdapter
 import com.chuthi.borrowoke.other.enums.ChatUiState
 import com.chuthi.borrowoke.other.enums.MessageType
 import com.chuthi.borrowoke.other.enums.asString
+import com.chuthi.borrowoke.util.MyLifecycleOwner
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -143,12 +143,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
     override fun onArgumentsSaved(arguments: Bundle?) {
     }
 
-    override fun onObserveData(): (LifecycleOwner.() -> Unit) = {
+    override fun onObserveData(): (MyLifecycleOwner.() -> Unit) = {
+
         viewModel.run {
 
-            getFlowDataLasted(validInput) { isValid ->
-                toggleSendButton(isValid)
-            }
+            validInput bindTo ::toggleSendButton
 
             getFlowDataLasted(messages) {
                 chatAdapter.submitList(it)
@@ -166,6 +165,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
             getFlowData(cost) {
                 binding.tvCost.text = getString(R.string.cost_per_tokens, it)
             }
+
 
             // Live data
             getLiveData(chatUiState) {

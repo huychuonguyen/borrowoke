@@ -35,7 +35,7 @@ inline fun <T> LifecycleOwner.getLiveData(
 inline fun <T> LifecycleOwner.getFlowData(
     flowData: (Flow<T>)?,
     state: Lifecycle.State = Lifecycle.State.STARTED,
-    crossinline data: (T) -> Unit
+    crossinline data: suspend (T) -> Unit
 ) = repeatOnLifeCycle(state) {
     flowData?.collect {
         data.invoke(it)
@@ -45,7 +45,7 @@ inline fun <T> LifecycleOwner.getFlowData(
 inline fun <T> LifecycleOwner.getFlowDataLasted(
     flowData: (Flow<T>)?,
     state: Lifecycle.State = Lifecycle.State.STARTED,
-    crossinline data: (T) -> Unit
+    crossinline data: suspend (T) -> Unit
 ) = repeatOnLifeCycle(state) {
     flowData?.collectLatest {
         data.invoke(it)
@@ -64,4 +64,3 @@ inline fun LifecycleOwner.repeatOnLifeCycle(
         action.invoke(this)
     }
 }
-

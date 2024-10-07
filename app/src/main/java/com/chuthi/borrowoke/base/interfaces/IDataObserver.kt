@@ -11,6 +11,7 @@ import com.chuthi.borrowoke.ext.showToast
 import com.chuthi.borrowoke.other.enums.CommonError
 import com.chuthi.borrowoke.other.enums.HttpError
 import com.chuthi.borrowoke.other.enums.asString
+import com.chuthi.borrowoke.util.MyLifecycleOwner
 import com.chuthi.borrowoke.util.MyLogManager
 
 /**
@@ -36,7 +37,7 @@ interface IDataObserver {
      * - Use [getFlowData], [getFlowDataLasted] or [getLiveData] extension
      * to observe data on here.
      */
-    fun onObserveData(): (LifecycleOwner.() -> Unit)? = null
+    fun onObserveData(): (MyLifecycleOwner.() -> Unit)? = null
 
     /**
      * Observe viewModel data on [lifecycleOwner].
@@ -54,7 +55,7 @@ interface IDataObserver {
             // handle FlowData
             handleEvents(context, viewModels, this)
             // raise observe FlowData/LiveData on [LifecycleOwner]
-            onObserveData()?.invoke(this)
+            onObserveData()?.invoke(MyLifecycleOwner(lifecycle))
         }
     }
 
