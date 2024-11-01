@@ -27,12 +27,14 @@ fun View.onSafeClick(
     onSafeClick: (View) -> Unit
 ) {
     // register on click with delay
+
     val safeClickListener = SafeClickListener(defaultInterval = defaultInterval) {
         onSafeClick(it)
     }
     setOnClickListener(safeClickListener)
     // set background effect
-    background = ContextCompat.getDrawable(context, drawableId)
+    foreground = ContextCompat.getDrawable(context, drawableId)
+    clipToOutline = true
 
     /*val attrs = intArrayOf(android.R.attr.selectableItemBackground)
     val typedArray: TypedArray = this.context.obtainStyledAttributes(attrs)
